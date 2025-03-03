@@ -1,0 +1,36 @@
+.aboutContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 40px 20px;
+  background: linear-gradient(to bottom, white 50%, #007bff 100%);
+}
+
+.aboutContent {
+  max-width: 800px; /* Ajusta a largura para não ficar muito pequeno */
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.aboutContent h1 {
+  font-size: 2.5rem;
+  color: #007bff;
+  margin-bottom: 20px;
+}
+
+.aboutContent h2 {
+  font-size: 1.8rem;
+  color: #d9534f;
+  margin-top: 20px;
+}
+
+.aboutContent p {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  color: #333;
+}
