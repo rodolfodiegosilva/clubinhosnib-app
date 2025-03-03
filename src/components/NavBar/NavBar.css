@@ -1,0 +1,73 @@
+/* NavBar.css */
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--cor-primaria);
+  padding: 15px 40px;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+.logo a {
+  color: var(--cor-branca);
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 30px;
+}
+
+.nav-links li a {
+  font-size: 1.2rem;
+  color: var(--cor-branca);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.nav-links li.active a,
+.nav-links li a:hover {
+  color: var(--cor-complementar);
+}
+
+.mobile-navigation {
+  display: none;
+}
+
+.hamburger-icon {
+  cursor: pointer;
+  color: var(--cor-branca);
+}
+
+.mobile-menu {
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  background-color: var(--cor-primaria);
+  padding: 20px 0;
+}
+
+@media (max-width: 768px) {
+  .desktop-navigation {
+    display: none;
+  }
+  .mobile-navigation {
+    display: block;
+  }
+  .nav-links {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .nav-links li {
+    padding: 10px 0;
+  }
+}
