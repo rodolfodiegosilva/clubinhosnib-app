@@ -1,0 +1,45 @@
+/* ======= Estilização Geral do Feed ======= */
+.feed-page {
+  max-width: 95%;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.feed-title {
+  font-size: 28px;
+  margin-top: 80px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.feed-subtitle {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.feed-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.feed-error-message {
+  color: red;
+  font-size: 16px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* ======= Responsividade ======= */
+@media (max-width: 768px) {
+  .feed-title {
+    font-size: 22px;
+    margin-top: 60px;
+  }
+
+  .feed-subtitle {
+    font-size: 14px;
+  }
+}

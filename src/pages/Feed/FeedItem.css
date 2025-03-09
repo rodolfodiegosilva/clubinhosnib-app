@@ -1,0 +1,180 @@
+/* ======= Ajuste do Card ======= */
+.feed-item {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.2s ease-in-out;
+  padding: 15px;
+  height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feed-item:hover {
+  transform: scale(1.02);
+}
+
+/* ======= Layout flexível lado a lado ======= */
+.feed-item-content-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  height: 100%;
+  width: 100%;
+  padding: 15px;
+}
+
+/* ======= Carrossel ======= */
+.feed-item-carousel-container {
+  flex: 1;
+  width: 50%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.feed-item-swiper-container {
+  width: 100%;
+  height: 100%;
+}
+
+.feed-item-swiper-slide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.feed-item-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 95%;
+  width: 100%;
+}
+
+.feed-item-carousel-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* ======= Estilizando as setas de navegação ======= */
+.feed-item-swiper-button-prev,
+.feed-item-swiper-button-next {
+  color: white !important;
+  background: rgba(0, 0, 0, 0.5);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s ease-in-out;
+}
+
+.feed-item-swiper-button-prev:hover,
+.feed-item-swiper-button-next:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.feed-item-swiper-button-prev {
+  left: 10px !important;
+}
+
+.feed-item-swiper-button-next {
+  right: 10px !important;
+}
+
+/* ======= Texto ======= */
+.feed-item-content {
+  flex: 1;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.feed-item-title {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.feed-item-description {
+  font-size: 16px;
+  line-height: 1.5;
+  max-width: 90%;
+  text-align: justify;
+}
+
+.feed-item-timestamp-container {
+  margin-top: 10px;
+}
+
+.feed-item-timestamp {
+  font-size: 14px;
+  color: #777;
+}
+
+/* ======= Responsividade ======= */
+@media (max-width: 1024px) {
+  .feed-item {
+    height: auto;
+    flex-direction: column;
+  }
+
+  .feed-item-content-wrapper {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+
+  .feed-item-carousel-container,
+  .feed-item-content {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .feed-item-title {
+    font-size: 18px;
+  }
+
+  .feed-item-description {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .feed-item-content {
+    padding: 5px;
+  }
+
+  .feed-item-title {
+    font-size: 16px;
+  }
+
+  .feed-item-description {
+    font-size: 12px;
+  }
+
+  .feed-item {
+    padding: 10px;
+  }
+
+  .feed-item-swiper-button-prev,
+  .feed-item-swiper-button-next {
+    width: 30px;
+    height: 30px;
+  }
+}

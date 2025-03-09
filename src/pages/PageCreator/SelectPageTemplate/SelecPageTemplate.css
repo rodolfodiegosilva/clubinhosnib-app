@@ -1,0 +1,126 @@
+/* 🌟 Página dinâmica */
+.dynamic-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background: linear-gradient(to bottom, #f4f4f4, #e8e8e8);
+  min-height: 100vh;
+  text-align: center;
+}
+
+/* 🌟 Título da página */
+.dynamic-title {
+  margin-top: 40px;
+  font-size: 32px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* 🌟 Subtítulo */
+.dynamic-subtitle {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 25px;
+  margin-top: 20px;
+}
+
+/* 🌟 Container do seletor */
+.select-container {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease-in-out;
+  width: 280px;
+}
+
+.select-container:hover {
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.15);
+}
+
+/* 🌟 Estilização do select */
+.custom-select {
+  padding: 12px 15px;
+  font-size: 16px;
+  border: 2px solid #333;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  font-weight: bold;
+}
+
+.custom-select:hover {
+  border-color: #28a745;
+}
+
+.custom-select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 6px rgba(0, 123, 255, 0.3);
+}
+
+/* 🌟 Container dos componentes */
+.component-container {
+  margin-top: 30px;
+  padding: 35px;
+  border-radius: 12px;
+  background-color: white;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+  width: 95%;
+  max-width: 95%;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+}
+
+/* 🌟 Animação ao selecionar um template */
+.component-container.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 🌟 Placeholder */
+.placeholder {
+  font-size: 16px;
+  color: #888;
+  font-weight: normal;
+}
+
+/* 📱 Responsividade */
+@media (max-width: 768px) {
+  .dynamic-title {
+    font-size: 26px;
+  }
+
+  .dynamic-subtitle {
+    font-size: 14px;
+  }
+
+  .select-container {
+    width: 260px;
+    padding: 12px;
+  }
+
+  .custom-select {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .component-container {
+    width: 95%;
+    padding: 25px;
+    font-size: 16px;
+  }
+}
