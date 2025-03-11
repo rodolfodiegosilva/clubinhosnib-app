@@ -3,7 +3,7 @@ import axios from "axios";
 
 // Carrega a URL base da API a partir de variável de ambiente
 // Se não estiver definida, usa "/api" como fallback
-const baseURL = process.env.REACT_APP_API_URL || "/api";
+const baseURL = process.env.REACT_APP_API_URL || "http://ec2-18-118-55-94.us-east-2.compute.amazonaws.com:3000";
 
 // Cria uma instância do axios com a URL base
 const apiAxios = axios.create({
