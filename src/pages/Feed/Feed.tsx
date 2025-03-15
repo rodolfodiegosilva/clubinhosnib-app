@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from "react";
-import api from "../../config/axiosConfig"; // Instância do Axios configurada
+import { useEffect, useState } from "react";
+import api from "../../config/axiosConfig";
 import FeedItem from "./FeedItem";
 import "./Feed.css";
 
-/**
- * Interface para os dados do Feed.
- */
 interface ImageData {
   id: string;
   url: string;
@@ -28,19 +25,17 @@ interface FeedData {
   sections: SectionData[];
 }
 
-/**
- * Componente principal que exibe o feed de forma dinâmica, carregando os dados da API.
- */
 export default function Feed() {
   const [feedData, setFeedData] = useState<FeedData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const feedMinisterioId = process.env.REACT_APP_FEED_MINISTERIO_ID;
 
   useEffect(() => {
     const fetchFeedData = async () => {
       try {
         setLoading(true);
-        const response = await api.get<FeedData>("/gallery/59878b80-bd73-4305-a1c3-4fbdbba2ce23");
+        const response = await api.get<FeedData>(`/gallery/${feedMinisterioId}`);
         setFeedData(response.data);
       } catch (err) {
         console.error("Erro ao buscar os dados do feed:", err);
@@ -51,7 +46,7 @@ export default function Feed() {
     };
 
     fetchFeedData();
-  }, []);
+  }, [feedMinisterioId]);
 
   if (loading) return <p>Carregando...</p>;
   if (error) return <p className="feed-error-message">{error}</p>;
