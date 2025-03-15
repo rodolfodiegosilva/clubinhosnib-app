@@ -3,6 +3,8 @@
   margin: 0 auto;
   padding: 20px;
   text-align: center;
+  margin-top: 60px;
+
 }
 
 .feed-title {
@@ -32,6 +34,12 @@
 }
 
 @media (max-width: 768px) {
+  .feed-page {
+    max-width: 98%;
+    padding: 0px 5px;
+    margin-top: 80px;
+    margin-bottom: 10px;
+}
   .feed-title {
     font-size: 22px;
     margin-top: 60px;
