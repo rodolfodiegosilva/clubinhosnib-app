@@ -48,7 +48,14 @@ export default function Feed() {
     fetchFeedData();
   }, [feedMinisterioId]);
 
-  if (loading) return <p>Carregando...</p>;
+  if (loading)
+    return (
+      <div className="feed-loading">
+        <div className="spinner"></div>
+        <p>Carregando...</p>
+      </div>
+    );
+
   if (error) return <p className="feed-error-message">{error}</p>;
 
   return (
