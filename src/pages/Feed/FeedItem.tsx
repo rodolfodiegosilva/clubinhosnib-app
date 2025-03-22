@@ -1,61 +1,70 @@
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
-import "./FeedItem.css";
+import {
+  Box,
+  Typography,
+  Paper,
+  Grid,
+} from "@mui/material";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-
-export interface ImageData {
-    file?: File;
-    url: string;
-    isLocalFile: boolean;
-}
+import { FeedImageData } from "./Feed";
 
 export interface FeedItemData {
-    images: ImageData[];
-    caption: string;
-    description: string;
-    createdAt: string;
-    updatedAt: string;
+  images: FeedImageData[];
+  caption: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export default function FeedItem({ images, caption, description, createdAt, updatedAt }: FeedItemData) {
-    return (
-        <div className="feed-item">
-            <div className="feed-item-content-wrapper">
-                <div className="feed-item-carousel-container">
-                    <Swiper
-                        modules={[Navigation, Pagination, Autoplay]}
-                        navigation
-                        pagination={{ clickable: true }}
-                        autoplay={{ delay: 3000 }}
-                        loop
-                        className="feed-item-swiper-container"
-                    >
-                        {images.map((imgData, i) => (
-                            <SwiperSlide key={i}>
-                                <div className="feed-item-image-container">
-                                    <img src={imgData.url} alt={`Slide ${i}`} className="feed-item-carousel-image" />
-                                </div>
-                            </SwiperSlide>
-                        ))}
-                    </Swiper>
-                </div>
+  return (
+    <Paper elevation={3} sx={{ p: 2 }}>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={6}>
+          <Swiper
+            modules={[Navigation, Pagination, Autoplay]}
+            navigation
+            pagination={{ clickable: true }}
+            autoplay={{ delay: 3000 }}
+            loop
+            style={{ borderRadius: 8, overflow: "hidden" }}
+          >
+            {images.map((imgData, i) => (
+              <SwiperSlide key={i}>
+                <Box sx={{ position: "relative" }}>
+                  <img
+                    src={imgData.url}
+                    alt={`Slide ${i}`}
+                    style={{ width: "100%", height: 300, objectFit: "cover" }}
+                  />
+                </Box>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </Grid>
 
-                <div className="feed-item-content">
-                    <h3 className="feed-item-title">{caption}</h3>
-                    <p className="feed-item-description">{description}</p>
-                    <div className="feed-item-timestamp-container">
-                        <p className="feed-item-timestamp">
-                            📅 Criado em: {new Date(createdAt).toLocaleDateString("pt-BR")} às {new Date(createdAt).toLocaleTimeString("pt-BR")}
-                        </p>
-                        <p className="feed-item-timestamp">
-                            ⏳ Atualizado em: {new Date(updatedAt).toLocaleDateString("pt-BR")} às {new Date(updatedAt).toLocaleTimeString("pt-BR")}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
+        <Grid item xs={12} md={6}>
+          <Typography variant="h6" fontWeight="bold" gutterBottom>
+            {caption}
+          </Typography>
+          <Typography variant="body1" gutterBottom>
+            {description}
+          </Typography>
+
+          <Box mt={2}>
+            <Typography variant="body2" color="text.secondary">
+              📅 Criado em: {new Date(createdAt).toLocaleDateString("pt-BR")} às {new Date(createdAt).toLocaleTimeString("pt-BR")}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              ⏳ Atualizado em: {new Date(updatedAt).toLocaleDateString("pt-BR")} às {new Date(updatedAt).toLocaleTimeString("pt-BR")}
+            </Typography>
+          </Box>
+        </Grid>
+      </Grid>
+    </Paper>
+  );
 }
