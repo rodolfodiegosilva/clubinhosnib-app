@@ -4,57 +4,7 @@
   background-color: #f9f9f9;
 }
 
-.gallery-page h2 {
-  font-size: 32px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  color: #004aad;
-}
-
-.subtitle {
-  font-size: 18px;
-  color: #666;
-  margin-bottom: 40px;
-}
-
-.gallery {
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
-  max-width: 1200px;
-  margin: auto;
-}
-
-/* Botão para adicionar seção */
-.add-section {
-  background-color: #004aad;
-  color: white;
-  font-weight: bold;
-  margin-right: 15px;
-  padding: 10px 20px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-}
-.add-section:hover {
-  opacity: 0.9;
-}
-
-/* Botão para salvar tudo */
-.save-all {
-  background-color: #3cba3c;
-  color: white;
-  font-weight: bold;
-  padding: 10px 20px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-}
-.save-all:hover {
-  opacity: 0.9;
-}
-
-/* Estilização para os campos de título e descrição da galeria */
+/* Inputs de título e descrição da galeria */
 .gallery-title {
   font-size: 24px;
   font-weight: bold;
@@ -76,8 +26,51 @@
   box-sizing: border-box;
 }
 
+/* Container das seções */
+.gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* Botão para adicionar seção */
+.add-section {
+  background-color: #004aad;
+  color: white;
+  font-weight: bold;
+  margin-right: 15px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.add-section:hover {
+  opacity: 0.9;
+}
+
+/* Botão para salvar tudo */
+.save-all {
+  background-color: #3cba3c;
+  color: white;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.save-all:hover {
+  opacity: 0.9;
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
+  .gallery-page {
+    padding: 40px 5px;
+  }
   .gallery-title {
     font-size: 20px;
     padding: 8px;
