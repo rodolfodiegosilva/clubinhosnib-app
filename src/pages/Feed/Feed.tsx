@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../../config/axiosConfig";
 import FeedItem from "./FeedItem";
 import {
@@ -7,42 +8,28 @@ import {
   Container,
   Typography,
   Alert,
+  Button,
 } from "@mui/material";
-
-export interface FeedImageData {
-  id: string;
-  url: string;
-  isLocalFile: boolean;
-}
-
-interface SectionData {
-  id: string;
-  caption: string;
-  description: string;
-  images: FeedImageData[];
-}
-
-interface FeedData {
-  id: string;
-  name: string;
-  description: string;
-  createdAt: string;
-  updatedAt: string;
-  sections: SectionData[];
-}
+import { useDispatch } from "react-redux";
+import { setFeedData } from "../../store/slices/feedSlice";
+import type { GalleryPageData } from "../../store/slices/feedSlice";
 
 export default function Feed() {
-  const [feedData, setFeedData] = useState<FeedData | null>(null);
+  const [feedDataLocal, setFeedDataLocal] = useState<GalleryPageData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const feedMinisterioId = process.env.REACT_APP_FEED_MINISTERIO_ID;
 
   useEffect(() => {
     const fetchFeedData = async () => {
       try {
         setLoading(true);
-        const response = await api.get<FeedData>(`/gallery/${feedMinisterioId}`);
-        setFeedData(response.data);
+        const response = await api.get<GalleryPageData>(`/gallery/${feedMinisterioId}`);
+        setFeedDataLocal(response.data);
+        dispatch(setFeedData(response.data));
       } catch (err) {
         console.error("Erro ao buscar os dados do feed:", err);
         setError("Erro ao carregar o feed. Tente novamente mais tarde.");
@@ -52,9 +39,9 @@ export default function Feed() {
     };
 
     fetchFeedData();
-  }, [feedMinisterioId]);
+  }, [feedMinisterioId, dispatch]);
 
-  if (loading)
+  if (loading) {
     return (
       <Container maxWidth={false} sx={{ maxWidth: "95% !important", marginTop: "100px", p: 0 }}>
         <Box display="flex" flexDirection="column" alignItems="center" mt={5}>
@@ -63,33 +50,44 @@ export default function Feed() {
         </Box>
       </Container>
     );
+  }
 
-  if (error)
+  if (error) {
     return (
       <Container maxWidth={false} sx={{ maxWidth: "95% !important", marginTop: "100px", p: 0 }}>
         <Alert severity="error">{error}</Alert>
       </Container>
     );
+  }
 
   return (
     <Container maxWidth={false} sx={{ maxWidth: "95% !important", marginTop: "100px", p: 0 }}>
-      <Typography variant="h4" gutterBottom fontWeight="bold" textAlign="center">
-        {feedData?.name || "Feed do Ministério"}
-      </Typography>
+      <Box textAlign="center" mb={3}>
+        <Typography variant="h4" fontWeight="bold">
+          {feedDataLocal?.name || "Feed do Ministério"}
+        </Typography>
+        <Typography variant="subtitle1" gutterBottom>
+          {feedDataLocal?.description || "Aqui você encontra fotos e notícias atuais do Ministério de Orfanato."}
+        </Typography>
 
-      <Typography variant="subtitle1" textAlign="center" gutterBottom>
-        {feedData?.description || "Aqui você encontra fotos e notícias atuais do Ministério de Orfanato."}
-      </Typography>
+        <Button
+          variant="contained"
+          color="warning"
+          onClick={() => navigate("/editar-feed-clubinho")}
+        >
+          Editar Feed
+        </Button>
+      </Box>
 
       <Box mt={4} display="flex" flexDirection="column" gap={4}>
-        {feedData?.sections.map((section) => (
+        {feedDataLocal?.sections.map((section) => (
           <FeedItem
             key={section.id}
             images={section.images}
             caption={section.caption}
             description={section.description}
-            createdAt={feedData.createdAt}
-            updatedAt={feedData.updatedAt}
+            createdAt={feedDataLocal.createdAt}
+            updatedAt={feedDataLocal.updatedAt}
           />
         ))}
       </Box>
