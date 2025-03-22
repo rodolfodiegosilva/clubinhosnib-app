@@ -1,0 +1,50 @@
+.notification-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+  }
+  
+  .notification-modal-content {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+  }
+  
+  .notification-modal-content h3 {
+    margin-bottom: 10px;
+  }
+  
+  .notification-modal-content p {
+    margin-bottom: 20px;
+    font-size: 16px;
+  }
+  
+  .notification-modal-content button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+  }
+  
+  /* Responsividade */
+  @media (max-width: 480px) {
+    .notification-modal-content {
+      width: 95%;
+      max-width: 95%;
+      padding: 15px;
+    }
+  }
+  

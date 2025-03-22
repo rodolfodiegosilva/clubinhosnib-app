@@ -1,56 +1,45 @@
 import React, { useState, useEffect } from "react";
-import "./AddImageModal.css";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Button,
+  Typography,
+  Box,
+} from "@mui/material";
 
-// Definindo o tipo de cada imagem
 export interface ImageData {
-  file?: File;       // se for upload
-  url: string;       // se for link ou objectURL
+  file?: File;
+  url: string;
   isLocalFile: boolean;
 }
 
 interface AddImageModalProps {
-  isOpen: boolean;                 // controla se o modal aparece
-  onClose: () => void;             // fechar modal
-  onSubmit: (imageData: ImageData) => void; 
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (imageData: ImageData) => void;
 }
 
-export function AddImageModal({
-  isOpen,
-  onClose,
-  onSubmit,
-}: AddImageModalProps) {
+export function AddImageModal({ isOpen, onClose, onSubmit }: AddImageModalProps) {
   const [urlInput, setUrlInput] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [tempUrl, setTempUrl] = useState("");
 
-  // Cria e remove URL temporária para preview local
   useEffect(() => {
     if (file) {
       const objectUrl = URL.createObjectURL(file);
       setTempUrl(objectUrl);
-      return () => {
-        URL.revokeObjectURL(objectUrl);
-      };
+      return () => URL.revokeObjectURL(objectUrl);
     }
   }, [file]);
 
-  if (!isOpen) return null;
-
   const handleSubmit = () => {
     if (file) {
-      // usuário fez upload do arquivo
-      onSubmit({
-        file,
-        url: tempUrl,   // objectURL para exibir localmente
-        isLocalFile: true,
-      });
+      onSubmit({ file, url: tempUrl, isLocalFile: true });
     } else if (urlInput.trim()) {
-      // usuário digitou link
-      onSubmit({
-        file: undefined,
-        url: urlInput.trim(),
-        isLocalFile: false,
-      });
+      onSubmit({ file: undefined, url: urlInput.trim(), isLocalFile: false });
     }
 
     setUrlInput("");
@@ -60,34 +49,47 @@ export function AddImageModal({
   };
 
   return (
-    <div className="modal">
-      <div className="modal-content">
-        <h3>Adicionar Nova Imagem</h3>
-
-        <input
-          type="text"
-          placeholder="Insira o URL da imagem"
+    <Dialog open={isOpen} onClose={onClose} fullWidth maxWidth="xs">
+      <DialogTitle>Adicionar Nova Imagem</DialogTitle>
+      <DialogContent>
+        <TextField
+          fullWidth
+          label="URL da imagem"
           value={urlInput}
           onChange={(e) => setUrlInput(e.target.value)}
+          margin="dense"
         />
 
-        <p style={{ textAlign: "center", margin: "10px 0" }}>ou</p>
+        <Typography align="center" sx={{ my: 2 }}>
+          ou
+        </Typography>
 
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => {
-            if (e.target.files && e.target.files.length > 0) {
-              setFile(e.target.files[0]);
-            }
-          }}
-        />
+        <Button variant="outlined" component="label" fullWidth>
+          Fazer upload da imagem
+          <input
+            hidden
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              if (e.target.files && e.target.files.length > 0) {
+                setFile(e.target.files[0]);
+              }
+            }}
+          />
+        </Button>
 
-        <div className="modal-actions">
-          <button onClick={handleSubmit}>Adicionar</button>
-          <button onClick={onClose}>Cancelar</button>
-        </div>
-      </div>
-    </div>
+        {tempUrl && (
+          <Box mt={2} textAlign="center">
+            <img src={tempUrl} alt="Preview" style={{ maxWidth: "100%", borderRadius: 8 }} />
+          </Box>
+        )}
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancelar</Button>
+        <Button onClick={handleSubmit} variant="contained">
+          Adicionar
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }
