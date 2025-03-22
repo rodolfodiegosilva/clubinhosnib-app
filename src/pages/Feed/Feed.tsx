@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
 import api from "../../config/axiosConfig";
 import FeedItem from "./FeedItem";
-import "./Feed.css";
+import {
+  Box,
+  CircularProgress,
+  Container,
+  Typography,
+  Alert,
+} from "@mui/material";
 
-interface ImageData {
+export interface FeedImageData {
   id: string;
   url: string;
   isLocalFile: boolean;
@@ -13,7 +19,7 @@ interface SectionData {
   id: string;
   caption: string;
   description: string;
-  images: ImageData[];
+  images: FeedImageData[];
 }
 
 interface FeedData {
@@ -50,20 +56,32 @@ export default function Feed() {
 
   if (loading)
     return (
-      <div className="feed-loading">
-        <div className="spinner"></div>
-        <p>Carregando...</p>
-      </div>
+      <Container maxWidth={false} sx={{ maxWidth: "95% !important", marginTop: "100px", p: 0 }}>
+        <Box display="flex" flexDirection="column" alignItems="center" mt={5}>
+          <CircularProgress />
+          <Typography variant="body1" mt={2}>Carregando...</Typography>
+        </Box>
+      </Container>
     );
 
-  if (error) return <p className="feed-error-message">{error}</p>;
+  if (error)
+    return (
+      <Container maxWidth={false} sx={{ maxWidth: "95% !important", marginTop: "100px", p: 0 }}>
+        <Alert severity="error">{error}</Alert>
+      </Container>
+    );
 
   return (
-    <div className="feed-page">
-      <h2 className="feed-title">{feedData?.name || "Feed do Ministério"}</h2>
-      <p className="feed-subtitle">{feedData?.description || "Aqui você encontra fotos e notícias atuais do Ministério de Orfanato."}</p>
+    <Container maxWidth={false} sx={{ maxWidth: "95% !important", marginTop: "100px", p: 0 }}>
+      <Typography variant="h4" gutterBottom fontWeight="bold" textAlign="center">
+        {feedData?.name || "Feed do Ministério"}
+      </Typography>
 
-      <div className="feed-container">
+      <Typography variant="subtitle1" textAlign="center" gutterBottom>
+        {feedData?.description || "Aqui você encontra fotos e notícias atuais do Ministério de Orfanato."}
+      </Typography>
+
+      <Box mt={4} display="flex" flexDirection="column" gap={4}>
         {feedData?.sections.map((section) => (
           <FeedItem
             key={section.id}
@@ -74,7 +92,7 @@ export default function Feed() {
             updatedAt={feedData.updatedAt}
           />
         ))}
-      </div>
-    </div>
+      </Box>
+    </Container>
   );
 }
