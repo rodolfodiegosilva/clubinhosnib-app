@@ -9,6 +9,7 @@ import './styles/Global.css';
 import Feed from './pages/Feed/Feed';
 import SelecPageTemplate from './pages/PageCreator/SelectPageTemplate/SelecPageTemplate';
 import Footer from './components/Footer/Footer';
+import Gallery from './pages/PageCreator/Templates/PhotosGallery/Gallery';
 
 const App: React.FC = () => {
   return (
@@ -19,8 +20,9 @@ const App: React.FC = () => {
           <Route path="/" element={<Home />} />
           <Route path="/sobre" element={<About />} />
           <Route path="/contato" element={<Contact />} />
-          <Route path="/eventos" element={<Event />} />          
-          <Route path="/feed-clubinho" element={<Feed />} />          
+          <Route path="/eventos" element={<Event />} />
+          <Route path="/feed-clubinho" element={<Feed />} />
+          <Route path="/editar-feed-clubinho" element={<Gallery />} />
           <Route path="/dynamic-page" element={<SelecPageTemplate />} />
         </Routes>
       </div>

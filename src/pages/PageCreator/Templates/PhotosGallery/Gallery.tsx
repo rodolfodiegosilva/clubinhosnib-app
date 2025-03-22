@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../store";
 import api from "../../../../config/axiosConfig";
 import { GalleryItem } from "./GalleryItem";
 import { AddImageModal, ImageData } from "./AddImageModal";
@@ -7,13 +10,29 @@ import { Notification } from "./NotificationModal";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { Box, Button, Container, TextField } from "@mui/material";
 
-export interface GalleryItemData {
+import { GalleryPageData, SectionData, FeedImageData } from "../../../../store/slices/feedSlice";
+
+interface GalleryProps {
+  fromTemplatePage?: boolean;
+}
+
+interface GalleryItemData {
   images: ImageData[];
   caption: string;
   description: string;
 }
 
-const initialImages: GalleryItemData[] = [];
+function sectionToGalleryItem(section: SectionData): GalleryItemData {
+  return {
+    caption: section.caption,
+    description: section.description,
+    images: section.images.map((img: FeedImageData) => ({
+      file: undefined,
+      url: img.url,
+      isLocalFile: img.isLocalFile,
+    })),
+  };
+}
 
 const sanitizeFileName = (fileName: string) => {
   return fileName
@@ -24,21 +43,36 @@ const sanitizeFileName = (fileName: string) => {
     .replace(/\s+/g, "_");
 };
 
-export default function Gallery() {
-  const [galleryItems, setGalleryItems] = useState<GalleryItemData[]>(initialImages);
+export default function Gallery({ fromTemplatePage }: GalleryProps) {
+  const navigate = useNavigate();
+  const feedGalleryPageData = useSelector((state: RootState) => state.feed.feedData);
+
+  const [galleryItems, setGalleryItems] = useState<GalleryItemData[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentEditingIndex, setCurrentEditingIndex] = useState<number | null>(null);
   const [galleryTitle, setGalleryTitle] = useState("");
   const [galleryDescription, setGalleryDescription] = useState("");
-
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [confirmMessage, setConfirmMessage] = useState("");
   const [onConfirmAction, setOnConfirmAction] = useState<() => void>(() => {});
-
   const [isSaving, setIsSaving] = useState(false);
   const [successSnackbarOpen, setSuccessSnackbarOpen] = useState(false);
   const [errorSnackbarOpen, setErrorSnackbarOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    if (!feedGalleryPageData && !fromTemplatePage) {
+      navigate("/feed-clubinho");
+      return;
+    }
+
+    if (feedGalleryPageData) {
+      setGalleryTitle(feedGalleryPageData.name);
+      setGalleryDescription(feedGalleryPageData.description);
+      const converted = feedGalleryPageData.sections.map(sectionToGalleryItem);
+      setGalleryItems(converted);
+    }
+  }, [feedGalleryPageData, navigate, fromTemplatePage]);
 
   const openModal = (index: number) => {
     setCurrentEditingIndex(index);
@@ -139,9 +173,16 @@ export default function Gallery() {
       };
 
       formData.append("galleryData", JSON.stringify(galleryData));
-      await api.post("/gallery", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+
+      if (fromTemplatePage) {
+        await api.post("/gallery", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      } else {
+        await api.patch(`/gallery/${feedGalleryPageData?.id}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      }
 
       setSuccessSnackbarOpen(true);
       setGalleryItems([]);
@@ -156,8 +197,9 @@ export default function Gallery() {
   };
 
   return (
-    <Container maxWidth={false} sx={{ maxWidth: "95% !important", p: 0 }}>
+    <Container maxWidth={false} sx={{ maxWidth: "95% !important", marginTop: "100px", p: 0 }}>
       <LoadingSpinner open={isSaving} />
+
       <ConfirmDialog
         open={confirmModalOpen}
         title="Confirmação"
@@ -168,6 +210,7 @@ export default function Gallery() {
         }}
         onCancel={() => setConfirmModalOpen(false)}
       />
+
       <Notification
         open={successSnackbarOpen}
         message="Página criada com sucesso!"
