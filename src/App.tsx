@@ -10,6 +10,7 @@ import Feed from './pages/Feed/Feed';
 import SelecPageTemplate from './pages/PageCreator/SelectPageTemplate/SelecPageTemplate';
 import Footer from './components/Footer/Footer';
 import Gallery from './pages/PageCreator/Templates/PhotosGallery/Gallery';
+import Login from './pages/Login/Login';
 
 const App: React.FC = () => {
   return (
@@ -23,7 +24,8 @@ const App: React.FC = () => {
           <Route path="/eventos" element={<Event />} />
           <Route path="/feed-clubinho" element={<Feed />} />
           <Route path="/editar-feed-clubinho" element={<Gallery />} />
-          <Route path="/dynamic-page" element={<SelecPageTemplate />} />
+          <Route path="/criar-pagina" element={<SelecPageTemplate />} />          
+          <Route path="/login" element={<Login />} />
         </Routes>
       </div>
       <Footer />

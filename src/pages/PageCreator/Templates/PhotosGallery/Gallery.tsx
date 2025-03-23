@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../../store";
+import { RootState } from "../../../../store/slices/index";
 import api from "../../../../config/axiosConfig";
 import { GalleryItem } from "./GalleryItem";
 import { AddImageModal, ImageData } from "./AddImageModal";
@@ -10,7 +10,7 @@ import { Notification } from "./NotificationModal";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { Box, Button, Container, TextField } from "@mui/material";
 
-import { GalleryPageData, SectionData, FeedImageData } from "../../../../store/slices/feedSlice";
+import { GalleryPageData, SectionData, FeedImageData } from "../../../../store/slices/feed/feedSlice";
 
 interface GalleryProps {
   fromTemplatePage?: boolean;

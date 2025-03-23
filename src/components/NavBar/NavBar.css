@@ -55,6 +55,26 @@
   background-color: var(--cor-primaria);
   padding: 20px 0;
 }
+/* Estilo para o botão "Sair" */
+.logout-button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: var(--cor-branca);
+  cursor: pointer;
+  transition: color 0.3s;
+  font-family: inherit;
+  padding: 0;
+}
+
+.logout-button:hover {
+  color: var(--cor-complementar);
+  text-decoration: underline;
+}
+
+.nav-links li .logout-button {
+  display: inline-block;
+}
 
 @media (max-width: 768px) {
   .desktop-navigation {
