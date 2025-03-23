@@ -10,17 +10,20 @@ import {
   Alert,
   Button,
 } from "@mui/material";
-import { useDispatch } from "react-redux";
-import { setFeedData } from "../../store/slices/feedSlice";
-import type { GalleryPageData } from "../../store/slices/feedSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { setFeedData } from "../../store/slices/feed/feedSlice";
+import type { GalleryPageData } from "../../store/slices/feed/feedSlice";
+import { RootState } from '../../store/slices';
 
 export default function Feed() {
   const [feedDataLocal, setFeedDataLocal] = useState<GalleryPageData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+
   const feedMinisterioId = process.env.REACT_APP_FEED_MINISTERIO_ID;
 
   useEffect(() => {
@@ -70,13 +73,15 @@ export default function Feed() {
           {feedDataLocal?.description || "Aqui você encontra fotos e notícias atuais do Ministério de Orfanato."}
         </Typography>
 
-        <Button
-          variant="contained"
-          color="warning"
-          onClick={() => navigate("/editar-feed-clubinho")}
-        >
-          Editar Feed
-        </Button>
+        {isAuthenticated && (
+          <Button
+            variant="contained"
+            color="warning"
+            onClick={() => navigate("/editar-feed-clubinho")}
+          >
+            Editar Feed
+          </Button>
+        )}
       </Box>
 
       <Box mt={4} display="flex" flexDirection="column" gap={4}>

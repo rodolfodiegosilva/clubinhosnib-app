@@ -12,9 +12,6 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({ title, description, image, link, type }) => {
   const [isOpen, setIsOpen] = useState(false);
-
-  console.log("Card Rendered:", { title, description, image, link, type });
-
   const handleClick = () => {
     console.log("Card Clicked:", { type, link });
     if (type === "img" || type === "pdf") {
@@ -25,7 +22,6 @@ const Card: React.FC<CardProps> = ({ title, description, image, link, type }) =>
     }
   };
 
-  // Função para transformar link do Google Drive em um link direto
   const getGoogleDriveUrl = (url: string) => {
     if (!url) return "";
     const match = url.match(/d\/(.*?)(\/|$)/);

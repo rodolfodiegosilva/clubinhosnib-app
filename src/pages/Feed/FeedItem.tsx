@@ -10,7 +10,7 @@ import {
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import { FeedImageData } from "../../store/slices/feedSlice";
+import { FeedImageData } from "../../store/slices/feed/feedSlice";
 
 export interface FeedItemData {
   images: FeedImageData[];
