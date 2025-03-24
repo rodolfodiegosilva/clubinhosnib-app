@@ -1,18 +1,28 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import About from './pages/About/About';
-import Contact from './pages/Contact/Contact';
-import Event from './pages/Event/Event';
-import Home from './pages/Home/Home';
-import Navbar from './components/NavBar/Navbar';
-import './styles/Global.css';
-import Feed from './pages/Feed/Feed';
-import SelecPageTemplate from './pages/PageCreator/SelectPageTemplate/SelecPageTemplate';
-import Footer from './components/Footer/Footer';
-import Gallery from './pages/PageCreator/Templates/PhotosGallery/Gallery';
-import Login from './pages/Login/Login';
+import React, { useEffect } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import About from "./pages/About/About";
+import Contact from "./pages/Contact/Contact";
+import Event from "./pages/Event/Event";
+import Home from "./pages/Home/Home";
+import Navbar from "./components/NavBar/Navbar";
+import "./styles/Global.css";
+import Feed from "./pages/PageGallery/PageGallery";
+import SelecPageTemplate from "./pages/PageCreator/SelectPageTemplate/SelecPageTemplate";
+import Footer from "./components/Footer/Footer";
+import { fetchRoutes, Route as DynamicRouteType } from "./store/slices/route/routeSlice";
+import { RootState, AppDispatch } from "./store/slices";
+import Gallery from "./pages/PageCreator/Templates/PhotosGallery/Gallery";
+import PageRenderer from "./components/PageRenderer/PageRenderer";
 
 const App: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const dynamicRoutes = useSelector((state: RootState) => state.routes.routes);
+
+  useEffect(() => {
+    dispatch(fetchRoutes());
+  }, [dispatch]);
+
   return (
     <BrowserRouter>
       <Navbar />
@@ -24,8 +34,21 @@ const App: React.FC = () => {
           <Route path="/eventos" element={<Event />} />
           <Route path="/feed-clubinho" element={<Feed />} />
           <Route path="/editar-feed-clubinho" element={<Gallery />} />
-          <Route path="/criar-pagina" element={<SelecPageTemplate />} />          
-          <Route path="/login" element={<Login />} />
+          <Route path="/criar-pagina" element={<SelecPageTemplate />} />
+
+          {/* Rotas Dinâmicas */}
+          {dynamicRoutes.map((route: DynamicRouteType) => (
+            <Route
+              key={route.id}
+              path={`/${route.path}`}
+              element={
+                <PageRenderer
+                  entityType={route.entityType}
+                  idToFetch={route.idToFetch}
+                />
+              }
+            />
+          ))}
         </Routes>
       </div>
       <Footer />

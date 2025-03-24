@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../config/axiosConfig";
-import FeedItem from "./FeedItem";
+import FeedItem from "./SectionGallery";
 import {
   Box,
   CircularProgress,
@@ -11,12 +11,16 @@ import {
   Button,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { setFeedData } from "../../store/slices/feed/feedSlice";
-import type { GalleryPageData } from "../../store/slices/feed/feedSlice";
+import { setGalleryData } from "../../store/slices/gallery/gallerySlice";
+import type { GalleryPageData } from "../../store/slices/gallery/gallerySlice";
 import { RootState } from '../../store/slices';
 
-export default function Feed() {
-  const [feedDataLocal, setFeedDataLocal] = useState<GalleryPageData | null>(null);
+interface PageGalleryProps {
+  idToFetch?: string;
+}
+
+export default function PageGallery({ idToFetch }: PageGalleryProps) {
+  const [galleryDataLocal, setFeedDataLocal] = useState<GalleryPageData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,9 +34,10 @@ export default function Feed() {
     const fetchFeedData = async () => {
       try {
         setLoading(true);
-        const response = await api.get<GalleryPageData>(`/gallery/${feedMinisterioId}`);
+        const idToFetchPage = idToFetch ?? feedMinisterioId;
+        const response = await api.get<GalleryPageData>(`/gallery/${idToFetchPage}`);
         setFeedDataLocal(response.data);
-        dispatch(setFeedData(response.data));
+        dispatch(setGalleryData(response.data));
       } catch (err) {
         console.error("Erro ao buscar os dados do feed:", err);
         setError("Erro ao carregar o feed. Tente novamente mais tarde.");
@@ -40,9 +45,10 @@ export default function Feed() {
         setLoading(false);
       }
     };
-
+  
     fetchFeedData();
-  }, [feedMinisterioId, dispatch]);
+  }, [idToFetch, feedMinisterioId, dispatch]);
+  
 
   if (loading) {
     return (
@@ -67,10 +73,10 @@ export default function Feed() {
     <Container maxWidth={false} sx={{ maxWidth: "95% !important", marginTop: "100px", p: 0 }}>
       <Box textAlign="center" mb={3}>
         <Typography variant="h4" fontWeight="bold">
-          {feedDataLocal?.name || "Feed do Ministério"}
+          {galleryDataLocal?.name || "Feed do Ministério"}
         </Typography>
         <Typography variant="subtitle1" gutterBottom>
-          {feedDataLocal?.description || "Aqui você encontra fotos e notícias atuais do Ministério de Orfanato."}
+          {galleryDataLocal?.description || "Aqui você encontra fotos e notícias atuais do Ministério de Orfanato."}
         </Typography>
 
         {isAuthenticated && (
@@ -85,14 +91,14 @@ export default function Feed() {
       </Box>
 
       <Box mt={4} display="flex" flexDirection="column" gap={4}>
-        {feedDataLocal?.sections.map((section) => (
+        {galleryDataLocal?.sections.map((section) => (
           <FeedItem
             key={section.id}
             images={section.images}
             caption={section.caption}
             description={section.description}
-            createdAt={feedDataLocal.createdAt}
-            updatedAt={feedDataLocal.updatedAt}
+            createdAt={galleryDataLocal.createdAt}
+            updatedAt={galleryDataLocal.updatedAt}
           />
         ))}
       </Box>
