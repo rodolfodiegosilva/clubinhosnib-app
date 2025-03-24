@@ -55,7 +55,7 @@ export default function Gallery({ fromTemplatePage }: GalleryProps) {
   const [galleryDescription, setGalleryDescription] = useState("");
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [confirmMessage, setConfirmMessage] = useState("");
-  const [onConfirmAction, setOnConfirmAction] = useState<() => void>(() => { });
+  const [onConfirmAction, setOnConfirmAction] = useState<() => void>(() => {});
   const [isSaving, setIsSaving] = useState(false);
   const [successSnackbarOpen, setSuccessSnackbarOpen] = useState(false);
   const [errorSnackbarOpen, setErrorSnackbarOpen] = useState(false);
@@ -75,75 +75,50 @@ export default function Gallery({ fromTemplatePage }: GalleryProps) {
     }
   }, [feedGalleryPageData, navigate, fromTemplatePage]);
 
-  const openModal = (index: number) => {
-    setCurrentEditingIndex(index);
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleModalSubmit = (imageData: ImageData) => {
-    if (imageData.file) {
-      const sanitizedFileName = sanitizeFileName(imageData.file.name);
-      const renamedFile = new File([imageData.file], sanitizedFileName, {
-        type: imageData.file.type,
-      });
-      const objectUrl = URL.createObjectURL(renamedFile);
-      imageData.file = renamedFile;
-      imageData.url = objectUrl;
-      imageData.isLocalFile = true;
+  const validateGallery = (): boolean => {
+    if (!galleryTitle.trim()) {
+      setErrorMessage("O título da galeria é obrigatório.");
+      setErrorSnackbarOpen(true);
+      return false;
     }
-    if (currentEditingIndex !== null) {
-      addImageToGalleryItem(currentEditingIndex, imageData);
+
+    if (!galleryDescription.trim()) {
+      setErrorMessage("A descrição da galeria é obrigatória.");
+      setErrorSnackbarOpen(true);
+      return false;
     }
-    closeModal();
-  };
 
-  const addGalleryItem = () => {
-    setGalleryItems((prev) => [...prev, { images: [], caption: "", description: "" }]);
-  };
+    if (galleryItems.length === 0) {
+      setErrorMessage("Adicione pelo menos uma seção.");
+      setErrorSnackbarOpen(true);
+      return false;
+    }
 
-  const removeGalleryItem = (index: number) => {
-    setConfirmMessage("Tem certeza que deseja excluir esta seção?");
-    setOnConfirmAction(() => () => {
-      setGalleryItems((prev) => prev.filter((_, i) => i !== index));
-    });
-    setConfirmModalOpen(true);
-  };
+    for (let i = 0; i < galleryItems.length; i++) {
+      const { caption, description, images } = galleryItems[i];
+      if (!caption.trim()) {
+        setErrorMessage(`A seção ${i + 1} precisa de um título.`);
+        setErrorSnackbarOpen(true);
+        return false;
+      }
+      if (!description.trim()) {
+        setErrorMessage(`A seção ${i + 1} precisa de uma descrição.`);
+        setErrorSnackbarOpen(true);
+        return false;
+      }
+      if (images.length === 0) {
+        setErrorMessage(`A seção ${i + 1} deve conter pelo menos uma imagem.`);
+        setErrorSnackbarOpen(true);
+        return false;
+      }
+    }
 
-  const removeImageFromGalleryItem = (itemIndex: number, imageIndex: number) => {
-    setConfirmMessage("Tem certeza que deseja excluir esta imagem?");
-    setOnConfirmAction(() => () => {
-      setGalleryItems((prev) =>
-        prev.map((item, i) =>
-          i === itemIndex ? { ...item, images: item.images.filter((_, j) => j !== imageIndex) } : item
-        )
-      );
-    });
-    setConfirmModalOpen(true);
-  };
-
-  const addImageToGalleryItem = (index: number, newImage: ImageData) => {
-    setGalleryItems((prev) =>
-      prev.map((item, i) => (i === index ? { ...item, images: [...item.images, newImage] } : item))
-    );
-  };
-
-  const updateCaption = (index: number, newCaption: string) => {
-    setGalleryItems((prev) =>
-      prev.map((item, i) => (i === index ? { ...item, caption: newCaption } : item))
-    );
-  };
-
-  const updateDescription = (index: number, newDescription: string) => {
-    setGalleryItems((prev) =>
-      prev.map((item, i) => (i === index ? { ...item, description: newDescription } : item))
-    );
+    return true;
   };
 
   const handleSaveAll = async () => {
+    if (!validateGallery()) return;
+
     try {
       setIsSaving(true);
       const formData = new FormData();
@@ -179,21 +154,16 @@ export default function Gallery({ fromTemplatePage }: GalleryProps) {
 
       formData.append("galleryData", JSON.stringify(galleryData));
 
-      let response;
-      if (fromTemplatePage) {
-        response = await api.post("/gallery", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-      } else {
-        response = await api.patch(`/gallery/${feedGalleryPageData?.id}`, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-      }
-
-      const savedPage = response.data;
+      const response = fromTemplatePage
+        ? await api.post("/gallery", formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+          })
+        : await api.patch(`/gallery/${feedGalleryPageData?.id}`, formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
 
       await dispatch(fetchRoutes());
-      navigate(`/${savedPage.route.path}`);
+      navigate(`/${response.data.route.path}`);
     } catch (error) {
       console.error(error);
       setErrorMessage("Erro ao enviar dados. Verifique o console.");
@@ -201,6 +171,80 @@ export default function Gallery({ fromTemplatePage }: GalleryProps) {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const openModal = (index: number) => {
+    setCurrentEditingIndex(index);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleModalSubmit = (imageData: ImageData) => {
+    if (imageData.file) {
+      const sanitizedFileName = sanitizeFileName(imageData.file.name);
+      const renamedFile = new File([imageData.file], sanitizedFileName, {
+        type: imageData.file.type,
+      });
+      const objectUrl = URL.createObjectURL(renamedFile);
+      imageData.file = renamedFile;
+      imageData.url = objectUrl;
+      imageData.isLocalFile = true;
+    }
+
+    if (currentEditingIndex !== null) {
+      addImageToGalleryItem(currentEditingIndex, imageData);
+    }
+
+    closeModal();
+  };
+
+  const addGalleryItem = () => {
+    setGalleryItems((prev) => [...prev, { images: [], caption: "", description: "" }]);
+  };
+
+  const removeGalleryItem = (index: number) => {
+    setConfirmMessage("Tem certeza que deseja excluir esta seção?");
+    setOnConfirmAction(() => () => {
+      setGalleryItems((prev) => prev.filter((_, i) => i !== index));
+    });
+    setConfirmModalOpen(true);
+  };
+
+  const removeImageFromGalleryItem = (itemIndex: number, imageIndex: number) => {
+    setConfirmMessage("Tem certeza que deseja excluir esta imagem?");
+    setOnConfirmAction(() => () => {
+      setGalleryItems((prev) =>
+        prev.map((item, i) =>
+          i === itemIndex
+            ? { ...item, images: item.images.filter((_, j) => j !== imageIndex) }
+            : item
+        )
+      );
+    });
+    setConfirmModalOpen(true);
+  };
+
+  const addImageToGalleryItem = (index: number, newImage: ImageData) => {
+    setGalleryItems((prev) =>
+      prev.map((item, i) =>
+        i === index ? { ...item, images: [...item.images, newImage] } : item
+      )
+    );
+  };
+
+  const updateCaption = (index: number, newCaption: string) => {
+    setGalleryItems((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, caption: newCaption } : item))
+    );
+  };
+
+  const updateDescription = (index: number, newDescription: string) => {
+    setGalleryItems((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, description: newDescription } : item))
+    );
   };
 
   return (
@@ -227,7 +271,7 @@ export default function Gallery({ fromTemplatePage }: GalleryProps) {
 
       <Notification
         open={errorSnackbarOpen}
-        message="Erro em salvar página."
+        message={errorMessage}
         severity="error"
         onClose={() => setErrorSnackbarOpen(false)}
       />
@@ -258,9 +302,9 @@ export default function Gallery({ fromTemplatePage }: GalleryProps) {
           images={item.images}
           caption={item.caption}
           description={item.description}
-          onCaptionChange={(newCaption) => updateCaption(index, newCaption)}
-          onDescriptionChange={(newDescription) => updateDescription(index, newDescription)}
-          onRemoveImage={(imageIndex) => removeImageFromGalleryItem(index, imageIndex)}
+          onCaptionChange={(val) => updateCaption(index, val)}
+          onDescriptionChange={(val) => updateDescription(index, val)}
+          onRemoveImage={(imgIdx) => removeImageFromGalleryItem(index, imgIdx)}
           onOpenModal={() => openModal(index)}
           onRemoveSection={() => removeGalleryItem(index)}
         />
