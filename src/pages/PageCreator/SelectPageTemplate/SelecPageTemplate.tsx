@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { clearFeedData } from "../../../store/slices/feed/feedSlice";
+import { clearGalleryData } from "../../../store/slices/gallery/gallerySlice";
 
 import "./SelecPageTemplate.css";
 
@@ -37,7 +37,7 @@ export default function SelecPageTemplate() {
 
     // Limpa Redux ao escolher galeria
     if (selected === Options.GALLERY) {
-      dispatch(clearFeedData());
+      dispatch(clearGalleryData());
     }
   };
 

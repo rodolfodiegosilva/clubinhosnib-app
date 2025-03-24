@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../store/slices/index";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../../store/slices";
 import api from "../../../../config/axiosConfig";
+import { fetchRoutes } from "../../../../store/slices/route/routeSlice";
 import { GalleryItem } from "./GalleryItem";
 import { AddImageModal, ImageData } from "./AddImageModal";
 import { ConfirmDialog } from "./ConfirmModal";
 import { Notification } from "./NotificationModal";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { Box, Button, Container, TextField } from "@mui/material";
-
-import { GalleryPageData, SectionData, FeedImageData } from "../../../../store/slices/feed/feedSlice";
+import { GalleryImageData, SectionData } from "../../../../store/slices/gallery/gallerySlice";
 
 interface GalleryProps {
   fromTemplatePage?: boolean;
@@ -26,7 +26,7 @@ function sectionToGalleryItem(section: SectionData): GalleryItemData {
   return {
     caption: section.caption,
     description: section.description,
-    images: section.images.map((img: FeedImageData) => ({
+    images: section.images.map((img: GalleryImageData) => ({
       file: undefined,
       url: img.url,
       isLocalFile: img.isLocalFile,
@@ -45,7 +45,8 @@ const sanitizeFileName = (fileName: string) => {
 
 export default function Gallery({ fromTemplatePage }: GalleryProps) {
   const navigate = useNavigate();
-  const feedGalleryPageData = useSelector((state: RootState) => state.feed.feedData);
+  const dispatch = useDispatch<AppDispatch>();
+  const feedGalleryPageData = useSelector((state: RootState) => state.feed.galleryData);
 
   const [galleryItems, setGalleryItems] = useState<GalleryItemData[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -54,7 +55,7 @@ export default function Gallery({ fromTemplatePage }: GalleryProps) {
   const [galleryDescription, setGalleryDescription] = useState("");
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [confirmMessage, setConfirmMessage] = useState("");
-  const [onConfirmAction, setOnConfirmAction] = useState<() => void>(() => {});
+  const [onConfirmAction, setOnConfirmAction] = useState<() => void>(() => { });
   const [isSaving, setIsSaving] = useState(false);
   const [successSnackbarOpen, setSuccessSnackbarOpen] = useState(false);
   const [errorSnackbarOpen, setErrorSnackbarOpen] = useState(false);
@@ -131,11 +132,15 @@ export default function Gallery({ fromTemplatePage }: GalleryProps) {
   };
 
   const updateCaption = (index: number, newCaption: string) => {
-    setGalleryItems((prev) => prev.map((item, i) => (i === index ? { ...item, caption: newCaption } : item)));
+    setGalleryItems((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, caption: newCaption } : item))
+    );
   };
 
   const updateDescription = (index: number, newDescription: string) => {
-    setGalleryItems((prev) => prev.map((item, i) => (i === index ? { ...item, description: newDescription } : item)));
+    setGalleryItems((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, description: newDescription } : item))
+    );
   };
 
   const handleSaveAll = async () => {
@@ -174,21 +179,23 @@ export default function Gallery({ fromTemplatePage }: GalleryProps) {
 
       formData.append("galleryData", JSON.stringify(galleryData));
 
+      let response;
       if (fromTemplatePage) {
-        await api.post("/gallery", formData, {
+        response = await api.post("/gallery", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
       } else {
-        await api.patch(`/gallery/${feedGalleryPageData?.id}`, formData, {
+        response = await api.patch(`/gallery/${feedGalleryPageData?.id}`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
       }
 
-      setSuccessSnackbarOpen(true);
-      setGalleryItems([]);
-      setGalleryTitle("");
-      setGalleryDescription("");
+      const savedPage = response.data;
+
+      await dispatch(fetchRoutes());
+      navigate(`/${savedPage.route.path}`);
     } catch (error) {
+      console.error(error);
       setErrorMessage("Erro ao enviar dados. Verifique o console.");
       setErrorSnackbarOpen(true);
     } finally {

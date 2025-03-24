@@ -1,5 +1,3 @@
-
-// ✅ authSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface LoginResponse {

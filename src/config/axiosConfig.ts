@@ -12,12 +12,10 @@ const apiAxios = axios.create({
   },
 });
 
-// Tipo com _retry para controlar duplicidade de requisições
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
 }
 
-// ✅ Interceptor de requisição
 apiAxios.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem('accessToken');
@@ -38,7 +36,6 @@ apiAxios.interceptors.request.use(
   }
 );
 
-// ✅ Interceptor de resposta com refresh automático
 apiAxios.interceptors.response.use(
   (response: AxiosResponse) => {
     console.log('[Axios][Response] Sucesso na resposta de:', response.config.url);
@@ -59,10 +56,8 @@ apiAxios.interceptors.response.use(
 
         const { accessToken, refreshToken: newRefresh } = response.data;
 
-        // ✅ Atualiza Redux e localStorage com novos tokens
         store.dispatch(login({ accessToken, refreshToken: newRefresh }));
 
-        // ✅ Atualiza o header da requisição original e reenviando
         originalRequest.headers = originalRequest.headers || {};
         originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
         console.log('[Axios][Response] Token atualizado. Reenviando requisição...',originalRequest.headers['Authorization']);

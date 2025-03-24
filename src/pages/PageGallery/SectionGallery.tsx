@@ -10,17 +10,17 @@ import {
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import { FeedImageData } from "../../store/slices/feed/feedSlice";
+import { GalleryImageData } from "../../store/slices/gallery/gallerySlice";
 
-export interface FeedItemData {
-  images: FeedImageData[];
+export interface GalleryItemData {
+  images: GalleryImageData[];
   caption: string;
   description: string;
   createdAt: string;
   updatedAt: string;
 }
 
-export default function FeedItem({ images, caption, description, createdAt, updatedAt }: FeedItemData) {
+export default function FeedItem({ images, caption, description, createdAt, updatedAt }: GalleryItemData) {
   return (
     <Paper elevation={3} sx={{ p: 2 }}>
       <Grid container spacing={2}>
