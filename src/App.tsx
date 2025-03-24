@@ -14,6 +14,7 @@ import { fetchRoutes, Route as DynamicRouteType } from "./store/slices/route/rou
 import { RootState, AppDispatch } from "./store/slices";
 import Gallery from "./pages/PageCreator/Templates/PhotosGallery/Gallery";
 import PageRenderer from "./components/PageRenderer/PageRenderer";
+import Login from "./pages/Login/Login";
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -34,7 +35,8 @@ const App: React.FC = () => {
           <Route path="/eventos" element={<Event />} />
           <Route path="/feed-clubinho" element={<Feed />} />
           <Route path="/editar-feed-clubinho" element={<Gallery />} />
-          <Route path="/criar-pagina" element={<SelecPageTemplate />} />
+          <Route path="/criar-pagina" element={<SelecPageTemplate />} />          
+          <Route path="/login" element={<Login />} />
 
           {/* Rotas Dinâmicas */}
           {dynamicRoutes.map((route: DynamicRouteType) => (
