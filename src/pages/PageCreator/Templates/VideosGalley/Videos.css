@@ -1,0 +1,23 @@
+.videos-page {
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .video-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .video-item {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+  }
+  
+  .video-item p {
+    margin-top: 10px;
+  }
+  
