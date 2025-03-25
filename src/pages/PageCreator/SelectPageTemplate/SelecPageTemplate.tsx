@@ -2,70 +2,116 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { clearGalleryData } from "../../../store/slices/gallery/gallerySlice";
 
-import "./SelecPageTemplate.css";
+import {
+  Box,
+  Typography,
+  Select,
+  MenuItem,
+  Paper,
+  FormControl,
+  InputLabel,
+  SelectChangeEvent,
+} from "@mui/material";
+import { ReactElement } from "react";
 
-import Videos from "../Videos";
-import Informative from "../Informative";
-import StudyMaterials from "../StudyMaterials";
-import Events from "../Events";
+import Videos from "../Templates/VideosGalley/Videos";
+import Informative from "../Templates/Inforamtive/Informative";
+import StudyMaterials from "../Templates/StudyMaterial/StudyMaterials";
+import Events from "../Templates/Events/Events";
 import Gallery from "../Templates/PhotosGallery/Gallery";
-import { JSX } from "react/jsx-runtime";
 
+// Enum com rótulos descritivos
 enum Options {
   GALLERY = "Galeria de Fotos",
   VIDEOS = "Galeria de Videos",
-  INFORMATIVE = "Pagina Iformativa",
+  INFORMATIVE = "Pagina Informativa",
   STUDY_MATERIALS = "Pagina de Materiais de Estudo",
   EVENTS = "Pagina de Eventos",
 }
 
-const componentMap: Record<Options, JSX.Element> = {
-  [Options.GALLERY]: <Gallery fromTemplatePage={true} />,
-  [Options.VIDEOS]: <Videos />,
-  [Options.INFORMATIVE]: <Informative />,
-  [Options.STUDY_MATERIALS]: <StudyMaterials />,
-  [Options.EVENTS]: <Events />,
+// Mapeamento de componentes como funções
+const componentMap: Record<keyof typeof Options, () => ReactElement> = {
+  GALLERY: () => <Gallery fromTemplatePage={true} />,
+  VIDEOS: () => <Videos />,
+  INFORMATIVE: () => <Informative />,
+  STUDY_MATERIALS: () => <StudyMaterials />,
+  EVENTS: () => <Events />,
 };
 
 export default function SelecPageTemplate() {
-  const [selectedOption, setSelectedOption] = useState<Options | "">("");
+  const [selectedOption, setSelectedOption] = useState<keyof typeof Options | "">("");
   const dispatch = useDispatch();
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selected = e.target.value as Options;
+  const handleChange = (event: SelectChangeEvent) => {
+    const selected = event.target.value as keyof typeof Options;
     setSelectedOption(selected);
 
-    // Limpa Redux ao escolher galeria
-    if (selected === Options.GALLERY) {
+    if (selected === "GALLERY") {
       dispatch(clearGalleryData());
     }
   };
 
   return (
-    <div className="dynamic-page">
-      <h2 className="dynamic-title">Escolha um Modelo</h2>
-      <p className="dynamic-subtitle">
+<Box
+  sx={{
+    minHeight: "100vh",
+    py: 6,
+    px: 2,
+    mt: 5,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    bgcolor: "linear-gradient(to bottom, #f4f4f4, #e8e8e8)",
+    textAlign: "center",
+  }}
+>
+      <Typography variant="h4" fontWeight="bold" gutterBottom>
+        Escolha um Modelo
+      </Typography>
+
+      <Typography variant="subtitle1" color="text.secondary" mb={4}>
         Selecione um modelo abaixo para visualizar e criar um novo conteúdo.
-      </p>
+      </Typography>
 
-      <div className="select-container">
-        <select className="custom-select" onChange={handleChange} value={selectedOption}>
-          <option value="">Selecione uma página</option>
-          {Object.values(Options).map((option) => (
-            <option key={option} value={option}>
-              {option.toUpperCase()}
-            </option>
+      <FormControl sx={{ minWidth: 300, mb: 4 }} fullWidth>
+        <InputLabel id="template-select-label">Selecione uma página</InputLabel>
+        <Select
+          labelId="template-select-label"
+          value={selectedOption}
+          onChange={handleChange}
+          label="Selecione uma página"
+        >
+          <MenuItem value="">
+            <em>Nenhuma</em>
+          </MenuItem>
+          {Object.entries(Options).map(([key, label]) => (
+            <MenuItem key={key} value={key}>
+              {label}
+            </MenuItem>
           ))}
-        </select>
-      </div>
+        </Select>
+      </FormControl>
 
-      <div className={`component-container ${selectedOption ? "active" : ""}`}>
+      <Paper
+        elevation={3}
+        sx={{
+          width: "95%",
+          maxWidth: "95%",
+          p: 1,
+          mt: 2,
+          transition: "all 0.3s ease-in-out",
+          opacity: selectedOption ? 1 : 0.5,
+        }}
+      >
+
         {selectedOption ? (
-          componentMap[selectedOption]
+          componentMap[selectedOption as keyof typeof Options]()
         ) : (
-          <p className="placeholder">Selecione um template para visualizar.</p>
+          <Typography variant="body1" color="text.secondary">
+            Selecione um template para visualizar.
+          </Typography>
         )}
-      </div>
-    </div>
+      </Paper>
+    </Box>
   );
 }

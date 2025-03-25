@@ -9,7 +9,7 @@ import { AddImageModal, ImageData } from "./AddImageModal";
 import { ConfirmDialog } from "./ConfirmModal";
 import { Notification } from "./NotificationModal";
 import { LoadingSpinner } from "./LoadingSpinner";
-import { Box, Button, Container, TextField } from "@mui/material";
+import { Box, Button, Container, TextField, Typography } from "@mui/material";
 import { GalleryImageData, SectionData } from "../../../../store/slices/gallery/gallerySlice";
 
 interface GalleryProps {
@@ -55,7 +55,7 @@ export default function Gallery({ fromTemplatePage }: GalleryProps) {
   const [galleryDescription, setGalleryDescription] = useState("");
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [confirmMessage, setConfirmMessage] = useState("");
-  const [onConfirmAction, setOnConfirmAction] = useState<() => void>(() => {});
+  const [onConfirmAction, setOnConfirmAction] = useState<() => void>(() => { });
   const [isSaving, setIsSaving] = useState(false);
   const [successSnackbarOpen, setSuccessSnackbarOpen] = useState(false);
   const [errorSnackbarOpen, setErrorSnackbarOpen] = useState(false);
@@ -156,11 +156,11 @@ export default function Gallery({ fromTemplatePage }: GalleryProps) {
 
       const response = fromTemplatePage
         ? await api.post("/gallery", formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-          })
+          headers: { "Content-Type": "multipart/form-data" },
+        })
         : await api.patch(`/gallery/${feedGalleryPageData?.id}`, formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-          });
+          headers: { "Content-Type": "multipart/form-data" },
+        });
 
       await dispatch(fetchRoutes());
       navigate(`/${response.data.route.path}`);
@@ -249,6 +249,22 @@ export default function Gallery({ fromTemplatePage }: GalleryProps) {
 
   return (
     <Container maxWidth={false} sx={{ maxWidth: "95% !important", marginTop: "100px", p: 0 }}>
+            <Typography
+        variant="h4"
+        mb={3}
+        fontWeight="bold"
+        sx={{
+          width: "100%",
+          fontSize: {
+            xs: "1.6rem",
+            sm: "2rem",
+            md: "2.25rem"
+          },
+          textAlign: "center",
+        }}
+      >
+        {fromTemplatePage ? "Criar Página de fotos" : "Editar Página de fotos"}
+      </Typography>
       <LoadingSpinner open={isSaving} />
 
       <ConfirmDialog
