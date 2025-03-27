@@ -10,7 +10,7 @@ import {
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import { GalleryImageData } from "../../store/slices/gallery/gallerySlice";
+import { GalleryImageData } from "store/slices/gallery/gallerySlice";
 
 export interface GalleryItemData {
   images: GalleryImageData[];

@@ -14,11 +14,11 @@ import {
 } from "@mui/material";
 import { ReactElement } from "react";
 
-import Videos from "../Templates/VideosGalley/Videos";
+import Videos from "../Templates/PageVideoCreate/PageVideoCreate";
 import Informative from "../Templates/Inforamtive/Informative";
 import StudyMaterials from "../Templates/StudyMaterial/StudyMaterials";
 import Events from "../Templates/Events/Events";
-import Gallery from "../Templates/PhotosGallery/Gallery";
+import Gallery from "../Templates/PhotosGallery/PagePhotosCreate";
 
 // Enum com rótulos descritivos
 enum Options {
@@ -32,7 +32,7 @@ enum Options {
 // Mapeamento de componentes como funções
 const componentMap: Record<keyof typeof Options, () => ReactElement> = {
   GALLERY: () => <Gallery fromTemplatePage={true} />,
-  VIDEOS: () => <Videos />,
+  VIDEOS: () => <Videos fromTemplatePage={true}/>,
   INFORMATIVE: () => <Informative />,
   STUDY_MATERIALS: () => <StudyMaterials />,
   EVENTS: () => <Events />,

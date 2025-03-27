@@ -17,7 +17,7 @@ interface VideoItem {
   description: string;
   type: "upload" | "link";
   platform?: "youtube" | "google-drive" | "onedrive";
-  src: string;
+  url: string;
 }
 
 interface DocumentItem {
@@ -25,14 +25,14 @@ interface DocumentItem {
   description: string;
   type: "upload" | "link";
   platform?: "google-drive" | "onedrive";
-  src: string;
+  url: string;
 }
 
 interface ImageItem {
   title: string;
   description: string;
   type: "upload" | "link";
-  src: string;
+  url: string;
 }
 
 export default function StudyMaterialsPage() {
