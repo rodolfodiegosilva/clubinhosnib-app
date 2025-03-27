@@ -7,14 +7,15 @@ import Event from "./pages/Event/Event";
 import Home from "./pages/Home/Home";
 import Navbar from "./components/NavBar/Navbar";
 import "./styles/Global.css";
-import Feed from "./pages/PageGallery/PageGallery";
 import SelecPageTemplate from "./pages/PageCreator/SelectPageTemplate/SelecPageTemplate";
 import Footer from "./components/Footer/Footer";
 import { fetchRoutes, Route as DynamicRouteType } from "./store/slices/route/routeSlice";
 import { RootState, AppDispatch } from "./store/slices";
-import Gallery from "./pages/PageCreator/Templates/PhotosGallery/Gallery";
+import Gallery from "./pages/PageCreator/Templates/PhotosGallery/PagePhotosCreate";
 import PageRenderer from "./components/PageRenderer/PageRenderer";
 import Login from "./pages/Login/Login";
+import VideosPageCreate from "./pages/PageCreator/Templates/PageVideoCreate/PageVideoCreate";
+import PageGalleryView from "pages/PageView/PageGallery/PageGalleryView";
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -33,8 +34,9 @@ const App: React.FC = () => {
           <Route path="/sobre" element={<About />} />
           <Route path="/contato" element={<Contact />} />
           <Route path="/eventos" element={<Event />} />
-          <Route path="/feed-clubinho" element={<Feed />} />
-          <Route path="/editar-feed-clubinho" element={<Gallery />} />
+          <Route path="/feed-clubinho" element={<PageGalleryView />} />
+          <Route path="/editar-feed-clubinho" element={<Gallery />} />          
+          <Route path="/editar-pagina-videos" element={<VideosPageCreate />} />
           <Route path="/criar-pagina" element={<SelecPageTemplate />} />          
           <Route path="/login" element={<Login />} />
 

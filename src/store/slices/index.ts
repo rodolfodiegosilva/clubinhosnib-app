@@ -1,13 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './auth/authSlice';
 import feedReducer from './gallery/gallerySlice';
-import routesReducer from './route/routeSlice'; // <-- import novo
+import routesReducer from './route/routeSlice';
+import videoReducer from './video/videoSlice';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     feed: feedReducer,
-    routes: routesReducer, // <-- adiciona aqui
+    routes: routesReducer,
+    video: videoReducer,
   },
 });
 

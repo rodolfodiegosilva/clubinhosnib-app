@@ -17,7 +17,7 @@ import {
     title: string;
     description: string;
     type: "upload" | "link";
-    src: string;
+    url: string;
   }
   
   interface Props {
@@ -30,7 +30,7 @@ import {
       title: "",
       description: "",
       type: "link",
-      src: "",
+      url: "",
     });
   
     const [errors, setErrors] = useState({
@@ -51,16 +51,16 @@ import {
     };
   
     const handleAdd = () => {
-      const hasError = !newImg.title || !newImg.description || !newImg.src;
+      const hasError = !newImg.title || !newImg.description || !newImg.url;
       setErrors({
         title: !newImg.title,
         description: !newImg.description,
-        src: !newImg.src,
+        src: !newImg.url,
       });
       if (hasError) return;
   
       setImages([...images, newImg]);
-      setNewImg({ title: "", description: "", type: "link", src: "" });
+      setNewImg({ title: "", description: "", type: "link", url: "" });
     };
   
     const handleRemove = (index: number) => {
@@ -110,7 +110,7 @@ import {
               <TextField
                 label="URL da Imagem"
                 fullWidth
-                value={newImg.src}
+                value={newImg.url}
                 onChange={(e) => setNewImg((prev) => ({ ...prev, src: e.target.value }))}
                 error={errors.src}
                 helperText={errors.src ? "Campo obrigatório" : ""}
@@ -141,7 +141,7 @@ import {
                 <Typography fontWeight="bold">{img.title}</Typography>
                 <Typography variant="body2" mb={1}>{img.description}</Typography>
                 <img
-                  src={img.src}
+                  src={img.url}
                   alt={img.title}
                   style={{ width: "100%", borderRadius: 8, marginTop: 8 }}
                 />

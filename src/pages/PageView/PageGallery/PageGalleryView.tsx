@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../../config/axiosConfig";
+import api from "../../../config/axiosConfig";
 import FeedItem from "./SectionGallery";
 import {
   Box,
@@ -16,16 +16,16 @@ import {
   DialogActions,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { setGalleryData } from "../../store/slices/gallery/gallerySlice";
-import type { GalleryPageData } from "../../store/slices/gallery/gallerySlice";
-import { RootState, AppDispatch } from "../../store/slices";
-import { fetchRoutes } from "../../store/slices/route/routeSlice";
+import { setGalleryData } from "../../../store/slices/gallery/gallerySlice";
+import type { GalleryPageData } from "../../../store/slices/gallery/gallerySlice";
+import { RootState, AppDispatch } from "../../../store/slices";
+import { fetchRoutes } from "../../../store/slices/route/routeSlice";
 
 interface PageGalleryProps {
   idToFetch?: string;
 }
 
-export default function PageGallery({ idToFetch }: PageGalleryProps) {
+export default function PageGalleryView({ idToFetch }: PageGalleryProps) {
   const [galleryDataLocal, setFeedDataLocal] = useState<GalleryPageData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);

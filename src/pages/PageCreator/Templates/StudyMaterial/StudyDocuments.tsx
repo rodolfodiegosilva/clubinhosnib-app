@@ -21,7 +21,7 @@ import {
     description: string;
     type: "upload" | "link";
     platform?: "google-drive" | "onedrive";
-    src: string;
+    url: string;
   }
   
   interface Props {
@@ -35,13 +35,13 @@ import {
       description: "",
       type: "link",
       platform: "google-drive",
-      src: "",
+      url: "",
     });
   
     const [errors, setErrors] = useState({
       title: false,
       description: false,
-      src: false,
+      url: false,
     });
   
     const [previewDoc, setPreviewDoc] = useState<string | null>(null);
@@ -51,21 +51,21 @@ import {
       if (!file) return;
       const reader = new FileReader();
       reader.onload = () => {
-        setNewDoc((prev) => ({ ...prev, src: reader.result as string }));
+        setNewDoc((prev) => ({ ...prev, url: reader.result as string }));
       };
       reader.readAsDataURL(file);
     };
   
     const handleAdd = () => {
-      const hasError = !newDoc.title || !newDoc.description || !newDoc.src;
+      const hasError = !newDoc.title || !newDoc.description || !newDoc.url;
       setErrors({
         title: !newDoc.title,
         description: !newDoc.description,
-        src: !newDoc.src,
+        url: !newDoc.url,
       });
       if (hasError) return;
       setDocuments([...documents, newDoc]);
-      setNewDoc({ title: "", description: "", type: "link", platform: "google-drive", src: "" });
+      setNewDoc({ title: "", description: "", type: "link", platform: "google-drive", url: "" });
     };
   
     const handleRemove = (index: number) => {
@@ -106,7 +106,7 @@ import {
                     ...prev,
                     type: e.target.value as "upload" | "link",
                     platform: e.target.value === "link" ? "google-drive" : undefined,
-                    src: "",
+                    url: "",
                   }))
                 }
               >
@@ -142,10 +142,10 @@ import {
               <TextField
                 label="URL do Documento"
                 fullWidth
-                value={newDoc.src}
-                onChange={(e) => setNewDoc((prev) => ({ ...prev, src: e.target.value }))}
-                error={errors.src}
-                helperText={errors.src ? "Campo obrigatório" : ""}
+                value={newDoc.url}
+                onChange={(e) => setNewDoc((prev) => ({ ...prev, url: e.target.value }))}
+                error={errors.url}
+                helperText={errors.url ? "Campo obrigatório" : ""}
               />
             </Grid>
           )}
@@ -173,7 +173,7 @@ import {
                 <Typography fontWeight="bold">{doc.title}</Typography>
                 <Typography variant="body2" mb={1}>{doc.description}</Typography>
                 <Box display="flex" gap={1} mt={1}>
-                  <IconButton color="primary" onClick={() => setPreviewDoc(doc.src)}>
+                  <IconButton color="primary" onClick={() => setPreviewDoc(doc.url)}>
                     <Visibility fontSize="small" />
                   </IconButton>
                   <IconButton color="error" onClick={() => handleRemove(index)}>

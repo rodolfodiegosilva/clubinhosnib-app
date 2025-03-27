@@ -18,7 +18,7 @@ import {
     description: string;
     type: "upload" | "link";
     platform?: "youtube" | "google-drive" | "onedrive";
-    src: string;
+    url: string;
   }
   
   interface Props {
@@ -32,13 +32,13 @@ import {
       description: "",
       type: "link",
       platform: "youtube",
-      src: "",
+      url: "",
     });
   
     const [errors, setErrors] = useState({
       title: false,
       description: false,
-      src: false,
+      url: false,
     });
   
     const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,21 +46,21 @@ import {
       if (!file) return;
       const reader = new FileReader();
       reader.onload = () => {
-        setNewVideo((prev) => ({ ...prev, src: reader.result as string }));
+        setNewVideo((prev) => ({ ...prev, url: reader.result as string }));
       };
       reader.readAsDataURL(file);
     };
   
     const handleAdd = () => {
-      const hasError = !newVideo.title || !newVideo.description || !newVideo.src;
+      const hasError = !newVideo.title || !newVideo.description || !newVideo.url;
       setErrors({
         title: !newVideo.title,
         description: !newVideo.description,
-        src: !newVideo.src,
+        url: !newVideo.url,
       });
       if (hasError) return;
       setVideos([...videos, newVideo]);
-      setNewVideo({ title: "", description: "", type: "link", platform: "youtube", src: "" });
+      setNewVideo({ title: "", description: "", type: "link", platform: "youtube", url: "" });
     };
   
     const handleRemove = (index: number) => {
@@ -102,7 +102,7 @@ import {
                     ...prev,
                     type: e.target.value as "upload" | "link",
                     platform: e.target.value === "link" ? "youtube" : undefined,
-                    src: "",
+                    url: "",
                   }))
                 }
               >
@@ -139,10 +139,10 @@ import {
               <TextField
                 label="URL do Vídeo"
                 fullWidth
-                value={newVideo.src}
-                onChange={(e) => setNewVideo((prev) => ({ ...prev, src: e.target.value }))}
-                error={errors.src}
-                helperText={errors.src ? "Campo obrigatório" : ""}
+                value={newVideo.url}
+                onChange={(e) => setNewVideo((prev) => ({ ...prev, url: e.target.value }))}
+                error={errors.url}
+                helperText={errors.url ? "Campo obrigatório" : ""}
               />
             </Grid>
           )}
@@ -172,7 +172,7 @@ import {
                 {video.type === "link" ? (
                   <Box sx={{ aspectRatio: '16/9' }}>
                     <iframe
-                      src={video.src}
+                      src={video.url}
                       title={video.title}
                       allowFullScreen
                       style={{ width: '100%', height: '100%', border: 0 }}
@@ -180,7 +180,7 @@ import {
                   </Box>
                 ) : (
                   <video controls style={{ width: '100%', marginTop: 8 }}>
-                    <source src={video.src} />
+                    <source src={video.url} />
                   </video>
                 )}
                 <IconButton

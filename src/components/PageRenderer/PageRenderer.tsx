@@ -1,8 +1,7 @@
-// components/PageRenderer.tsx
+
+import PageGalleryView from "pages/PageView/PageGallery/PageGalleryView";
+import PageVideoView from "pages/PageView/PageVideo/PageVideoView";
 import React from "react";
-import PageGallery from "../../pages/PageGallery/PageGallery";
-// import Blog from "../pages/Blog/Blog";
-// import Video from "../pages/Video/Video";
 
 interface PageRendererProps {
   entityType: string;
@@ -12,9 +11,9 @@ interface PageRendererProps {
 const PageRenderer: React.FC<PageRendererProps> = ({ entityType, idToFetch }) => {
   switch (entityType) {
     case "GalleryPage":
-      return <PageGallery idToFetch={idToFetch} />;
-    // case "BlogPage":
-    //   return <Blog entityId={entityId} />;
+      return <PageGalleryView idToFetch={idToFetch} />;
+    case "VideosPage":
+      return <PageVideoView idToFetch={idToFetch} />;
     // case "VideoPage":
     //   return <Video entityId={entityId} />;
     default:

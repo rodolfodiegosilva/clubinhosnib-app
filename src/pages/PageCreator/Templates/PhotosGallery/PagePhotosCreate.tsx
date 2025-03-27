@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../store/slices";
 import api from "../../../../config/axiosConfig";
 import { fetchRoutes } from "../../../../store/slices/route/routeSlice";
-import { GalleryItem } from "./GalleryItem";
 import { AddImageModal, ImageData } from "./AddImageModal";
 import { ConfirmDialog } from "./ConfirmModal";
 import { Notification } from "./NotificationModal";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { Box, Button, Container, TextField, Typography } from "@mui/material";
 import { GalleryImageData, SectionData } from "../../../../store/slices/gallery/gallerySlice";
+import PhotosSection from "./PhotosSection";
 
 interface GalleryProps {
   fromTemplatePage?: boolean;
@@ -43,10 +43,10 @@ const sanitizeFileName = (fileName: string) => {
     .replace(/\s+/g, "_");
 };
 
-export default function Gallery({ fromTemplatePage }: GalleryProps) {
+export default function PagePhotosCreate({ fromTemplatePage }: GalleryProps) {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const feedGalleryPageData = useSelector((state: RootState) => state.feed.galleryData);
+  const photosGalleryPageData = useSelector((state: RootState) => state.feed.galleryData);
 
   const [galleryItems, setGalleryItems] = useState<GalleryItemData[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -62,18 +62,18 @@ export default function Gallery({ fromTemplatePage }: GalleryProps) {
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    if (!feedGalleryPageData && !fromTemplatePage) {
+    if (!photosGalleryPageData && !fromTemplatePage) {
       navigate("/feed-clubinho");
       return;
     }
 
-    if (feedGalleryPageData) {
-      setGalleryTitle(feedGalleryPageData.name);
-      setGalleryDescription(feedGalleryPageData.description);
-      const converted = feedGalleryPageData.sections.map(sectionToGalleryItem);
+    if (photosGalleryPageData) {
+      setGalleryTitle(photosGalleryPageData.name);
+      setGalleryDescription(photosGalleryPageData.description);
+      const converted = photosGalleryPageData.sections.map(sectionToGalleryItem);
       setGalleryItems(converted);
     }
-  }, [feedGalleryPageData, navigate, fromTemplatePage]);
+  }, [photosGalleryPageData, navigate, fromTemplatePage]);
 
   const validateGallery = (): boolean => {
     if (!galleryTitle.trim()) {
@@ -158,7 +158,7 @@ export default function Gallery({ fromTemplatePage }: GalleryProps) {
         ? await api.post("/gallery", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         })
-        : await api.patch(`/gallery/${feedGalleryPageData?.id}`, formData, {
+        : await api.patch(`/gallery/${photosGalleryPageData?.id}`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
 
@@ -248,22 +248,13 @@ export default function Gallery({ fromTemplatePage }: GalleryProps) {
   };
 
   return (
-    <Container maxWidth={false} sx={{ maxWidth: "95% !important", marginTop: "100px", p: 0 }}>
-            <Typography
-        variant="h4"
-        mb={3}
-        fontWeight="bold"
-        sx={{
-          width: "100%",
-          fontSize: {
-            xs: "1.6rem",
-            sm: "2rem",
-            md: "2.25rem"
-          },
-          textAlign: "center",
-        }}
+    <Container maxWidth={false} sx={{ maxWidth: "95% !important", mt: fromTemplatePage ? 0 : 11, p: 0 }}>
+      <Typography variant="h4" mb={3} fontWeight="bold" sx={{
+        width: "100%", fontSize: { xs: "1.6rem", sm: "2rem", md: "2.25rem" },
+        textAlign: "center",
+      }}
       >
-        {fromTemplatePage ? "Criar Página de fotos" : "Editar Página de fotos"}
+        {fromTemplatePage ? "Criar Galeria de fotos" : "Editar Galeria de fotos"}
       </Typography>
       <LoadingSpinner open={isSaving} />
 
@@ -313,7 +304,7 @@ export default function Gallery({ fromTemplatePage }: GalleryProps) {
       </Box>
 
       {galleryItems.map((item, index) => (
-        <GalleryItem
+        <PhotosSection
           key={index}
           images={item.images}
           caption={item.caption}
