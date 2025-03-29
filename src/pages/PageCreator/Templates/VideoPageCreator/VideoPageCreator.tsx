@@ -21,7 +21,7 @@ interface VideosProps {
   fromTemplatePage?: boolean;
 }
 
-export default function VideosPageCreate({ fromTemplatePage }: VideosProps) {
+export default function VideoPageCreator({ fromTemplatePage }: VideosProps) {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const videoData = useSelector((state: RootState) => state.video.videoData);

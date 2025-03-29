@@ -9,43 +9,46 @@ import {
 } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 
-interface InfoItem {
+interface EventItem {
   title: string;
-  content: string;
+  date: string;
+  location: string;
 }
 
-export default function Informative() {
+export default function EventPageCreator() {
   const [pageTitle, setPageTitle] = useState("");
   const [pageDescription, setPageDescription] = useState("");
-  const [infos, setInfos] = useState<InfoItem[]>([]);
-  const [newInfo, setNewInfo] = useState<InfoItem>({ title: "", content: "" });
+  const [events, setEvents] = useState<EventItem[]>([]);
+  const [newEvent, setNewEvent] = useState<EventItem>({ title: "", date: "", location: "" });
 
   const [errors, setErrors] = useState({
     pageTitle: false,
     pageDescription: false,
-    newInfoTitle: false,
-    newInfoContent: false,
+    newEventTitle: false,
+    newEventDate: false,
+    newEventLocation: false,
   });
 
-  const handleAddInfo = () => {
-    const hasError = !newInfo.title || !newInfo.content;
+  const handleAddEvent = () => {
+    const hasError = !newEvent.title || !newEvent.date || !newEvent.location;
     setErrors((prev) => ({
       ...prev,
-      newInfoTitle: !newInfo.title,
-      newInfoContent: !newInfo.content,
+      newEventTitle: !newEvent.title,
+      newEventDate: !newEvent.date,
+      newEventLocation: !newEvent.location,
     }));
     if (hasError) return;
 
-    setInfos([...infos, newInfo]);
-    setNewInfo({ title: "", content: "" });
+    setEvents([...events, newEvent]);
+    setNewEvent({ title: "", date: "", location: "" });
   };
 
-  const handleRemoveInfo = (index: number) => {
-    setInfos(infos.filter((_, i) => i !== index));
+  const handleRemoveEvent = (index: number) => {
+    setEvents(events.filter((_, i) => i !== index));
   };
 
   const handleSavePage = async () => {
-    const hasError = !pageTitle || !pageDescription || infos.length === 0;
+    const hasError = !pageTitle || !pageDescription || events.length === 0;
     setErrors((prev) => ({
       ...prev,
       pageTitle: !pageTitle,
@@ -56,11 +59,11 @@ export default function Informative() {
     const payload = {
       pageTitle,
       pageDescription,
-      infos,
+      events,
     };
 
     try {
-      const res = await fetch("/informative-page", {
+      const res = await fetch("/events-page", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -79,12 +82,9 @@ export default function Informative() {
         variant="h4"
         mb={3}
         fontWeight="bold"
-        sx={{
-          textAlign: "center",
-          fontSize: { xs: "1.6rem", sm: "2rem", md: "2.25rem" },
-        }}
+        sx={{ textAlign: "center", fontSize: { xs: "1.6rem", sm: "2rem", md: "2.25rem" } }}
       >
-        Criar Página Informativa
+        Criar Página de Eventos
       </Typography>
 
       <Grid container spacing={2} mb={4}>
@@ -113,47 +113,60 @@ export default function Informative() {
       </Grid>
 
       <Typography variant="h6" fontWeight="medium" mb={2}>
-        Adicionar Informativo
+        Adicionar Evento / Treinamento
       </Typography>
 
       <Grid container spacing={2} mb={4}>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={4}>
           <TextField
-            label="Título da Notícia"
+            label="Título do Evento"
             fullWidth
-            value={newInfo.title}
-            onChange={(e) => setNewInfo((prev) => ({ ...prev, title: e.target.value }))}
-            error={errors.newInfoTitle}
-            helperText={errors.newInfoTitle ? "Campo obrigatório" : ""}
+            value={newEvent.title}
+            onChange={(e) => setNewEvent((prev) => ({ ...prev, title: e.target.value }))}
+            error={errors.newEventTitle}
+            helperText={errors.newEventTitle ? "Campo obrigatório" : ""}
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={4}>
           <TextField
-            label="Conteúdo da Notícia"
+            label="Data do Evento"
+            type="date"
             fullWidth
-            value={newInfo.content}
-            onChange={(e) => setNewInfo((prev) => ({ ...prev, content: e.target.value }))}
-            error={errors.newInfoContent}
-            helperText={errors.newInfoContent ? "Campo obrigatório" : ""}
+            InputLabelProps={{ shrink: true }}
+            value={newEvent.date}
+            onChange={(e) => setNewEvent((prev) => ({ ...prev, date: e.target.value }))}
+            error={errors.newEventDate}
+            helperText={errors.newEventDate ? "Campo obrigatório" : ""}
+          />
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <TextField
+            label="Local do Evento"
+            fullWidth
+            value={newEvent.location}
+            onChange={(e) => setNewEvent((prev) => ({ ...prev, location: e.target.value }))}
+            error={errors.newEventLocation}
+            helperText={errors.newEventLocation ? "Campo obrigatório" : ""}
           />
         </Grid>
         <Grid item xs={12}>
-          <Button variant="contained" fullWidth onClick={handleAddInfo}>
-            Adicionar Informativo
+          <Button variant="contained" fullWidth onClick={handleAddEvent}>
+            Adicionar Evento
           </Button>
         </Grid>
       </Grid>
 
       <Grid container spacing={3}>
-        {infos.map((info, index) => (
+        {events.map((event, index) => (
           <Grid item xs={12} sm={6} md={4} key={index}>
             <Box border={1} borderRadius={2} p={2} position="relative">
-              <Typography fontWeight="bold">{info.title}</Typography>
-              <Typography variant="body2">{info.content}</Typography>
+              <Typography fontWeight="bold">{event.title}</Typography>
+              <Typography variant="body2" mt={1}>📅 {event.date}</Typography>
+              <Typography variant="body2">📍 {event.location}</Typography>
               <IconButton
                 size="small"
                 color="error"
-                onClick={() => handleRemoveInfo(index)}
+                onClick={() => handleRemoveEvent(index)}
                 sx={{ position: "absolute", top: 8, right: 8 }}
               >
                 <Delete fontSize="small" />
