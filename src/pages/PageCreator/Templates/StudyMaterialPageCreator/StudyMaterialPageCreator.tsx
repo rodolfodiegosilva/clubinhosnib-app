@@ -35,7 +35,7 @@ interface ImageItem {
   url: string;
 }
 
-export default function StudyMaterialsPage() {
+export default function StudyMaterialPageCreator() {
   const [pageTitle, setPageTitle] = useState<string>("");
   const [pageDescription, setPageDescription] = useState<string>("");
   const [tab, setTab] = useState<number>(0);

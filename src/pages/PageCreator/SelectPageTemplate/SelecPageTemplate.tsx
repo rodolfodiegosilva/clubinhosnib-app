@@ -13,12 +13,13 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import { ReactElement } from "react";
+import StudyMaterialPageCreator from "../Templates/StudyMaterialPageCreator/StudyMaterialPageCreator";
+import VideoPageCreator from "../Templates/VideoPageCreator/VideoPageCreator";
+import PhotoPageCreator from "../Templates/PhotoPageCreator/PhotoPageCreator";
+import InforamtivePageCreator from "../Templates/InforamtivePageCreator/InforamtivePageCreator";
+import EventPageCreator from "../Templates/EventPageCreator/EventPageCreator";
 
-import Videos from "../Templates/PageVideoCreate/PageVideoCreate";
-import Informative from "../Templates/Inforamtive/Informative";
-import StudyMaterials from "../Templates/StudyMaterial/StudyMaterials";
-import Events from "../Templates/Events/Events";
-import Gallery from "../Templates/PhotosGallery/PagePhotosCreate";
+
 
 // Enum com rótulos descritivos
 enum Options {
@@ -31,11 +32,11 @@ enum Options {
 
 // Mapeamento de componentes como funções
 const componentMap: Record<keyof typeof Options, () => ReactElement> = {
-  GALLERY: () => <Gallery fromTemplatePage={true} />,
-  VIDEOS: () => <Videos fromTemplatePage={true}/>,
-  INFORMATIVE: () => <Informative />,
-  STUDY_MATERIALS: () => <StudyMaterials />,
-  EVENTS: () => <Events />,
+  GALLERY: () => <PhotoPageCreator fromTemplatePage={true} />,
+  VIDEOS: () => <VideoPageCreator fromTemplatePage={true}/>,
+  INFORMATIVE: () => <InforamtivePageCreator />,
+  STUDY_MATERIALS: () => <StudyMaterialPageCreator />,
+  EVENTS: () => <EventPageCreator />,
 };
 
 export default function SelecPageTemplate() {

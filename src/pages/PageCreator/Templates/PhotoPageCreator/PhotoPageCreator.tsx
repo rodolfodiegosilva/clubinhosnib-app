@@ -43,7 +43,7 @@ const sanitizeFileName = (fileName: string) => {
     .replace(/\s+/g, "_");
 };
 
-export default function PagePhotosCreate({ fromTemplatePage }: GalleryProps) {
+export default function PhotoPageCreator({ fromTemplatePage }: GalleryProps) {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const photosGalleryPageData = useSelector((state: RootState) => state.feed.galleryData);
