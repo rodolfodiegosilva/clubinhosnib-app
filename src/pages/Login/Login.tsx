@@ -12,10 +12,11 @@ import {
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../../store/slices/auth/authSlice';
-import api from '../../../src/config/axiosConfig';
 import axios from 'axios';
-import { RootState } from '../../store/slices/index'; // 👈 importa seu tipo do estado global
+
+import api from '../../config/axiosConfig';
+import { RootState, AppDispatch } from '../../store/slices';
+import { login, fetchCurrentUser } from '../../store/slices/auth/authSlice';
 
 interface LoginResponse {
   message: string;
@@ -33,7 +34,7 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('123456');
   const [loading, setLoading] = useState(false);
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>(); // ✅ suporte a async thunks
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -56,8 +57,14 @@ const Login: React.FC = () => {
       const { accessToken, refreshToken, user } = response.data;
 
       console.log('[Login] Login realizado com sucesso:', { accessToken, refreshToken, user });
+
       dispatch(login({ accessToken, refreshToken }));
-      navigate('/');
+
+      // 🔁 Buscar dados do usuário e armazenar no Redux
+      await dispatch(fetchCurrentUser());
+
+      // ✅ Redirecionar para a área do professor após login
+      navigate('/area-do-professor');
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error('[Login] Erro Axios:', error.response?.data || error.message);

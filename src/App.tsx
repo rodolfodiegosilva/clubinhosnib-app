@@ -1,21 +1,28 @@
 import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+
+import Navbar from "./components/NavBar/Navbar";
+import Footer from "./components/Footer/Footer";
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+
+import Home from "./pages/Home/Home";
 import About from "./pages/About/About";
 import Contact from "./pages/Contact/Contact";
 import Event from "./pages/Event/Event";
-import Home from "./pages/Home/Home";
-import Navbar from "./components/NavBar/Navbar";
-import "./styles/Global.css";
-import SelecPageTemplate from "./pages/PageCreator/SelectPageTemplate/SelecPageTemplate";
-import Footer from "./components/Footer/Footer";
-import { fetchRoutes, Route as DynamicRouteType } from "./store/slices/route/routeSlice";
-import { RootState, AppDispatch } from "./store/slices";
-import PageRenderer from "./components/PageRenderer/PageRenderer";
 import Login from "./pages/Login/Login";
-import PageGalleryView from "pages/PageView/PageGallery/PageGalleryView";
-import PhotoPageCreator from "pages/PageCreator/Templates/PhotoPageCreator/PhotoPageCreator";
-import VideoPageCreator from "pages/PageCreator/Templates/VideoPageCreator/VideoPageCreator";
+import TeacherArea from "./pages/TeacherArea/TeacherArea";
+import PageGalleryView from "./pages/PageView/PageGallery/PageGalleryView";
+import PhotoPageCreator from "./pages/PageCreator/Templates/PhotoPageCreator/PhotoPageCreator";
+import VideoPageCreator from "./pages/PageCreator/Templates/VideoPageCreator/VideoPageCreator";
+import SelecPageTemplate from "./pages/PageCreator/SelectPageTemplate/SelecPageTemplate";
+import PageRenderer from "./components/PageRenderer/PageRenderer";
+
+import "./styles/Global.css";
+
+import { fetchRoutes, Route as DynamicRouteType } from "./store/slices/route/routeSlice";
+import { fetchCurrentUser } from "./store/slices/auth/authSlice";
+import { RootState, AppDispatch } from "./store/slices";
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -23,6 +30,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     dispatch(fetchRoutes());
+    dispatch(fetchCurrentUser()); // pega os dados do usuário logado
   }, [dispatch]);
 
   return (
@@ -30,17 +38,27 @@ const App: React.FC = () => {
       <Navbar />
       <div className="mainContainer">
         <Routes>
+          {/* Rotas públicas */}
           <Route path="/" element={<Home />} />
           <Route path="/sobre" element={<About />} />
           <Route path="/contato" element={<Contact />} />
           <Route path="/eventos" element={<Event />} />
           <Route path="/feed-clubinho" element={<PageGalleryView />} />
-          <Route path="/editar-feed-clubinho" element={<PhotoPageCreator />} />          
-          <Route path="/editar-pagina-videos" element={<VideoPageCreator />} />
-          <Route path="/criar-pagina" element={<SelecPageTemplate />} />          
           <Route path="/login" element={<Login />} />
 
-          {/* Rotas Dinâmicas */}
+          {/* Rota protegida (qualquer usuário logado) */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/area-do-professor" element={<TeacherArea />} />
+          </Route>
+
+          {/* Rotas protegidas exclusivas para admin */}
+          <Route element={<ProtectedRoute requiredRole="admin" />}>
+            <Route path="/editar-feed-clubinho" element={<PhotoPageCreator />} />
+            <Route path="/editar-pagina-videos" element={<VideoPageCreator />} />
+            <Route path="/criar-pagina" element={<SelecPageTemplate />} />
+          </Route>
+
+          {/* Rotas dinâmicas vindas da API */}
           {dynamicRoutes.map((route: DynamicRouteType) => (
             <Route
               key={route.id}

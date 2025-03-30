@@ -39,7 +39,9 @@ export default function PageVideoView({ idToFetch }: VideoPageViewProps) {
   const navigate = useNavigate();
 
   const videoData = useSelector((state: RootState) => state.video.videoData);
-  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+
+  const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
+  const isAdmin = isAuthenticated && user?.role === "admin"; // 👈 Verificação Admin
 
   useEffect(() => {
     const fetchData = async () => {
@@ -112,7 +114,7 @@ export default function PageVideoView({ idToFetch }: VideoPageViewProps) {
           {videoData.description}
         </Typography>
 
-        {isAuthenticated && (
+        {isAdmin && ( // 👈 Botões apenas para Admin
           <Box mt={2} display="flex" justifyContent="center" gap={2}>
             <Button
               variant="contained"

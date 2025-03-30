@@ -20,6 +20,7 @@ import { setGalleryData } from "../../../store/slices/gallery/gallerySlice";
 import type { GalleryPageData } from "../../../store/slices/gallery/gallerySlice";
 import { RootState, AppDispatch } from "../../../store/slices";
 import { fetchRoutes } from "../../../store/slices/route/routeSlice";
+import { RoleUser } from "store/slices/auth/authSlice";
 
 interface PageGalleryProps {
   idToFetch?: string;
@@ -34,7 +35,9 @@ export default function PageGalleryView({ idToFetch }: PageGalleryProps) {
 
   const navigate = useNavigate();
   const dispatch: AppDispatch = useDispatch();
-  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+
+  const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
+  const isAdmin = isAuthenticated && user?.role === RoleUser.ADMIN;
 
   const feedMinisterioId = process.env.REACT_APP_FEED_MINISTERIO_ID;
 
@@ -103,7 +106,7 @@ export default function PageGalleryView({ idToFetch }: PageGalleryProps) {
           {galleryDataLocal?.description || "Aqui você encontra fotos e notícias atuais do Ministério de Orfanato."}
         </Typography>
 
-        {isAuthenticated && (
+        {isAdmin && ( // 👈 Condição para Admin
           <Box mt={2} display="flex" justifyContent="center" gap={2}>
             <Button
               variant="contained"

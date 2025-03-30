@@ -1,5 +1,6 @@
 
 import PageGalleryView from "pages/PageView/PageGallery/PageGalleryView";
+import StudyMaterialsPageView from "pages/PageView/PageStudy/StudyMaterialsPageView";
 import PageVideoView from "pages/PageView/PageVideo/PageVideoView";
 import React from "react";
 
@@ -14,8 +15,8 @@ const PageRenderer: React.FC<PageRendererProps> = ({ entityType, idToFetch }) =>
       return <PageGalleryView idToFetch={idToFetch} />;
     case "VideosPage":
       return <PageVideoView idToFetch={idToFetch} />;
-    // case "VideoPage":
-    //   return <Video entityId={entityId} />;
+     case "StudyMaterialsPage":
+       return <StudyMaterialsPageView idToFetch={idToFetch}/>;
     default:
       return <div>Tipo de página desconhecido: {entityType}</div>;
   }

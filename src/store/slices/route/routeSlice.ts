@@ -4,7 +4,9 @@ import apiAxios from "../../../config/axiosConfig";
 
 // Tipagem de cada rota vinda da API
 export interface Route {
-  id: string;
+  id: string;  
+  title: string;
+  subtitle: string;
   path: string;
   idToFetch: string;
   entityType: string;
@@ -14,7 +16,6 @@ export interface Route {
   image: string | null;
   createdAt: string;
   updatedAt: string;
-  name: string;
 }
 
 // Estado global do slice

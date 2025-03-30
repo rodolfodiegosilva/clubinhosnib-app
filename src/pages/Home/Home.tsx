@@ -1,12 +1,20 @@
 import React from "react";
-import { Box, Grid2, Typography } from "@mui/material";
+import { Box, Typography, Grid2 } from "@mui/material";
 import banner from "../../assets/banner_2.png";
 import Card from "../../components/Card/Card";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/slices";
+import WeekBanner from "components/WeekBanner/WeekBanner";
 
 const Home: React.FC = () => {
   const dynamicRoutes = useSelector((state: RootState) => state.routes.routes);
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+
+  const filteredRoutes = dynamicRoutes
+    .filter((route) => route.entityType === "StudyMaterialsPage")
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+  const latestRoute = filteredRoutes[0];
 
   return (
     <Box
@@ -78,22 +86,32 @@ const Home: React.FC = () => {
         </Box>
       </Box>
 
-      {/* Cards Dinâmicos vindos do Redux */}
+      {isAuthenticated && latestRoute && latestRoute.title && latestRoute.path && (
+        <WeekBanner
+          title={latestRoute.title}
+          subtitle={latestRoute.subtitle}
+          linkTo={`/${latestRoute.path}`}
+        />
+      )}
+
       <Box sx={{ width: "90%", py: 6 }}>
         <Grid2 container spacing={4} justifyContent="center">
-          {dynamicRoutes.map((card) => (
-            <Grid2 key={card.id}>
-              <Card
-                title={card.name}
-                description={card.description}
-                image={card.image ?? ""}
-                link={`/${card.path}`}
-                type={card.type}
-              />
-            </Grid2>
-          ))}
+          {dynamicRoutes
+            .filter((card) => card.entityType !== "StudyMaterialsPage")
+            .map((card) => (
+              <Grid2 key={card.id}>
+                <Card
+                  title={card.title}
+                  description={card.description}
+                  image={card.image ?? ""}
+                  link={`/${card.path}`}
+                  type={card.type}
+                />
+              </Grid2>
+            ))}
         </Grid2>
       </Box>
+
     </Box>
   );
 };
