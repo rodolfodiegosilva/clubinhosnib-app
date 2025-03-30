@@ -16,6 +16,7 @@ import {
 } from "../../../../store/slices/video/videoSlice";
 import VideoForm from "./VideoForm";
 import VideoList from "./VideoList";
+import { buildFileItem } from "../../../../utils/formDataHelpers";
 
 interface VideosProps {
   fromTemplatePage?: boolean;
@@ -63,14 +64,6 @@ export default function VideoPageCreator({ fromTemplatePage }: VideosProps) {
       setVideos(videoData.videos);
     }
   }, [fromTemplatePage, videoData]);
-
- /* useEffect(() => {
-    return () => {
-      if (!fromTemplatePage) {
-       dispatch(clearVideoData());
-      }
-    };
-  }, [fromTemplatePage, dispatch]);*/
 
   const handleAddVideo = () => {
     const hasError = !newVideo.title || !newVideo.description || !newVideo.url;
@@ -130,35 +123,20 @@ export default function VideoPageCreator({ fromTemplatePage }: VideosProps) {
     try {
       const formData = new FormData();
 
-      const itemsPayload = videos.map((video, index) => {
-        if (video.type === "upload" && video.url.startsWith("data:")) {
-          const byteString = atob(video.url.split(",")[1]);
-          const mimeString = video.url.split(",")[0].split(":")[1].split(";")[0];
-          const ab = new ArrayBuffer(byteString.length);
-          const ia = new Uint8Array(ab);
-          for (let i = 0; i < byteString.length; i++) {
-            ia[i] = byteString.charCodeAt(i);
-          }
-          const blob = new Blob([ab], { type: mimeString });
-          const filename = `video_${index}.mp4`;
-          formData.append(`video_${index}`, blob, filename);
-          return { ...video, srcField: `video_${index}` };
-        }
-        return { ...video, srcField: video.url };
-      });
+      const videoPayload = videos.map((v, i) => buildFileItem(v, i, "video", formData));
 
       const payload = {
         id: fromTemplatePage ? undefined : videoData?.id,
         pageTitle,
         pageDescription,
-        videos: itemsPayload.map((v) => ({
-          id: fromTemplatePage ? undefined: v.id,
+        videos: videoPayload.map((v) => ({
+          id: fromTemplatePage ? undefined : v.id,
           title: v.title,
           description: v.description,
           type: v.type,
           platform: v.platform,
-          url: v.type === "upload" ? undefined : v.srcField,
-          fileField: v.type === "upload" ? v.srcField : undefined,
+          url: v.type === "upload" ? undefined : v.url,
+          fileField: v.type === "upload" ? v.fileField : undefined,
         })),
       };
 

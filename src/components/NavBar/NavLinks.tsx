@@ -11,7 +11,9 @@ const NavLinks: React.FC<{ closeMenu?: () => void }> = ({ closeMenu }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+
+  const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
+  const isAdmin = isAuthenticated && user?.role === 'admin';
 
   const handleClick = () => {
     if (closeMenu) closeMenu();
@@ -47,10 +49,16 @@ const NavLinks: React.FC<{ closeMenu?: () => void }> = ({ closeMenu }) => {
         <Link to="/contato" onClick={handleClick}>Contato</Link>
       </li>
 
+      {isAdmin && (  // 👈 Exibir somente se logado E admin
+        <li className={location.pathname === '/criar-pagina' ? 'active' : ''}>
+          <Link to="/criar-pagina" onClick={handleClick}>Criar página</Link>
+        </li>
+      )}
+
       {isAuthenticated && (
         <>
-          <li className={location.pathname === '/criar-pagina' ? 'active' : ''}>
-            <Link to="/criar-pagina" onClick={handleClick}>Criar página</Link>
+          <li className={location.pathname === '/area-do-professor' ? 'active' : ''}>
+            <Link to="/area-do-professor" onClick={handleClick}>Area do Professor</Link>
           </li>
           <li>
             <Button
@@ -64,6 +72,9 @@ const NavLinks: React.FC<{ closeMenu?: () => void }> = ({ closeMenu }) => {
             </Button>
           </li>
         </>
+
+
+
       )}
 
       {!isAuthenticated && (

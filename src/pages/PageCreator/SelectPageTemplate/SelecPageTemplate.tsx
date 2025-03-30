@@ -19,9 +19,6 @@ import PhotoPageCreator from "../Templates/PhotoPageCreator/PhotoPageCreator";
 import InforamtivePageCreator from "../Templates/InforamtivePageCreator/InforamtivePageCreator";
 import EventPageCreator from "../Templates/EventPageCreator/EventPageCreator";
 
-
-
-// Enum com rótulos descritivos
 enum Options {
   GALLERY = "Galeria de Fotos",
   VIDEOS = "Galeria de Videos",
@@ -30,12 +27,11 @@ enum Options {
   EVENTS = "Pagina de Eventos",
 }
 
-// Mapeamento de componentes como funções
 const componentMap: Record<keyof typeof Options, () => ReactElement> = {
   GALLERY: () => <PhotoPageCreator fromTemplatePage={true} />,
-  VIDEOS: () => <VideoPageCreator fromTemplatePage={true}/>,
+  VIDEOS: () => <VideoPageCreator fromTemplatePage={true} />,
   INFORMATIVE: () => <InforamtivePageCreator />,
-  STUDY_MATERIALS: () => <StudyMaterialPageCreator />,
+  STUDY_MATERIALS: () => <StudyMaterialPageCreator fromTemplatePage={true} />,
   EVENTS: () => <EventPageCreator />,
 };
 
@@ -53,19 +49,19 @@ export default function SelecPageTemplate() {
   };
 
   return (
-<Box
-  sx={{
-    minHeight: "100vh",
-    py: 6,
-    px: 2,
-    mt: 5,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    bgcolor: "linear-gradient(to bottom, #f4f4f4, #e8e8e8)",
-    textAlign: "center",
-  }}
->
+    <Box
+      sx={{
+        minHeight: "100vh",
+        py: 6,
+        px: 2,
+        mt: 5,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        bgcolor: "linear-gradient(to bottom, #f4f4f4, #e8e8e8)",
+        textAlign: "center",
+      }}
+    >
       <Typography variant="h4" fontWeight="bold" gutterBottom>
         Escolha um Modelo
       </Typography>
