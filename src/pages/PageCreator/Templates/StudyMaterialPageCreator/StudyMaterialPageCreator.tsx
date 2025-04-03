@@ -32,7 +32,7 @@ interface StudyMaterialPageCreatorProps {
 }
 
 export default function StudyMaterialPageCreator({
-  fromTemplatePage = false,
+  fromTemplatePage,
 }: StudyMaterialPageCreatorProps) {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -61,6 +61,7 @@ export default function StudyMaterialPageCreator({
     severity: "success" as "success" | "error",
   });
 
+  // MODO TEMPLATE (criação): limpa tudo
   useEffect(() => {
     if (fromTemplatePage) {
       dispatch(clearStudyMaterialData());
@@ -71,7 +72,12 @@ export default function StudyMaterialPageCreator({
       setDocuments([]);
       setImages([]);
       setAudios([]);
-    } else if (studyData) {
+    }
+  }, [fromTemplatePage, dispatch]);
+
+  // MODO EDIÇÃO: carrega dados do Redux
+  useEffect(() => {
+    if (!fromTemplatePage && studyData) {
       setPageTitle(studyData.title);
       setPageSubtitle(studyData.subtitle);
       setPageDescription(studyData.description);
@@ -80,7 +86,7 @@ export default function StudyMaterialPageCreator({
       setImages(studyData.images);
       setAudios(studyData.audios);
     }
-  }, [fromTemplatePage, studyData, dispatch]);
+  }, [fromTemplatePage, studyData]);
 
   const handleSavePage = async () => {
     const hasError =
@@ -124,32 +130,40 @@ export default function StudyMaterialPageCreator({
           description: v.description,
           type: v.type,
           platform: v.platform,
-          url: v.type === "upload" ? undefined : v.url,
-          fileField: v.type === "upload" ? v.fileField : undefined,
+          url: v.url || '',
+          fileField: v.fileField || '',
+          isLocalFile: v.isLocalFile ?? (v.type === "upload" ? true : false),    
+          size: v.size,
         })),
         documents: processedDocs.map((d) => ({
           title: d.title,
           description: d.description,
           type: d.type,
           platform: d.platform,
-          url: d.type === "upload" ? undefined : d.url,
-          fileField: d.type === "upload" ? d.fileField : undefined,
+          url:  d.url || '',
+          fileField: d.fileField || '',
+          isLocalFile: d.isLocalFile ?? (d.type === "upload" ? true : false),    
+          size: d.size,
         })),
         images: processedImgs.map((i) => ({
           title: i.title,
           description: i.description,
           type: i.type,
           platform: i.platform,
-          url: i.type === "upload" ? undefined : i.url,
-          fileField: i.type === "upload" ? i.fileField : undefined,
+          url: i.url || '',
+          fileField: i.fileField || '',
+          isLocalFile: i.isLocalFile ?? (i.type === "upload" ? true : false),    
+          size: i.size,
         })),
         audios: processedAudios.map((a) => ({
           title: a.title,
           description: a.description,
           type: a.type,
           platform: a.platform,
-          url: a.type === "upload" ? undefined : a.url,
-          fileField: a.type === "upload" ? a.fileField : undefined,
+          url:  a.url || '',
+          fileField:  a.fileField || '',
+          isLocalFile: a.isLocalFile ?? (a.type === "upload" ? true : false),    
+          size: a.size,
         })),
       };
 

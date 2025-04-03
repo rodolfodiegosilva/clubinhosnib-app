@@ -192,7 +192,7 @@ const Eventos: React.FC = () => {
               Editar Página
             </Button>
           )}
-          {eventosAnteriores.length > 0 && (
+          {eventosAnteriores.slice(2).length > 0 && (
             <Button
               variant="text"
               color="secondary"
@@ -214,110 +214,110 @@ const Eventos: React.FC = () => {
           minHeight: "auto",
         }}
       >
-<Grid container spacing={4} justifyContent="center" sx={{ mt: { xs: 2, md: 1 }, mb: { xs: 4, md: 1 } }}>
-  {eventoHoje ? (
-    <>
-      {eventoAnterior && (
-        <Grid item xs={12} md={4} sx={{ mt: { xs: 2, md: 1 }, mb: { xs: 2, md: 3 } }}>
-          <Typography
-            variant="subtitle1"
-            textAlign="center"
-            fontWeight="bold"
-            mb={{ xs: 1, md: 1 }}
-            sx={{ fontSize: { xs: '1rem', md: '1.25rem' } }}
-          >
-            Evento Anterior
-          </Typography>
-          {renderCard(eventoAnterior)}
+        <Grid container spacing={4} justifyContent="center" sx={{ mt: { xs: 2, md: 1 }, mb: { xs: 4, md: 1 } }}>
+          {eventoHoje ? (
+            <>
+              {eventoAnterior && (
+                <Grid item xs={12} md={4} sx={{ mt: { xs: 2, md: 1 }, mb: { xs: 2, md: 3 } }}>
+                  <Typography
+                    variant="subtitle1"
+                    textAlign="center"
+                    fontWeight="bold"
+                    mb={{ xs: 1, md: 1 }}
+                    sx={{ fontSize: { xs: '1rem', md: '1.25rem' } }}
+                  >
+                    Evento Anterior
+                  </Typography>
+                  {renderCard(eventoAnterior)}
+                </Grid>
+              )}
+              <Grid
+                item
+                xs={12}
+                md={4}
+                sx={{
+                  mt: { xs: 2, md: 1 },
+                  mb: { xs: 2, md: 3 },
+                  order: { xs: -1, md: 0 }
+                }}
+              >
+                <Typography
+                  variant="subtitle1"
+                  textAlign="center"
+                  fontWeight="bold"
+                  mb={{ xs: 1, md: 1 }}
+                  sx={{ fontSize: { xs: '1rem', md: '1.25rem' } }}
+                >
+                  Evento de Hoje
+                </Typography>
+                {renderCard(eventoHoje)}
+              </Grid>
+              {eventoProximo && (
+                <Grid item xs={12} md={4} sx={{ mt: { xs: 2, md: 1 }, mb: { xs: 2, md: 3 } }}>
+                  <Typography
+                    variant="subtitle1"
+                    textAlign="center"
+                    fontWeight="bold"
+                    mb={{ xs: 1, md: 1 }}
+                    sx={{ fontSize: { xs: '1rem', md: '1.25rem' } }}
+                  >
+                    Próximo Evento
+                  </Typography>
+                  {renderCard(eventoProximo)}
+                </Grid>
+              )}
+            </>
+          ) : (
+            <>
+              {eventoAnterior && (
+                <Grid item xs={12} md={4} sx={{ mt: { xs: 2, md: 1 }, mb: { xs: 2, md: 1 } }}>
+                  <Typography
+                    variant="subtitle1"
+                    textAlign="center"
+                    fontWeight="bold"
+                    mb={{ xs: 1, md: 1 }}
+                    sx={{ fontSize: { xs: '1rem', md: '1.25rem' } }}
+                  >
+                    Evento Anterior
+                  </Typography>
+                  {renderCard(eventoAnterior)}
+                </Grid>
+              )}
+              {eventoProximo && (
+                <Grid item xs={12} md={4} sx={{ mt: { xs: 2, md: 1 }, mb: { xs: 2, md: 3 } }}>
+                  <Typography
+                    variant="subtitle1"
+                    textAlign="center"
+                    fontWeight="bold"
+                    mb={{ xs: 1, md: 1 }}
+                    sx={{ fontSize: { xs: '1rem', md: '1.25rem' } }}
+                  >
+                    Próximo Evento
+                  </Typography>
+                  {renderCard(eventoProximo)}
+                </Grid>
+              )}
+              {eventoPosterior && (
+                <Grid item xs={12} md={4} sx={{ mt: { xs: 2, md: 1 }, mb: { xs: 2, md: 3 } }}>
+                  <Typography
+                    variant="subtitle1"
+                    textAlign="center"
+                    fontWeight="bold"
+                    mb={{ xs: 1, md: 1 }}
+                    sx={{ fontSize: { xs: '1rem', md: '1.25rem' } }}
+                  >
+                    Evento Posterior
+                  </Typography>
+                  {renderCard(eventoPosterior)}
+                </Grid>
+              )}
+            </>
+          )}
         </Grid>
-      )}
-      <Grid
-        item
-        xs={12}
-        md={4}
-        sx={{
-          mt: { xs: 2, md: 1 },
-          mb: { xs: 2, md: 3 },
-          order: { xs: -1, md: 0 }
-        }}
-      >
-        <Typography
-          variant="subtitle1"
-          textAlign="center"
-          fontWeight="bold"
-          mb={{ xs: 1, md: 1 }}
-          sx={{ fontSize: { xs: '1rem', md: '1.25rem' } }}
-        >
-          Evento de Hoje
-        </Typography>
-        {renderCard(eventoHoje)}
-      </Grid>
-      {eventoProximo && (
-        <Grid item xs={12} md={4} sx={{ mt: { xs: 2, md: 1 }, mb: { xs: 2, md: 3 } }}>
-          <Typography
-            variant="subtitle1"
-            textAlign="center"
-            fontWeight="bold"
-            mb={{ xs: 1, md: 1 }}
-            sx={{ fontSize: { xs: '1rem', md: '1.25rem' } }}
-          >
-            Próximo Evento
-          </Typography>
-          {renderCard(eventoProximo)}
-        </Grid>
-      )}
-    </>
-  ) : (
-    <>
-      {eventoAnterior && (
-        <Grid item xs={12} md={4} sx={{ mt: { xs: 2, md: 1 }, mb: { xs: 2, md: 1 } }}>
-          <Typography
-            variant="subtitle1"
-            textAlign="center"
-            fontWeight="bold"
-            mb={{ xs: 1, md: 1 }}
-            sx={{ fontSize: { xs: '1rem', md: '1.25rem' } }}
-          >
-            Evento Anterior
-          </Typography>
-          {renderCard(eventoAnterior)}
-        </Grid>
-      )}
-      {eventoProximo && (
-        <Grid item xs={12} md={4} sx={{ mt: { xs: 2, md: 1 }, mb: { xs: 2, md: 3 } }}>
-          <Typography
-            variant="subtitle1"
-            textAlign="center"
-            fontWeight="bold"
-            mb={{ xs: 1, md: 1 }}
-            sx={{ fontSize: { xs: '1rem', md: '1.25rem' } }}
-          >
-            Próximo Evento
-          </Typography>
-          {renderCard(eventoProximo)}
-        </Grid>
-      )}
-      {eventoPosterior && (
-        <Grid item xs={12} md={4} sx={{ mt: { xs: 2, md: 1 }, mb: { xs: 2, md: 3 } }}>
-          <Typography
-            variant="subtitle1"
-            textAlign="center"
-            fontWeight="bold"
-            mb={{ xs: 1, md: 1 }}
-            sx={{ fontSize: { xs: '1rem', md: '1.25rem' } }}
-          >
-            Evento Posterior
-          </Typography>
-          {renderCard(eventoPosterior)}
-        </Grid>
-      )}
-    </>
-  )}
-</Grid>
 
       </Box>
 
-      {eventosFuturos.length > 0 && (
+      {eventosFuturos.slice(2).length > 0 && (
         <Box
           mb={6}
           sx={{
@@ -340,7 +340,7 @@ const Eventos: React.FC = () => {
         </Box>
       )}
 
-      {mostrarAntigos && eventosAnteriores.length > 0 && (
+      {mostrarAntigos && eventosAnteriores.slice(2).length > 0 && (
         <Box
           ref={eventosAntigosRef}
           mb={6}
