@@ -98,20 +98,47 @@ export default function PageGalleryView({ idToFetch }: PageGalleryProps) {
 
   return (
     <Container maxWidth={false} sx={{ maxWidth: "95% !important", marginTop: "100px", p: 0 }}>
-      <Box textAlign="center" mb={3}>
+      <Box
+        textAlign="center"
+        mb={3}
+        sx={{ position: "relative" }}
+      >
         <Typography variant="h4" fontWeight="bold">
-          {galleryDataLocal?.name || "Feed do Ministério"}
-        </Typography>
-        <Typography variant="subtitle1" gutterBottom>
-          {galleryDataLocal?.description || "Aqui você encontra fotos e notícias atuais do Ministério de Orfanato."}
+          {galleryDataLocal?.name}
         </Typography>
 
-        {isAdmin && ( // 👈 Condição para Admin
-          <Box mt={2} display="flex" justifyContent="center" gap={2}>
+        <Box display="flex" justifyContent="center" width="100%">
+          <Typography
+            variant="subtitle1"
+            sx={{
+              mt: 1,
+              textAlign: "justify",
+              maxWidth: "1000px",
+              px: { xs: 2, sm: 0 },
+            }}
+          >
+            {galleryDataLocal?.description}
+          </Typography>
+        </Box>
+
+        {isAdmin && (
+          <Box
+            mt={2}
+            display="flex"
+            justifyContent="flex-start"
+            gap={2}
+            sx={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              ml: { xs: 2, sm: 0 },
+              mb: { xs: 3, sm: 0 },
+            }}
+          >
             <Button
               variant="contained"
               color="warning"
-              onClick={() => navigate("/editar-feed-clubinho")}
+              onClick={() => navigate("/editar-pagina-fotos")}
               disabled={isDeleting}
             >
               Editar Página
@@ -127,6 +154,7 @@ export default function PageGalleryView({ idToFetch }: PageGalleryProps) {
           </Box>
         )}
       </Box>
+
 
       <Box mt={4} display="flex" flexDirection="column" gap={4}>
         {galleryDataLocal?.sections.map((section) => (

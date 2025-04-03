@@ -1,5 +1,5 @@
 
-import PageGalleryView from "pages/PageView/PageGallery/PageGalleryView";
+import PageGalleryView from "pages/PageView/PagePhoto/PageGalleryView";
 import StudyMaterialsPageView from "pages/PageView/PageStudy/StudyMaterialsPageView";
 import PageVideoView from "pages/PageView/PageVideo/PageVideoView";
 import React from "react";

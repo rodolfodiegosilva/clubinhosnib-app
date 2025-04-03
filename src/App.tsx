@@ -12,7 +12,7 @@ import Contact from "./pages/Contact/Contact";
 import Event from "./pages/Event/Event";
 import Login from "./pages/Login/Login";
 import TeacherArea from "./pages/TeacherArea/TeacherArea";
-import PageGalleryView from "./pages/PageView/PageGallery/PageGalleryView";
+import PageGalleryView from "./pages/PageView/PagePhoto/PageGalleryView";
 import PhotoPageCreator from "./pages/PageCreator/Templates/PhotoPageCreator/PhotoPageCreator";
 import VideoPageCreator from "./pages/PageCreator/Templates/VideoPageCreator/VideoPageCreator";
 import SelecPageTemplate from "./pages/PageCreator/SelectPageTemplate/SelecPageTemplate";
@@ -23,6 +23,7 @@ import "./styles/Global.css";
 import { fetchRoutes, Route as DynamicRouteType } from "./store/slices/route/routeSlice";
 import { fetchCurrentUser } from "./store/slices/auth/authSlice";
 import { RootState, AppDispatch } from "./store/slices";
+import StudyMaterialPageCreator from "pages/PageCreator/Templates/StudyMaterialPageCreator/StudyMaterialPageCreator";
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -53,8 +54,9 @@ const App: React.FC = () => {
 
           {/* Rotas protegidas exclusivas para admin */}
           <Route element={<ProtectedRoute requiredRole="admin" />}>
-            <Route path="/editar-feed-clubinho" element={<PhotoPageCreator />} />
-            <Route path="/editar-pagina-videos" element={<VideoPageCreator />} />
+            <Route path="/editar-pagina-fotos" element={<PhotoPageCreator />} />
+            <Route path="/editar-pagina-videos" element={<VideoPageCreator />} />            
+            <Route path="/editar-pagina-semana" element={<StudyMaterialPageCreator />} />
             <Route path="/criar-pagina" element={<SelecPageTemplate />} />
           </Route>
 

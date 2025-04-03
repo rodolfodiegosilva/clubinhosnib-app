@@ -10,6 +10,7 @@ export interface StudyMediaItem {
   file?: File;
   isLocalFile?: boolean;
   originalName?: string;
+  size?: number
 }
 
 export interface StudyMaterialPageData {

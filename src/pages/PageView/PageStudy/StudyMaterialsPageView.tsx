@@ -1,3 +1,4 @@
+// 👇 Adicionei logs para rastrear fluxo, Redux e payloads
 import { useEffect, useState } from "react";
 import {
   Box,
@@ -26,6 +27,7 @@ import StudyImageGalleryView from "./StudyImageGalleryView";
 import StudyVideoPlayerView from "./StudyVideoPlayerView";
 import { fetchRoutes } from "store/slices/route/routeSlice";
 import { RootState, AppDispatch } from "store/slices";
+import { setStudyMaterialData } from "store/slices/study-material/studyMaterialSlice";
 
 interface StudyMaterialsPageViewProps {
   idToFetch: string;
@@ -48,11 +50,18 @@ export default function StudyMaterialsPageView({ idToFetch }: StudyMaterialsPage
 
   useEffect(() => {
     const fetchData = async () => {
+      console.log("📡 Buscando materiais de estudo por ID:", idToFetch);
       try {
         const response = await api.get(`/study-materials-page/${idToFetch}`);
         setStudyMaterials(response.data);
+
+        console.log("✅ Dados recebidos da API:", response.data);
+
+        // 👉 Armazenando no Redux para uso na edição
+        dispatch(setStudyMaterialData(response.data));
+        console.log("📦 Dados setados no Redux.");
       } catch (err) {
-        console.error("Erro ao buscar materiais de estudo:", err);
+        console.error("❌ Erro ao buscar materiais de estudo:", err);
         setError("Erro ao carregar os materiais de estudo. Tente novamente mais tarde.");
       } finally {
         setLoading(false);
@@ -60,22 +69,28 @@ export default function StudyMaterialsPageView({ idToFetch }: StudyMaterialsPage
     };
 
     fetchData();
-  }, [idToFetch]);
+  }, [idToFetch, dispatch]);
 
   const handleDeletePage = async () => {
     try {
       if (!studyMaterials?.id) return;
       setIsDeleting(true);
+      console.log("🗑️ Deletando página com ID:", studyMaterials.id);
       await api.delete(`/study-materials-page/${studyMaterials.id}`);
       await dispatch(fetchRoutes());
       navigate("/");
     } catch (err) {
-      console.error("Erro ao excluir a página de materiais de estudo:", err);
+      console.error("❌ Erro ao excluir a página:", err);
       setError("Erro ao excluir a página. Tente novamente mais tarde.");
     } finally {
       setIsDeleting(false);
       setDeleteConfirmOpen(false);
     }
+  };
+
+  const handleEdit = () => {
+    console.log("✏️ Redirecionando para edição...");
+    navigate("/editar-pagina-semana", { state: { fromTemplatePage: false } });
   };
 
   const SectionBox = ({
@@ -151,29 +166,24 @@ export default function StudyMaterialsPageView({ idToFetch }: StudyMaterialsPage
         maxWidth: "none !important",
       }}
     >
-      <Box textAlign="center" mb={6}>
-        <Typography variant="h4" fontWeight="bold" color="primary">
-          {title}
-        </Typography>
-        {subtitle && (
-          <Typography variant="h6" mt={1}>
-            {subtitle}
-          </Typography>
-        )}
-        <Typography variant="body1" mt={2} color="text.secondary">
-          {description}
-        </Typography>
-
+      <Box position="relative" textAlign="center" mb={6}>
         {isAdmin && (
-          <Box mt={3} display="flex" justifyContent="center" gap={2}>
-            <Button
-              variant="contained"
-              color="warning"
-              onClick={() =>
-                navigate("/editar-material-estudo", { state: { fromTemplatePage: false } })
-              }
-              disabled={isDeleting}
-            >
+          <Box
+            position="absolute"
+            top={0}
+            left={0}
+            display="flex"
+            gap={2}
+            flexWrap="wrap"
+            sx={(theme) => ({
+              [theme.breakpoints.down("sm")]: {
+                position: "static",
+                justifyContent: "center",
+                mb: 2,
+              },
+            })}
+          >
+            <Button variant="contained" color="warning" onClick={handleEdit} disabled={isDeleting}>
               Editar Página
             </Button>
             <Button
@@ -186,6 +196,32 @@ export default function StudyMaterialsPageView({ idToFetch }: StudyMaterialsPage
             </Button>
           </Box>
         )}
+
+        {/* Conteúdo centralizado */}
+        <Typography variant="h4" fontWeight="bold" color="primary">
+          {title}
+        </Typography>
+        {subtitle && (
+          <Typography variant="h6" mt={1}>
+            {subtitle}
+          </Typography>
+        )}
+        <Typography
+          variant="body1"
+          mt={2}
+          color="text.secondary"
+          textAlign="justify"
+          maxWidth="800px"
+          mx="auto"
+          sx={(theme) => ({
+            [theme.breakpoints.down("sm")]: {
+              px: 2,
+            },
+          })}
+        >
+          {description}
+        </Typography>
+
       </Box>
 
       {videos?.length > 0 && (

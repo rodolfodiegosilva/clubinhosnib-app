@@ -26,7 +26,6 @@ const Home: React.FC = () => {
         alignItems: "center",
       }}
     >
-      {/* Hero Section */}
       <Box
         sx={{
           position: "relative",
@@ -81,7 +80,8 @@ const Home: React.FC = () => {
             Bem-vindo ao Clubinhos NIB
           </Typography>
           <Typography variant="h5">
-            Plataforma de evangelismo cristão para todas as idades.
+            Ministério de evangelismo que leva a palavra de Deus para as crianças que precisam
+            conhecer o amor de Jesus.
           </Typography>
         </Box>
       </Box>
