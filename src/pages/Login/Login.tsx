@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -9,14 +9,15 @@ import {
   useTheme,
   useMediaQuery,
   CircularProgress,
-} from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+  Alert,
+} from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-import api from '../../config/axiosConfig';
-import { RootState, AppDispatch } from '../../store/slices';
-import { login, fetchCurrentUser } from '../../store/slices/auth/authSlice';
+import api from "../../config/axiosConfig";
+import { RootState as RootStateType, AppDispatch as AppDispatchType } from "../../store/slices";
+import { login, RoleUser } from "../../store/slices/auth/authSlice";
 
 interface LoginResponse {
   message: string;
@@ -24,53 +25,82 @@ interface LoginResponse {
     id: string;
     email: string;
     name: string;
+    role: "admin" | "user";
   };
   accessToken: string;
   refreshToken: string;
 }
 
-const Login: React.FC = () => {
-  const [email, setEmail] = useState('joao@email.com');
-  const [password, setPassword] = useState('123456');
-  const [loading, setLoading] = useState(false);
+const log = (message: string, ...args: any[]) => {
+  if (process.env.NODE_ENV === "development") {
+    console.log(message, ...args);
+  }
+};
 
-  const dispatch = useDispatch<AppDispatch>(); // ✅ suporte a async thunks
+const Login: React.FC = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const dispatch = useDispatch<AppDispatchType>();
   const navigate = useNavigate();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const { isAuthenticated, user } = useSelector((state: RootStateType) => state.auth);
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/');
+      const redirectPath = user?.role === RoleUser.ADMIN ? "/adm" : "/area-do-professor";
+      navigate(redirectPath);
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, user, navigate]);
+
+  const isFormValid = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email) && password.length >= 6;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!isFormValid()) {
+      setErrorMessage("Por favor, insira um email válido e uma senha com pelo menos 6 caracteres.");
+      return;
+    }
+
     setLoading(true);
-    console.log('[Login] Tentando login com:', { email });
+    setErrorMessage(null);
+    log("[Login] Tentando login com:", { email });
 
     try {
-      const response = await api.post<LoginResponse>('/auth/login', { email, password });
-      const { accessToken, refreshToken, user } = response.data;
+      const response = await api.post<LoginResponse>("/auth/login", { email, password });
+      const { accessToken, refreshToken, user: responseUser } = response.data;
 
-      console.log('[Login] Login realizado com sucesso:', { accessToken, refreshToken, user });
+      log("[Login] Login realizado com sucesso:", { accessToken, refreshToken, responseUser });
 
-      dispatch(login({ accessToken, refreshToken }));
+      // Mapeia o role para RoleUser
+      const mappedUser = {
+        ...responseUser,
+        role: responseUser.role === "admin" ? RoleUser.ADMIN : RoleUser.USER,
+      };
 
-      // 🔁 Buscar dados do usuário e armazenar no Redux
-      await dispatch(fetchCurrentUser());
+      // Armazena tokens e usuário no Redux
+      dispatch(login({ accessToken, refreshToken, user: mappedUser }));
 
-      // ✅ Redirecionar para a área do professor após login
-      navigate('/area-do-professor');
+      // Redireciona com base na role do usuário
+      const redirectPath = mappedUser.role === RoleUser.ADMIN ? "/adm" : "/area-do-professor";
+      navigate(redirectPath);
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.error('[Login] Erro Axios:', error.response?.data || error.message);
-        alert('Erro ao fazer login. Verifique suas credenciais.');
+        const message =
+          error.response?.data?.message || "Erro ao fazer login. Verifique suas credenciais.";
+        setErrorMessage(message);
+        log("[Login] Erro Axios:", error.response?.data || error.message);
       } else {
-        console.error('[Login] Erro inesperado:', error);
+        setErrorMessage("Erro inesperado. Tente novamente mais tarde.");
+        log("[Login] Erro inesperado:", error);
       }
     } finally {
       setLoading(false);
@@ -79,39 +109,66 @@ const Login: React.FC = () => {
 
   return (
     <Container maxWidth="sm" sx={{ mt: 16 }}>
-      <Paper elevation={3} sx={{ p: 4, borderRadius: 2, boxShadow: 3, backgroundColor: '#fff' }}>
+      <Paper
+        elevation={3}
+        sx={{
+          p: 4,
+          borderRadius: 2,
+          boxShadow: 3,
+          backgroundColor: "#fff",
+        }}
+      >
         <Typography variant="h5" component="h1" gutterBottom align="center">
           Área do Professor
         </Typography>
 
-        <Box component="form" onSubmit={handleSubmit} noValidate>
+        {errorMessage && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {errorMessage}
+          </Alert>
+        )}
+
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          noValidate
+          sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+        >
           <TextField
             fullWidth
             type="email"
             label="Email"
-            margin="normal"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            disabled={loading}
+            aria-label="Digite seu email"
+            variant="outlined"
+            error={!!errorMessage && !email}
+            helperText={!!errorMessage && !email ? "Email é obrigatório" : ""}
           />
           <TextField
             fullWidth
             type="password"
             label="Senha"
-            margin="normal"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            disabled={loading}
+            aria-label="Digite sua senha"
+            variant="outlined"
+            error={!!errorMessage && !password}
+            helperText={!!errorMessage && !password ? "Senha é obrigatória" : ""}
           />
           <Button
             type="submit"
             variant="contained"
             fullWidth
-            sx={{ mt: 2 }}
-            size={isMobile ? 'medium' : 'large'}
-            disabled={loading}
+            size={isMobile ? "medium" : "large"}
+            disabled={loading || !isFormValid()}
+            sx={{ mt: 1 }}
           >
-            {loading ? <CircularProgress size={24} color="inherit" /> : 'Entrar'}
+            {loading ? <CircularProgress size={24} color="inherit" /> : "Entrar"}
           </Button>
         </Box>
       </Paper>

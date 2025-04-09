@@ -3,9 +3,10 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import apiAxios from "../../../config/axiosConfig";
 
 // Tipagem de cada rota vinda da API
-export interface Route {
+export interface RouteData {
   id: string;  
   title: string;
+  public: boolean;
   subtitle: string;
   path: string;
   idToFetch: string;
@@ -20,7 +21,7 @@ export interface Route {
 
 // Estado global do slice
 interface RouteState {
-  routes: Route[];
+  routes: RouteData[];
   loading: boolean;
   error: string | null;
 }
@@ -33,10 +34,10 @@ const initialState: RouteState = {
 };
 
 // Thunk para buscar as rotas dinamicamente da API
-export const fetchRoutes = createAsyncThunk<Route[]>(
+export const fetchRoutes = createAsyncThunk<RouteData[]>(
   "routes/fetchRoutes",
   async () => {
-    const response = await apiAxios.get<Route[]>("/routes");
+    const response = await apiAxios.get<RouteData[]>("/routes");
     return response.data;
   }
 );

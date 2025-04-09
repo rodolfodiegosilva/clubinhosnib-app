@@ -1,20 +1,38 @@
-// store/index.ts ou store.ts
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore, combineReducers } from '@reduxjs/toolkit';
+import { persistReducer, persistStore } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import imageReducer from './image/imageSlice';
+
 import authReducer from './auth/authSlice';
-import feedReducer from './gallery/gallerySlice';
 import routesReducer from './route/routeSlice';
 import videoReducer from './video/videoSlice';
-import studyMaterialReducer from './study-material/studyMaterialSlice';
+import meditationReducer from './meditation/meditationSlice';
+import weekMaterialReducer from './week-material/weekMaterialSlice';
+import eventsReducer from './events/eventsSlice';
+
+const authPersistConfig = {
+  key: 'auth',
+  storage,
+  whitelist: ['accessToken', 'refreshToken', 'isAuthenticated'],
+};
+
+const rootReducer = combineReducers({
+  auth: persistReducer(authPersistConfig, authReducer),
+  image: imageReducer,
+  routes: routesReducer,
+  video: videoReducer,
+  meditation: meditationReducer,
+  weekMaterial: weekMaterialReducer,
+  events: eventsReducer,
+});
 
 export const store = configureStore({
-  reducer: {
-    auth: authReducer,
-    feed: feedReducer,
-    routes: routesReducer,
-    video: videoReducer,
-    studyMaterial: studyMaterialReducer,
-  },
+  reducer: rootReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({ serializableCheck: false }),
 });
+
+export const persistor = persistStore(store);
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

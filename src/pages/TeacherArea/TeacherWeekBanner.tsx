@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Typography, Button } from "@mui/material";
 import { Link } from "react-router-dom";
+import { sharedBannerStyles } from "./SharedBannerStyles";
 
 interface TeacherWeekBannerProps {
   title: string;
@@ -16,17 +17,9 @@ const TeacherWeekBanner: React.FC<TeacherWeekBannerProps> = ({
   return (
     <Box
       sx={{
-        width: "100%",
-        minHeight: { xs: "50vh", sm: "55vh", md: "45vh" },
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        textAlign: "center",
-        color: "#fff",
+        ...sharedBannerStyles,
         background: "linear-gradient(to bottom right, #0073E6 0%, #dceeff 100%)",
-        px: 2,
-        py: { xs: 5, md: 8 },
-        boxShadow: "inset 0 0 80px rgba(0,0,0,0.1)",
+        color: "#fff",
       }}
     >
       <Box sx={{ maxWidth: 800 }}>
@@ -38,7 +31,7 @@ const TeacherWeekBanner: React.FC<TeacherWeekBannerProps> = ({
             fontSize: { xs: "1.2rem", md: "1.5rem" },
           }}
         >
-          Olá Professor, estamos na semana:
+          Olá Professor, estamos na:
         </Typography>
 
         <Typography

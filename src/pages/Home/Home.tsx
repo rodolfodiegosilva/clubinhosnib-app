@@ -1,20 +1,37 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Box, Typography, Grid2 } from "@mui/material";
+import { useSelector } from "react-redux";
 import banner from "../../assets/banner_2.png";
 import Card from "../../components/Card/Card";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store/slices";
-import WeekBanner from "components/WeekBanner/WeekBanner";
+import WeekBanner from "../../components/WeekBanner/WeekBanner";
+import { RootState as RootStateType } from "../../store/slices";
+import { RouteData } from "../../store/slices/route/routeSlice";
 
 const Home: React.FC = () => {
-  const dynamicRoutes = useSelector((state: RootState) => state.routes.routes);
-  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const { dynamicRoutes, isAuthenticated } = useSelector((state: RootStateType) => ({
+    dynamicRoutes: state.routes.routes,
+    isAuthenticated: state.auth.isAuthenticated,
+  }));
 
-  const filteredRoutes = dynamicRoutes
-    .filter((route) => route.entityType === "StudyMaterialsPage")
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  const feedImageGalleryId = process.env.REACT_APP_FEED_MINISTERIO_ID ?? "";
+  const excludedTypes = ["WeekMaterialsPage", "meditation"];
 
-  const latestRoute = filteredRoutes[0];
+  const getLatestWeekMaterial = (routes: RouteData[]): RouteData | undefined =>
+    routes
+      .filter((route) => route.entityType === "WeekMaterialsPage")
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
+
+  const latestWeekRoute = useMemo(() => getLatestWeekMaterial(dynamicRoutes), [dynamicRoutes]);
+  const filteredCards = useMemo(
+    () =>
+      dynamicRoutes.filter(
+        (card) =>
+          !excludedTypes.includes(card.entityType) &&
+          (card.public || isAuthenticated) &&
+          card.idToFetch !== feedImageGalleryId
+      ),
+    [dynamicRoutes, isAuthenticated, feedImageGalleryId]
+  );
 
   return (
     <Box
@@ -24,13 +41,15 @@ const Home: React.FC = () => {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
+        width: "100%",
       }}
     >
+      {/* Banner Principal */}
       <Box
         sx={{
           position: "relative",
           width: "100%",
-          height: { xs: "70vh", md: "85vh" },
+          height: { xs: "50vh", sm: "70vh", md: "85vh" },
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -42,7 +61,7 @@ const Home: React.FC = () => {
         <Box
           component="img"
           src={banner}
-          alt="Clubinhos NIB"
+          alt="Banner Clubinhos NIB"
           sx={{
             width: "100%",
             height: "100%",
@@ -50,6 +69,7 @@ const Home: React.FC = () => {
             position: "absolute",
             top: 0,
             left: 0,
+            zIndex: 0,
           }}
         />
         <Box
@@ -59,7 +79,7 @@ const Home: React.FC = () => {
             left: 0,
             width: "100%",
             height: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.4)",
+            backgroundColor: "rgba(0, 0, 0, 0.6)", // Overlay mais escuro para contraste
             zIndex: 1,
           }}
         />
@@ -67,51 +87,62 @@ const Home: React.FC = () => {
           sx={{
             position: "relative",
             zIndex: 2,
-            maxWidth: "800px",
-            px: 2,
+            px: { xs: 2, sm: 4 },
+            maxWidth: { xs: "90%", sm: "800px" },
           }}
         >
           <Typography
             variant="h3"
+            component="h1"
             fontWeight="bold"
             gutterBottom
-            sx={{ textShadow: "2px 2px 5px rgba(0, 0, 0, 0.5)" }}
+            sx={{
+              color: "#FFF176", // Amarelo claro para o título
+              textShadow: "2px 2px 5px rgba(0, 0, 0, 0.5)",
+              fontSize: { xs: "1.8rem", sm: "2.5rem", md: "3rem" },
+            }}
           >
             Bem-vindo ao Clubinhos NIB
           </Typography>
-          <Typography variant="h5">
+          <Typography
+            variant="h5"
+            sx={{
+              color: "#FFFFFF", // Branco puro para o subtítulo
+              textShadow: "1px 1px 3px rgba(0, 0, 0, 0.5)",
+              fontSize: { xs: "1rem", sm: "1.5rem" },
+            }}
+          >
             Ministério de evangelismo que leva a palavra de Deus para as crianças que precisam
             conhecer o amor de Jesus.
           </Typography>
         </Box>
       </Box>
 
-      {isAuthenticated && latestRoute && latestRoute.title && latestRoute.path && (
+      {/* Banner Semanal */}
+      {isAuthenticated && latestWeekRoute && (
         <WeekBanner
-          title={latestRoute.title}
-          subtitle={latestRoute.subtitle}
-          linkTo={`/${latestRoute.path}`}
+          title={latestWeekRoute.title ?? "Sem título"}
+          subtitle={latestWeekRoute.subtitle ?? ""}
+          linkTo={`/${latestWeekRoute.path}`}
         />
       )}
 
-      <Box sx={{ width: "90%", py: 6 }}>
-        <Grid2 container spacing={4} justifyContent="center">
-          {dynamicRoutes
-            .filter((card) => card.entityType !== "StudyMaterialsPage")
-            .map((card) => (
-              <Grid2 key={card.id}>
-                <Card
-                  title={card.title}
-                  description={card.description}
-                  image={card.image ?? ""}
-                  link={`/${card.path}`}
-                  type={card.type}
-                />
-              </Grid2>
-            ))}
+      {/* Grid de Cards */}
+      <Box sx={{ width: { xs: "95%", sm: "90%", md: "85%" }, py: { xs: 4, sm: 6 } }}>
+        <Grid2 container spacing={{ xs: 2, sm: 4 }} justifyContent="center">
+          {filteredCards.map((card) => (
+            <Grid2 key={card.id} size={{ xs: 12, sm: 6, md: 4 }}>
+              <Card
+                title={card.title ?? "Sem título"}
+                description={card.description ?? ""}
+                image={card.image ?? ""}
+                link={`/${card.path}`}
+                type={card.type ?? "default"}
+              />
+            </Grid2>
+          ))}
         </Grid2>
       </Box>
-
     </Box>
   );
 };
