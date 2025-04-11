@@ -166,7 +166,7 @@ export default function MeditationListPage() {
         variant="h4"
         fontWeight="bold"
         textAlign="center"
-        sx={{ mt: { xs: 0, md: 0 }, mb: { xs: 6, md: 3 }, fontSize: { xs: "1.5rem", md: "2.4rem" } }}
+        sx={{ mt: 0, mb: { xs: 6, md: 3 }, fontSize: { xs: "1.5rem", md: "2.4rem" } }}
       >
         Meditações Semanais
       </Typography>
@@ -178,6 +178,10 @@ export default function MeditationListPage() {
       ) : error ? (
         <Box textAlign="center" mt={10}>
           <Alert severity="error">{error}</Alert>
+        </Box>
+      ) : meditations.length === 0 ? (
+        <Box textAlign="center" mt={10}>
+          <Alert severity="info">Nenhuma meditação encontrada.</Alert>
         </Box>
       ) : (
         <Grid container spacing={4} justifyContent="center">
@@ -213,10 +217,21 @@ export default function MeditationListPage() {
                 </IconButton>
 
                 <CardContent>
-                  <Typography variant="h6" fontWeight="bold" textAlign="center" gutterBottom sx={{ mt: { xs: 0, md: 2 }, mb: { xs: 1, md: 2 }, fontSize: { xs: "1rem", md: "1.5rem" } }}>
+                  <Typography
+                    variant="h6"
+                    fontWeight="bold"
+                    textAlign="center"
+                    gutterBottom
+                    sx={{ mt: { xs: 0, md: 2 }, mb: { xs: 1, md: 2 }, fontSize: { xs: "1rem", md: "1.5rem" } }}
+                  >
                     {meditation.topic}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" textAlign="center" sx={{ mt: { xs: 0, md: 2 }, mb: { xs: 1, md: 2 }, fontSize: { xs: ".8rem", md: "1rem" } }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    textAlign="center"
+                    sx={{ mt: { xs: 0, md: 2 }, mb: { xs: 1, md: 2 }, fontSize: { xs: ".8rem", md: "1rem" } }}
+                  >
                     {formatDate(meditation.startDate)} - {formatDate(meditation.endDate)}
                   </Typography>
 
@@ -278,6 +293,7 @@ export default function MeditationListPage() {
         </Grid>
       )}
 
+      {/* Dialogs */}
       <Dialog
         open={!!selectedDay}
         onClose={() => setSelectedDay(null)}

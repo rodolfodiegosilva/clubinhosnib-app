@@ -19,8 +19,8 @@ export default function AdminDashboardPage() {
     <Box
       sx={{
         width: "100%",
-        px: { xs: 2, md: 4 },
-        py: { xs: 4, md: 6 },
+        px: { xs: 0, md: 4 },
+        py: { xs: 0, md: 6 },
       }}
     >
       <Typography

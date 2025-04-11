@@ -55,10 +55,10 @@ export default function SelecPageTemplate() {
     <Box
       sx={{
         minHeight: "100vh",
-        px: { xs: 0, md: 6 },
+        px: { xs: 0, md: 0 },
         py: { xs: 0, md: 8 },
-        mt: { xs: 0, md: 2 },
-        mb: { xs: 4, md: 8 },
+        mt: { xs: 0, md: 0 },
+        mb: { xs: 0, md: 0 },
         display: "flex",
         flexDirection: "column",
         alignItems: "center",

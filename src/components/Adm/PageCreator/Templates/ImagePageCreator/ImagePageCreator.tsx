@@ -53,7 +53,7 @@ export default function ImagePageCreator({ fromTemplatePage }: ImageProps) {
   const [currentEditingIndex, setCurrentEditingIndex] = useState<number | null>(null);
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [confirmMessage, setConfirmMessage] = useState("");
-  const [onConfirmAction, setOnConfirmAction] = useState<() => void>(() => {});
+  const [onConfirmAction, setOnConfirmAction] = useState<() => void>(() => { });
   const [isSaving, setIsSaving] = useState(false);
   const [successSnackbarOpen, setSuccessSnackbarOpen] = useState(false);
   const [errorSnackbarOpen, setErrorSnackbarOpen] = useState(false);
@@ -96,20 +96,20 @@ export default function ImagePageCreator({ fromTemplatePage }: ImageProps) {
 
   const handleSaveAll = async () => {
     if (!validate()) return;
-  
+
     try {
       setIsSaving(true);
       const formData = new FormData();
-  
+
       const sectionsPayload: SectionData[] = sections.map((section, sectionIndex) => {
         const mediaItems: MediaItem[] = section.mediaItems.map((media, mediaIndex) => {
           const fieldKey = `file_sec${sectionIndex}_mid${mediaIndex}`;
-  
+
           // Adiciona o arquivo à FormData se for local
           if (media.isLocalFile && media.file) {
             formData.append(fieldKey, media.file);
           }
-  
+
           const baseMedia = {
             isLocalFile: media.isLocalFile,
             url: media.url || "",
@@ -123,45 +123,45 @@ export default function ImagePageCreator({ fromTemplatePage }: ImageProps) {
             file: media.file,
             fieldKey,
           };
-  
+
           // Se for uma criação (do template) e não tiver id, omite o id
           return fromTemplatePage && !media.id
             ? { ...baseMedia }
             : { ...baseMedia, id: media.id }; // Inclui o id na edição
         });
-  
+
         const baseSection = {
           public: section.public,
           caption: section.caption,
           description: section.description,
           mediaItems,
         };
-  
+
         // Se for criação (do template) e não tiver id, omite o id
         return fromTemplatePage && !section.id
           ? { ...baseSection }
           : { ...baseSection, id: section.id }; // Inclui o id da seção na edição
       });
-  
+
       const payload: ImagePageData = {
         ...((fromTemplatePage === false || fromTemplatePage === undefined) && imageData?.id && { id: imageData.id }), // Inclui o id se for edição e se o id existir
-  
+
         public: isPublic,
         title,
         description,
         sections: sectionsPayload,
       };
-  
+
       formData.append("imageData", JSON.stringify(payload));
-  
+
       const response = fromTemplatePage
         ? await api.post("/image-pages", formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-          })
+          headers: { "Content-Type": "multipart/form-data" },
+        })
         : await api.patch(`/image-pages/${imageData?.id}`, formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-          });
-  
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+
       await dispatch(fetchRoutes());
       navigate(`/${response.data.route.path}`);
     } catch (error) {
@@ -171,8 +171,8 @@ export default function ImagePageCreator({ fromTemplatePage }: ImageProps) {
       setIsSaving(false);
     }
   };
-  
-  
+
+
 
   const openModal = (index: number) => {
     setCurrentEditingIndex(index);
@@ -206,9 +206,9 @@ export default function ImagePageCreator({ fromTemplatePage }: ImageProps) {
         prev.map((section, i) =>
           i === sectionIndex
             ? {
-                ...section,
-                mediaItems: section.mediaItems.filter((_, j) => j !== mediaIndex),
-              }
+              ...section,
+              mediaItems: section.mediaItems.filter((_, j) => j !== mediaIndex),
+            }
             : section
         )
       )
@@ -251,7 +251,18 @@ export default function ImagePageCreator({ fromTemplatePage }: ImageProps) {
   };
 
   return (
-    <Container maxWidth={false} sx={{ maxWidth: "95% !important", mt: fromTemplatePage ? 0 : 11, p: 0 }}>
+    <Container
+      maxWidth={false}
+      sx={{
+        maxWidth: "95% !important",
+        mt: { xs: 0, md: 0 },
+        mb: { xs: 0, md: 0 },
+        pt: { xs: 2, md: 0 },
+        pb: { xs: 2, md: 2 },
+        px: 0,
+      }}
+    >
+
       <Typography variant="h4" fontWeight="bold" mb={3} textAlign="center">
         {fromTemplatePage ? "Criar Galeria de Fotos" : "Editar Galeria de Fotos"}
       </Typography>

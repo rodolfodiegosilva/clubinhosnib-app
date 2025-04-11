@@ -12,6 +12,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Tooltip,
+  Fab,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import api from "../../../config/axiosConfig";
@@ -21,6 +23,8 @@ import { fetchRoutes } from "../../../store/slices/route/routeSlice";
 import { RoleUser } from "store/slices/auth/authSlice";
 import type { ImagePageData } from "../../../store/slices/image/imageSlice";
 import SectionImagePageView from "./SectionImagePageView";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 interface PageGalleryProps {
   idToFetch?: string;
@@ -121,7 +125,6 @@ export default function PageGalleryView({ idToFetch }: PageGalleryProps) {
         overflowX: "hidden",
       }}
     >
-      {/* Cabeçalho da galeria */}
       <Box
         sx={{
           textAlign: "center",
@@ -133,7 +136,13 @@ export default function PageGalleryView({ idToFetch }: PageGalleryProps) {
           position: "relative",
         }}
       >
-        <Typography variant="h4" fontWeight="bold">
+        <Typography
+          variant="h4"
+          fontWeight="bold"
+          sx={{
+            fontSize: { xs: '1.5rem', md: '2.125rem' },
+          }}
+        >
           {localData.title}
         </Typography>
 
@@ -149,22 +158,23 @@ export default function PageGalleryView({ idToFetch }: PageGalleryProps) {
           {localData.description}
         </Typography>
 
-        {/* Botões de administrador (somente para ADMIN) */}
+        {/* Botões de administrador (desktop) */}
         {isAdmin && (
           <Box
-            mt={3}
-            display="flex"
-            flexDirection={{ xs: "column", sm: "row" }}
-            justifyContent="center"
-            alignItems="center"
-            gap={1}
+            sx={{
+              mt: 3,
+              display: { xs: "none", sm: "flex" },
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: 1,
+            }}
           >
             <Button
               variant="contained"
               color="warning"
               onClick={() => navigate("/adm/editar-pagina-fotos")}
               disabled={isDeleting}
-              fullWidth={false}
             >
               Editar Página
             </Button>
@@ -173,10 +183,45 @@ export default function PageGalleryView({ idToFetch }: PageGalleryProps) {
               color="error"
               onClick={() => setDeleteConfirmOpen(true)}
               disabled={isDeleting}
-              fullWidth={false}
             >
               Excluir Página
             </Button>
+          </Box>
+        )}
+
+        {isAdmin && (
+          <Box
+            sx={{
+              position: "fixed",
+              bottom: 20,
+              right: 20,
+              zIndex: 1300,
+              display: { xs: "flex", sm: "none" },
+              flexDirection: "column",
+              gap: 1,
+            }}
+          >
+            <Tooltip title="Editar Página" placement="left">
+              <Fab
+                color="warning"
+                size="medium"
+                onClick={() => navigate("/adm/editar-pagina-fotos")}
+                disabled={isDeleting}
+              >
+                <EditIcon />
+              </Fab>
+            </Tooltip>
+
+            <Tooltip title="Excluir Página" placement="left">
+              <Fab
+                color="error"
+                size="medium"
+                onClick={() => setDeleteConfirmOpen(true)}
+                disabled={isDeleting}
+              >
+                <DeleteIcon />
+              </Fab>
+            </Tooltip>
           </Box>
         )}
       </Box>
@@ -194,8 +239,7 @@ export default function PageGalleryView({ idToFetch }: PageGalleryProps) {
               createdAt={section.createdAt || ""}
               updatedAt={section.updatedAt || ""}
             />
-          ))
-        }
+          ))}
       </Box>
 
       <Dialog
