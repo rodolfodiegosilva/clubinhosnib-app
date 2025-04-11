@@ -5,9 +5,7 @@ import {
   Box,
   Typography,
   Grid,
-  useMediaQuery,
   useTheme,
-  CircularProgress,
   Button,
   Dialog,
   DialogTitle,
@@ -17,7 +15,11 @@ import {
   Container,
   Alert,
   Paper,
+  Skeleton,
+  Tooltip,
 } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import api from "../../../config/axiosConfig";
 import { RootState, AppDispatch } from "../../../store/slices";
 import { setVideoData } from "../../../store/slices/video/videoSlice";
@@ -35,7 +37,6 @@ export default function PageVideoView({ idToFetch }: VideoPageViewProps) {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
   const theme = useTheme();
-  const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
@@ -79,13 +80,15 @@ export default function PageVideoView({ idToFetch }: VideoPageViewProps) {
 
   if (loading) {
     return (
-      <Container sx={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <Box textAlign="center">
-          <CircularProgress size={60} thickness={4} />
-          <Typography variant="h6" mt={2} color="textSecondary">
-            Carregando...
-          </Typography>
-        </Box>
+      <Container sx={{ py: 8 }}>
+        <Skeleton variant="rectangular" width="100%" height={200} sx={{ borderRadius: 3, mb: 4 }} />
+        <Grid container spacing={4}>
+          {[...Array(3)].map((_, index) => (
+            <Grid item xs={12} md={6} key={index}>
+              <Skeleton variant="rectangular" width="100%" height={200} sx={{ borderRadius: 3 }} />
+            </Grid>
+          ))}
+        </Grid>
       </Container>
     );
   }
@@ -93,7 +96,7 @@ export default function PageVideoView({ idToFetch }: VideoPageViewProps) {
   if (error) {
     return (
       <Container sx={{ mt: 10 }}>
-        <Alert severity="error" sx={{ borderRadius: 2 }}>
+        <Alert severity="error" sx={{ borderRadius: 2, boxShadow: 3 }}>
           {error}
         </Alert>
       </Container>
@@ -111,88 +114,176 @@ export default function PageVideoView({ idToFetch }: VideoPageViewProps) {
   }
 
   return (
-    <Container sx={{ py: 8 }}>
-      <Paper
-        elevation={4}
-        sx={{
-          p: 4,
-          mb: 6,
-          borderRadius: 3,
-          background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
-        }}
-      >
-        <Box textAlign="center">
+    <Box
+      sx={{
+        bgcolor: "#f5f7fa",
+        minHeight: "100vh",
+        pt: { xs: 4, md: 8 },
+        pb: { xs: 4, md: 0 },
+        mt: { xs: 4, md: 4 },
+        mb: { xs: 2, md: 0 },
+      }}
+    >
+      <Container maxWidth="lg">
+        <Paper
+          elevation={4}
+          sx={{
+            p: 4,
+            mb: 4,
+            borderRadius: 3,
+            background: "linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%)",
+            position: "relative",
+          }}
+        >
           <Typography
             variant="h3"
             fontWeight="bold"
             color="primary"
-            sx={{ mb: 1, textShadow: "1px 1px 2px rgba(0,0,0,0.1)" }}
+            sx={{
+              fontSize: { xs: '2rem', md: '3rem' },
+              mb: { xs: 2, md: 3 },
+              textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
+            }}
           >
-            {videoData.title} {/* Atualizado para title */}
+            {videoData.title}
           </Typography>
-          <Typography variant="subtitle1" color="textSecondary" sx={{ maxWidth: "600px", mx: "auto" }}>
+
+          <Typography
+            variant="subtitle1"
+            color="textSecondary"
+            sx={{ maxWidth: "600px", mx: "auto" }}
+          >
             {videoData.description}
           </Typography>
 
           {isAdmin && (
-            <Box mt={3} display="flex" justifyContent="center" gap={2}>
-              <Button
-                variant="contained"
-                color="warning"
-                onClick={() => navigate("/adm/editar-pagina-videos", { state: { fromTemplatePage: false } })}
-                disabled={isDeleting}
-                sx={{ borderRadius: 2, px: 3 }}
+            <>
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: 16,
+                  right: 16,
+                  display: { xs: "none", sm: "flex" },
+                  gap: 2,
+                }}
               >
-                Editar Página
-              </Button>
-              <Button
-                variant="outlined"
-                color="error"
-                onClick={() => setDeleteConfirmOpen(true)}
-                disabled={isDeleting}
-                sx={{ borderRadius: 2, px: 3 }}
+                <Tooltip title="Editar página de vídeos">
+                  <Button
+                    variant="contained"
+                    color="warning"
+                    onClick={() =>
+                      navigate("/adm/editar-pagina-videos", {
+                        state: { fromTemplatePage: false },
+                      })
+                    }
+                    disabled={isDeleting}
+                    startIcon={<EditIcon />}
+                  >
+                    Editar
+                  </Button>
+                </Tooltip>
+                <Tooltip title="Excluir página de vídeos">
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={() => setDeleteConfirmOpen(true)}
+                    disabled={isDeleting}
+                    startIcon={<DeleteIcon />}
+                  >
+                    Excluir
+                  </Button>
+                </Tooltip>
+              </Box>
+
+              <Box
+                sx={{
+                  position: "fixed",
+                  bottom: 24,
+                  right: 24,
+                  display: { xs: "flex", sm: "none" },
+                  flexDirection: "column",
+                  gap: 2,
+                  zIndex: 1300,
+                }}
               >
-                Excluir Página
-              </Button>
-            </Box>
+                <Tooltip title="Editar página de vídeos">
+                  <Button
+                    variant="contained"
+                    color="warning"
+                    onClick={() =>
+                      navigate("/adm/editar-pagina-videos", {
+                        state: { fromTemplatePage: false },
+                      })
+                    }
+                    disabled={isDeleting}
+                    sx={{
+                      borderRadius: "50%",
+                      minWidth: 56,
+                      width: 56,
+                      height: 56,
+                      p: 0,
+                    }}
+                  >
+                    <EditIcon />
+                  </Button>
+                </Tooltip>
+
+                <Tooltip title="Excluir página de vídeos">
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => setDeleteConfirmOpen(true)}
+                    disabled={isDeleting}
+                    sx={{
+                      borderRadius: "50%",
+                      minWidth: 56,
+                      width: 56,
+                      height: 56,
+                      p: 0,
+                    }}
+                  >
+                    <DeleteIcon />
+                  </Button>
+                </Tooltip>
+              </Box>
+            </>
           )}
-        </Box>
-      </Paper>
+        </Paper>
 
-      <Grid container spacing={4}>
-        {videoData.videos.map((video) => (
-          <Grid item xs={12} key={video.id}>
-            <VideoCard video={video} isSmall={isSmall} />
-          </Grid>
-        ))}
-      </Grid>
+        <Grid container spacing={4}>
+          {videoData.videos.map((video) => (
+            <Grid item xs={12} sm={6} md={4} key={video.id}>
+              <VideoCard video={video} />
+            </Grid>
+          ))}
+        </Grid>
 
-      <Dialog
-        open={deleteConfirmOpen}
-        onClose={() => !isDeleting && setDeleteConfirmOpen(false)}
-        PaperProps={{ sx: { borderRadius: 2 } }}
-      >
-        <DialogTitle>Confirmar exclusão</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Tem certeza que deseja excluir esta página de vídeos? Esta ação não pode ser desfeita.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDeleteConfirmOpen(false)} disabled={isDeleting}>
-            Cancelar
-          </Button>
-          <Button
-            onClick={handleDeletePage}
-            color="error"
-            autoFocus
-            disabled={isDeleting}
-            startIcon={isDeleting && <CircularProgress size={20} />}
-          >
-            {isDeleting ? "Excluindo..." : "Confirmar Exclusão"}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Container>
+        <Dialog
+          open={deleteConfirmOpen}
+          onClose={() => !isDeleting && setDeleteConfirmOpen(false)}
+          PaperProps={{ sx: { borderRadius: 2 } }}
+        >
+          <DialogTitle>Confirmar exclusão</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Tem certeza que deseja excluir esta página de vídeos? Esta ação não pode ser desfeita.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setDeleteConfirmOpen(false)} disabled={isDeleting}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleDeletePage}
+              color="error"
+              autoFocus
+              disabled={isDeleting}
+            >
+              {isDeleting ? "Excluindo..." : "Confirmar Exclusão"}
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Container>
+    </Box>
   );
 }

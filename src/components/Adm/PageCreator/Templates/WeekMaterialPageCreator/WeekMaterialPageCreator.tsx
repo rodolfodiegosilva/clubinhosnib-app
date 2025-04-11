@@ -19,15 +19,45 @@ import {
   clearWeekMaterialData,
   WeekMediaItem,
 } from "../../../../../store/slices/week-material/weekMaterialSlice";
-
 import WeekVideos from "./WeekVideos";
 import WeekDocuments from "./WeekDocuments";
 import WeekAudios from "./WeekAudios";
-import api from "../../../../../config/axiosConfig";
 import WeekImages from "./WeekImages";
+import api from "../../../../../config/axiosConfig";
 
 interface WeekMaterialPageCreatorProps {
   fromTemplatePage?: boolean;
+}
+
+interface FileItem {
+  type: "upload" | "link";
+  url?: string;
+  file?: File;
+  [key: string]: any;
+}
+
+function buildFileItem<T extends FileItem>(
+  item: T,
+  index: number,
+  prefix: string,
+  formData: FormData
+): T & { fileField?: string } {
+  if (item.type === "upload" && item.file instanceof File) {
+    const extension = item.file.name.split(".").pop() || "bin";
+    const filename = `${prefix}_${index}.${extension}`;
+    formData.append(filename, item.file, filename);
+
+    return {
+      ...item,
+      url: undefined, // Removemos a URL local usada no front
+      fileField: filename,
+    };
+  }
+
+  return {
+    ...item,
+    fileField: undefined,
+  };
 }
 
 export default function WeekMaterialPageCreator({
@@ -86,11 +116,7 @@ export default function WeekMaterialPageCreator({
   }, [fromTemplatePage, studyData]);
 
   const handleSavePage = async () => {
-    const hasError =
-      !pageTitle ||
-      !pageSubtitle ||
-      !pageDescription ||
-      (!videos.length && !documents.length && !images.length && !audios.length);
+    const hasError = !pageTitle || !pageSubtitle || !pageDescription;
 
     setErrors({
       title: !pageTitle,
@@ -101,7 +127,7 @@ export default function WeekMaterialPageCreator({
     if (hasError) {
       setSnackbar({
         open: true,
-        message: "Preencha todos os campos obrigatórios e adicione ao menos um material.",
+        message: "Preencha todos os campos obrigatórios.",
         severity: "error",
       });
       return;
@@ -118,53 +144,53 @@ export default function WeekMaterialPageCreator({
       const processedAudios = audios.map((a, x) => buildFileItem(a, x, "audio", formData));
 
       const payload = {
-        id: fromTemplatePage ? undefined : studyData?.id,
+        ...(fromTemplatePage ? {} : { id: studyData?.id }),
         pageTitle,
         pageSubtitle,
         pageDescription,
         videos: processedVideos.map((v) => ({
-          id: v.id,
+          ...(v.id && { id: v.id }), // Inclui id apenas se existir
           title: v.title,
           description: v.description,
           type: v.type,
-          platform: v.platform,
-          url: v.url || '',
-          fileField: v.fileField || '',
-          isLocalFile: v.isLocalFile ?? (v.type === "upload" ? true : false),    
-          size: v.size,
+          isLocalFile: v.type === "upload" ? true : false,
+          ...(v.platform && { platform: v.platform }), // Inclui platform se existir
+          ...(v.url && { url: v.url }), // Inclui url se existir
+          ...(v.fileField && { fieldKey: v.fileField }), // Usa fieldKey em vez de fileField
+          ...(v.size && { size: String(v.size) }), // Converte size para string
         })),
         documents: processedDocs.map((d) => ({
-          id: d.id,
+          ...(d.id && { id: d.id }),
           title: d.title,
           description: d.description,
           type: d.type,
-          platform: d.platform,
-          url:  d.url || '',
-          fileField: d.fileField || '',
-          isLocalFile: d.isLocalFile ?? (d.type === "upload" ? true : false),    
-          size: d.size,
+          isLocalFile: d.type === "upload" ? true : false,
+          ...(d.platform && { platform: d.platform }),
+          ...(d.url && { url: d.url }),
+          ...(d.fileField && { fieldKey: d.fileField }),
+          ...(d.size && { size: String(d.size) }),
         })),
         images: processedImgs.map((i) => ({
-          id: i.id,
+          ...(i.id && { id: i.id }),
           title: i.title,
           description: i.description,
           type: i.type,
-          platform: i.platform,
-          url: i.url || '',
-          fileField: i.fileField || '',
-          isLocalFile: i.isLocalFile ?? (i.type === "upload" ? true : false),    
-          size: i.size,
+          isLocalFile: i.type === "upload" ? true : false,
+          ...(i.platform && { platform: i.platform }),
+          ...(i.url && { url: i.url }),
+          ...(i.fileField && { fieldKey: i.fileField }),
+          ...(i.size && { size: String(i.size) }),
         })),
         audios: processedAudios.map((a) => ({
-          id: a.id,
+          ...(a.id && { id: a.id }),
           title: a.title,
           description: a.description,
           type: a.type,
-          platform: a.platform,
-          url:  a.url || '',
-          fileField:  a.fileField || '',
-          isLocalFile: a.isLocalFile ?? (a.type === "upload" ? true : false),    
-          size: a.size,
+          isLocalFile: a.type === "upload" ? true : false,
+          ...(a.platform && { platform: a.platform }),
+          ...(a.url && { url: a.url }),
+          ...(a.fileField && { fieldKey: a.fileField }),
+          ...(a.size && { size: String(a.size) }),
         })),
       };
 
@@ -203,7 +229,7 @@ export default function WeekMaterialPageCreator({
 
   return (
     <Box sx={{ p: 0, m: 0, mt: fromTemplatePage ? 0 : 10, width: "98%", maxWidth: 1000, mx: "auto" }}>
-      <Typography variant="h3" mb={3} fontWeight="bold" textAlign="center"  sx={{ mt: { xs: 0, md: 0 }, mb: { xs: 1, md: 3 }, fontSize: { xs: "1.5rem", md: "2rem" } }}>
+      <Typography variant="h3" mb={3} fontWeight="bold" textAlign="center" sx={{ mt: { xs: 0, md: 0 }, mb: { xs: 1, md: 3 }, fontSize: { xs: "1.5rem", md: "2rem" } }}>
         {fromTemplatePage ? "Adicionar Semana" : "Editar Semana"}
       </Typography>
 
@@ -278,40 +304,4 @@ export default function WeekMaterialPageCreator({
       </Snackbar>
     </Box>
   );
-}
-
-
- interface FileItem {
-  type: "upload" | "link";
-  url?: string;
-  file?: File;
-  [key: string]: any;
-}
-
-/**
- * Adiciona um arquivo de upload ao FormData e retorna o item com `fileField` para referência no JSON.
- * Suporta múltiplos tipos: vídeo, imagem, documento e áudio.
- */
- function buildFileItem<T extends FileItem>(
-  item: T,
-  index: number,
-  prefix: string,
-  formData: FormData
-): T & { fileField?: string } {
-  if (item.type === "upload" && item.file instanceof File) {
-    const extension = item.file.name.split(".").pop() || "bin";
-    const filename = `${prefix}_${index}.${extension}`;
-    formData.append(filename, item.file, filename);
-
-    return {
-      ...item,
-      url: undefined, // removemos a prévia usada no front
-      fileField: filename,
-    };
-  }
-
-  return {
-    ...item,
-    fileField: undefined,
-  };
 }

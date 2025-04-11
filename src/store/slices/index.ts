@@ -2,13 +2,13 @@ import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import imageReducer from './image/imageSlice';
-
 import authReducer from './auth/authSlice';
 import routesReducer from './route/routeSlice';
 import videoReducer from './video/videoSlice';
 import meditationReducer from './meditation/meditationSlice';
 import weekMaterialReducer from './week-material/weekMaterialSlice';
 import eventsReducer from './events/eventsSlice';
+import commentsReducer from './comment/commentsSlice'; // Importação do reducer de comentários
 
 const authPersistConfig = {
   key: 'auth',
@@ -24,6 +24,7 @@ const rootReducer = combineReducers({
   meditation: meditationReducer,
   weekMaterial: weekMaterialReducer,
   events: eventsReducer,
+  comments: commentsReducer, // Reducer de comentários adicionado aqui
 });
 
 export const store = configureStore({

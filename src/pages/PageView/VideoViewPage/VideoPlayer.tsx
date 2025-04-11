@@ -4,7 +4,7 @@ import { VideoItem } from "store/slices/video/videoSlice";
 const VideoPlayer = ({ video }: { video: VideoItem }) => {
   if (video.type === "upload" && video.url) {
     return (
-      <Box sx={{ borderRadius: 3, overflow: "hidden", boxShadow: "0 2px 10px rgba(0,0,0,0.1)" }}>
+      <Box sx={{ borderRadius: 3, overflow: "hidden" }}>
         <video controls style={{ width: "100%", display: "block" }}>
           <source src={video.url} />
           Seu navegador não suporta vídeo.
@@ -27,7 +27,7 @@ const VideoPlayer = ({ video }: { video: VideoItem }) => {
     }
 
     return embedUrl ? (
-      <Box sx={{ borderRadius: 3, overflow: "hidden", boxShadow: "0 2px 10px rgba(0,0,0,0.1)" }}>
+      <Box sx={{ borderRadius: 3, overflow: "hidden" }}>
         <iframe
           src={embedUrl}
           title={video.title}

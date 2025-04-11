@@ -2,6 +2,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import apiAxios from "../../../config/axiosConfig";
 
+export enum Type {
+  Page = "page",
+  Doc = "doc",
+}
+
 // Tipagem de cada rota vinda da API
 export interface RouteData {
   id: string;  
@@ -13,7 +18,7 @@ export interface RouteData {
   entityType: string;
   description: string;
   entityId: string;
-  type: string;
+  type: Type;
   image: string | null;
   createdAt: string;
   updatedAt: string;

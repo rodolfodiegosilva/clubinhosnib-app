@@ -8,6 +8,9 @@ import {
   List,
   ListItem,
   ListItemText,
+  Grid,
+  Card,
+  CardContent,
 } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store/slices';
@@ -16,11 +19,15 @@ import api from '../../config/axiosConfig';
 import {
   setMeditationData,
   MeditationData,
-  MediaItem,
-  DayItem,
-  WeekDay,
 } from '../../store/slices/meditation/meditationSlice';
 import TeacherMeditationBanner from './TeacherMeditationBanner';
+import { motion } from 'framer-motion';
+import CommentsSection from './CommentsSection';
+import TrainingVideosSection from './TrainingVideosSection'; // Novo componente
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import InfoIcon from '@mui/icons-material/Info';
+import LightbulbIcon from '@mui/icons-material/Lightbulb';
+import PhotoIcon from '@mui/icons-material/Photo';
 
 const TeacherArea: React.FC = () => {
   const dispatch = useDispatch();
@@ -32,25 +39,11 @@ const TeacherArea: React.FC = () => {
     async function fetchMeditation() {
       try {
         const response = await api.get('/meditations/this-week');
-        /**
-         * Resposta esperada:
-         * {
-         *   status: 'Meditação da Semana' | 'Meditação não encontrada',
-         *   meditation: {
-         *     id, topic, startDate, endDate, days: [...], media: {...}
-         *   } | null
-         * }
-         */
         if (response.data.status === 'Meditação da Semana' && response.data.meditation) {
-          const m = response.data.meditation;
-
           dispatch(setMeditationData(response.data.meditation as MeditationData));
-
-        } else {
-          console.log('Nenhuma meditação encontrada para esta semana.');
         }
       } catch (error) {
-        console.error('Erro ao buscar a meditação da semana:', error);
+        console.error('Erro ao buscar meditação:', error);
       }
     }
     fetchMeditation();
@@ -59,14 +52,14 @@ const TeacherArea: React.FC = () => {
   const filteredRoutes = dynamicRoutes
     .filter((route) => route.entityType === 'WeekMaterialsPage')
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-
   const latestRoute = filteredRoutes[0];
 
   const motivacaoEvangelismo =
     '💬 Que tal aproveitar esta semana para compartilhar o amor de Jesus com alguém da sua comunidade? Uma conversa, uma visita, uma oração... cada gesto conta!';
 
   return (
-    <Container maxWidth={false} sx={{ width: '100%', mt: 10, mb: 8, mx: 'auto' }}>
+    <Container maxWidth={false} sx={{ width: '100%', mt: 10, mb: 8, mx: 'auto', bgcolor: '#f5f7fa' }}>
+      {/* Banners (inalterados) */}
       <Box
         sx={{
           display: 'flex',
@@ -84,7 +77,6 @@ const TeacherArea: React.FC = () => {
             />
           </Box>
         )}
-
         {meditationData && meditationData.days && meditationData.days.length > 0 && (
           <Box sx={{ flex: 1 }}>
             <TeacherMeditationBanner meditation={meditationData} />
@@ -98,144 +90,175 @@ const TeacherArea: React.FC = () => {
         sx={{
           backgroundColor: '#e3f2fd',
           p: { xs: 2, md: 3 },
-          mb: 4,
+          mb: 5,
           borderLeft: '6px solid #2196f3',
+          borderRadius: 2,
         }}
       >
-        <Typography variant="h6" fontWeight="bold" gutterBottom>
+        <Typography variant="h6" fontWeight="bold" color="#2196f3" gutterBottom>
           ✨ Motivação para Evangelizar
         </Typography>
         <Typography variant="body1">{motivacaoEvangelismo}</Typography>
       </Paper>
 
       {/* Bloco Principal */}
-      <Paper elevation={3} sx={{ p: { xs: 3, md: 5 } }}>
-        <Typography variant="h4" fontWeight="bold" gutterBottom>
+      <Paper
+        elevation={4}
+        sx={{
+          p: { xs: 3, md: 5 },
+          borderRadius: 3,
+          background: 'linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%)',
+        }}
+      >
+        <Typography variant="h4" fontWeight="bold" color="#424242" gutterBottom>
           Área do Professor
         </Typography>
-
-        <Divider sx={{ my: 2 }} />
+        <Divider sx={{ my: 3, borderColor: '#e0e0e0' }} />
 
         {isAuthenticated ? (
           <Box>
-            <Typography variant="h6" gutterBottom>
+            <Typography variant="h6" gutterBottom color="#616161">
               Olá, {user?.name || 'Professor'}!
             </Typography>
-
-            <Typography variant="body1" gutterBottom>
-              Seja bem-vindo à sua central de apoio pedagógico. Aqui você encontrará conteúdos atualizados semanalmente, orientações e recursos exclusivos para enriquecer suas aulas.
+            <Typography variant="body1" gutterBottom color="#757575">
+              Bem-vindo à sua central de apoio pedagógico. Explore recursos atualizados semanalmente e enriqueça suas aulas!
             </Typography>
 
-            {/* Objetivos */}
+            {/* Seções em Grade */}
+            <Grid container spacing={3} sx={{ mt: 4 }}>
+              <Grid item xs={12} md={4}>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+                  <Card
+                    sx={{
+                      borderLeft: '5px solid #4caf50',
+                      height: '100%',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                      transition: 'all 0.3s ease',
+                      '&:hover': { boxShadow: '0 6px 18px rgba(0,0,0,0.15)' },
+                    }}
+                  >
+                    <CardContent>
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                        <CheckCircleIcon sx={{ color: '#4caf50', mr: 1 }} />
+                        <Typography variant="h6" fontWeight="bold" color="#424242">
+                          Objetivos da Área
+                        </Typography>
+                      </Box>
+                      <List dense>
+                        <ListItem>
+                          <ListItemText primary="Materiais alinhados ao calendário semanal." />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemText primary="Conteúdos por faixa etária e tema." />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemText primary="Apoio didático e sugestões de atividades." />
+                        </ListItem>
+                      </List>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </Grid>
+
+              <Grid item xs={12} md={4}>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+                  <Card
+                    sx={{
+                      borderLeft: '5px solid #f44336',
+                      height: '100%',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                      transition: 'all 0.3s ease',
+                      '&:hover': { boxShadow: '0 6px 18px rgba(0,0,0,0.15)' },
+                    }}
+                  >
+                    <CardContent>
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                        <InfoIcon sx={{ color: '#f44336', mr: 1 }} />
+                        <Typography variant="h6" fontWeight="bold" color="#424242">
+                          Orientações
+                        </Typography>
+                      </Box>
+                      <List dense>
+                        <ListItem>
+                          <ListItemText primary="Acesse o banner semanal para o tema atual." />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemText primary="Adapte os materiais à sua turma." />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemText primary="Compartilhe ideias com outros professores." />
+                        </ListItem>
+                      </List>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </Grid>
+
+              <Grid item xs={12} md={4}>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+                  <Card
+                    sx={{
+                      borderLeft: '5px solid #ff9800',
+                      height: '100%',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                      transition: 'all 0.3s ease',
+                      '&:hover': { boxShadow: '0 6px 18px rgba(0,0,0,0.15)' },
+                    }}
+                  >
+                    <CardContent>
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                        <LightbulbIcon sx={{ color: '#ff9800', mr: 1 }} />
+                        <Typography variant="h6" fontWeight="bold" color="#424242">
+                          Dicas Rápidas
+                        </Typography>
+                      </Box>
+                      <List dense>
+                        <ListItem>
+                          <ListItemText primary="Prepare a aula com antecedência." />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemText primary="Reforce valores bíblicos de forma criativa." />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemText primary="Crie um ambiente acolhedor." />
+                        </ListItem>
+                      </List>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </Grid>
+            </Grid>
+
+            {/* Galeria de Ideias */}
             <Paper
-              elevation={1}
-              sx={{ p: 3, mt: 4, borderLeft: '5px solid #4caf50', backgroundColor: '#f9f9f9' }}
+              elevation={2}
+              sx={{
+                p: 3,
+                mt: 5,
+                borderLeft: '5px solid #ab47bc',
+                backgroundColor: '#f3e5f5',
+                borderRadius: 2,
+              }}
             >
-              <Typography variant="h6" fontWeight="bold" gutterBottom>
-                📘 Objetivos da Área
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <PhotoIcon sx={{ color: '#ab47bc', mr: 1 }} />
+                <Typography variant="h6" fontWeight="bold" color="#424242">
+                  Galeria de Ideias (em breve)
+                </Typography>
+              </Box>
+              <Typography variant="body2" color="#616161">
+                Compartilhe fotos, dinâmicas e boas práticas em sala. Fique atento!
               </Typography>
-              <List dense>
-                <ListItem>
-                  <ListItemText primary="Disponibilizar materiais alinhados ao calendário semanal." />
-                </ListItem>
-                <ListItem>
-                  <ListItemText primary="Facilitar o acesso a conteúdos organizados por faixa etária e tema." />
-                </ListItem>
-                <ListItem>
-                  <ListItemText primary="Proporcionar apoio didático e sugestões de atividades." />
-                </ListItem>
-              </List>
             </Paper>
 
-            {/* Orientações */}
-            <Paper
-              elevation={1}
-              sx={{ p: 3, mt: 4, borderLeft: '5px solid #f44336', backgroundColor: '#fdf2f2' }}
-            >
-              <Typography variant="h6" fontWeight="bold" gutterBottom>
-                📌 Orientações
-              </Typography>
-              <List dense>
-                <ListItem>
-                  <ListItemText primary="Acesse o banner semanal para visualizar o tema atual." />
-                </ListItem>
-                <ListItem>
-                  <ListItemText primary="Utilize os materiais como base e adapte conforme a realidade da sua turma." />
-                </ListItem>
-                <ListItem>
-                  <ListItemText primary="Compartilhe ideias com outros professores e coordenação." />
-                </ListItem>
-              </List>
-            </Paper>
+            {/* Novo Componente de Vídeos de Capacitação */}
+            <TrainingVideosSection />
 
-            {/* Dicas Rápidas */}
-            <Paper
-              elevation={1}
-              sx={{ p: 3, mt: 4, borderLeft: '5px solid #ff9800', backgroundColor: '#fff8e1' }}
-            >
-              <Typography variant="h6" fontWeight="bold" gutterBottom>
-                💡 Dicas Rápidas
-              </Typography>
-              <List dense>
-                <ListItem>
-                  <ListItemText primary="Reserve um tempo para preparar a aula com antecedência." />
-                </ListItem>
-                <ListItem>
-                  <ListItemText primary="Reforce os valores bíblicos de forma prática e criativa." />
-                </ListItem>
-                <ListItem>
-                  <ListItemText primary="Mantenha o ambiente acolhedor e interativo." />
-                </ListItem>
-              </List>
-            </Paper>
-
-            {/* Galeria */}
-            <Paper
-              elevation={1}
-              sx={{ p: 3, mt: 5, borderLeft: '5px solid #ab47bc', backgroundColor: '#f3e5f5' }}
-            >
-              <Typography variant="h6" fontWeight="bold" gutterBottom>
-                🎨 Galeria de Ideias (em breve)
-              </Typography>
-              <Typography variant="body2">
-                Uma seção especial para que professores compartilhem fotos, ideias de dinâmicas e boas práticas em sala. Fique atento!
-              </Typography>
-            </Paper>
-
-            {/* Vídeos */}
-            <Paper
-              elevation={1}
-              sx={{ p: 3, mt: 5, borderLeft: '5px solid #7e57c2', backgroundColor: '#ede7f6' }}
-            >
-              <Typography variant="h6" fontWeight="bold" gutterBottom>
-                🎥 Vídeos de Capacitação
-              </Typography>
-              <Typography variant="body2">
-                Acesse vídeos curtos com orientações práticas, dicas pedagógicas e inspirações para seu ministério.
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                (Em breve: vídeos incorporados diretamente aqui!)
-              </Typography>
-            </Paper>
-
-            {/* Mural */}
-            <Paper
-              elevation={1}
-              sx={{ p: 3, mt: 5, borderLeft: '5px solid #607d8b', backgroundColor: '#eceff1' }}
-            >
-              <Typography variant="h6" fontWeight="bold" gutterBottom>
-                💬 Mural de Comentários
-              </Typography>
-              <Typography variant="body2">
-                Em breve, você poderá deixar mensagens, dúvidas e sugestões para a equipe pedagógica e outros professores.
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                (Funcionalidade em desenvolvimento.)
-              </Typography>
-            </Paper>
+            {/* Mural de Comentários */}
+            <CommentsSection />
           </Box>
         ) : (
-          <Typography variant="body1" gutterBottom>
+          <Typography variant="body1" color="#757575">
             Você precisa estar logado para acessar esta área.
           </Typography>
         )}

@@ -219,11 +219,11 @@ export default function VideoPageCreator({ fromTemplatePage }: VideoProps) {
 
       const response = fromTemplatePage
         ? await api.post("/video-pages", formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-          })
+          headers: { "Content-Type": "multipart/form-data" },
+        })
         : await api.patch(`/video-pages/${videoData?.id}`, formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-          });
+          headers: { "Content-Type": "multipart/form-data" },
+        });
 
       await dispatch(fetchRoutes());
       navigate(`/${response.data.route.path}`);
@@ -241,8 +241,21 @@ export default function VideoPageCreator({ fromTemplatePage }: VideoProps) {
   };
 
   return (
-    <Container maxWidth={false} sx={{ maxWidth: "95% !important", mt: fromTemplatePage ? 0 : 11, p: 0 }}>
-      <Typography variant="h4" fontWeight="bold" mb={3} textAlign="center">
+    <Container
+      maxWidth={false}
+      sx={{
+        mt: { xs: 0, md: 6 },
+      }}
+    >
+      <Typography
+        variant="h4"
+        fontWeight="bold"
+        mb={{ xs: 2, md: 3 }}
+        textAlign="center"
+        sx={{
+          fontSize: { xs: '1.5rem', md: '2.125rem' }, // menor no mobile, maior no desktop
+        }}
+      >
         {fromTemplatePage ? "Criar Galeria de Vídeos" : "Editar Galeria de Vídeos"}
       </Typography>
 
