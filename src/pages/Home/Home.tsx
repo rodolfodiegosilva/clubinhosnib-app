@@ -1,11 +1,50 @@
 import React, { useMemo } from "react";
-import { Box, Typography, Grid2 } from "@mui/material";
+import { Box, Typography, Grid2, Card as MuiCard, CardContent, CardMedia } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import { motion } from "framer-motion";
 import { useSelector } from "react-redux";
 import banner from "../../assets/banner_2.png";
-import Card from "../../components/Card/Card";
 import WeekBanner from "../../components/WeekBanner/WeekBanner";
 import { RootState as RootStateType } from "../../store/slices";
 import { RouteData } from "../../store/slices/route/routeSlice";
+
+interface CustomCardProps {
+  title: string;
+  description: string;
+  image: string | null;
+  link: string;
+}
+
+const StyledCard = styled(MuiCard)(({ theme }) => ({
+  borderRadius: theme.shape.borderRadius * 2,
+  boxShadow: theme.shadows[4],
+  transition: "transform 0.3s ease, box-shadow 0.3s ease",
+  maxWidth: 300,
+  minHeight: 400,
+  "&:hover": {
+    transform: "translateY(-5px)",
+    boxShadow: theme.shadows[8],
+  },
+}));
+
+const CustomCard = ({ title, description, image, link }: CustomCardProps) => (
+  <StyledCard>
+    <CardMedia
+      component="img"
+      height="300"
+      image={image ?? ""}
+      alt={title ?? "Imagem do card"}
+    />
+    <CardContent>
+      <Typography variant="h6" fontWeight="bold">
+        {title ?? "Sem título"}
+      </Typography>
+      <Typography variant="body2" color="textSecondary">
+        {description ?? ""}
+      </Typography>
+    </CardContent>
+  </StyledCard>
+);
 
 const Home: React.FC = () => {
   const { dynamicRoutes, isAuthenticated } = useSelector((state: RootStateType) => ({
@@ -79,7 +118,7 @@ const Home: React.FC = () => {
             left: 0,
             width: "100%",
             height: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.6)", // Overlay mais escuro para contraste
+            backgroundColor: "rgba(0, 0, 0, 0.6)",
             zIndex: 1,
           }}
         />
@@ -97,7 +136,7 @@ const Home: React.FC = () => {
             fontWeight="bold"
             gutterBottom
             sx={{
-              color: "#FFF176", // Amarelo claro para o título
+              color: "#FFF176",
               textShadow: "2px 2px 5px rgba(0, 0, 0, 0.5)",
               fontSize: { xs: "1.8rem", sm: "2.5rem", md: "3rem" },
             }}
@@ -107,7 +146,7 @@ const Home: React.FC = () => {
           <Typography
             variant="h5"
             sx={{
-              color: "#FFFFFF", // Branco puro para o subtítulo
+              color: "#FFFFFF",
               textShadow: "1px 1px 3px rgba(0, 0, 0, 0.5)",
               fontSize: { xs: "1rem", sm: "1.5rem" },
             }}
@@ -118,7 +157,6 @@ const Home: React.FC = () => {
         </Box>
       </Box>
 
-      {/* Banner Semanal */}
       {isAuthenticated && latestWeekRoute && (
         <WeekBanner
           title={latestWeekRoute.title ?? "Sem título"}
@@ -127,22 +165,30 @@ const Home: React.FC = () => {
         />
       )}
 
-      {/* Grid de Cards */}
-      <Box sx={{ width: { xs: "95%", sm: "90%", md: "85%" }, py: { xs: 4, sm: 6 } }}>
-        <Grid2 container spacing={{ xs: 2, sm: 4 }} justifyContent="center">
-          {filteredCards.map((card) => (
-            <Grid2 key={card.id} size={{ xs: 12, sm: 6, md: 4 }}>
-              <Card
-                title={card.title ?? "Sem título"}
-                description={card.description ?? ""}
-                image={card.image ?? ""}
-                link={`/${card.path}`}
-                type={card.type ?? "default"}
-              />
-            </Grid2>
-          ))}
-        </Grid2>
-      </Box>
+      {filteredCards.length > 0 && (
+        <Box sx={{ width: { xs: "95%", sm: "90%", md: "85%" }, py: { xs: 4, sm: 6 } }}>
+          <Grid2 container spacing={{ xs: 2, sm: 3, md: 4 }} justifyContent="center">
+            {filteredCards.map((card, index) => (
+              <Grid2 key={card.id} size={{ xs: 12, sm: 6, md: 4 }}>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                >
+                  <a href={`/${card.path}`} style={{ textDecoration: "none" }}>
+                    <CustomCard
+                      title={card.title}
+                      description={card.description}
+                      image={card.image}
+                      link={`/${card.path}`}
+                    />
+                  </a>
+                </motion.div>
+              </Grid2>
+            ))}
+          </Grid2>
+        </Box>
+      )}
     </Box>
   );
 };
