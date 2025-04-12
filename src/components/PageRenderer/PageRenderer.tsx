@@ -11,7 +11,7 @@ interface PageRendererProps {
 
 const PageRenderer: React.FC<PageRendererProps> = ({ entityType, idToFetch }) => {
   switch (entityType) {
-    case "ImagePageEntity":
+    case "ImagesPage":
       return <PageGalleryView idToFetch={idToFetch} />;
     case "VideosPage":
       return <PageVideoView idToFetch={idToFetch} />;

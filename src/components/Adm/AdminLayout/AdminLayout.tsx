@@ -38,12 +38,40 @@ const AdminLayout: React.FC = () => {
       <Divider sx={{ mb: 1 }} />
 
       <List>
+        <ListItemButton onClick={() => navigate("/adm/paginas-materiais-semanais")}>
+          <ListItemIcon>
+            <EventNote />
+          </ListItemIcon>
+          <ListItemText primary="Páginas de materiais" />
+        </ListItemButton>
+
+        <ListItemButton onClick={() => navigate("/adm/paginas-fotos")}>
+          <ListItemIcon>
+            <EventNote />
+          </ListItemIcon>
+          <ListItemText primary="Páginas de fotos" />
+        </ListItemButton>
+
+        <ListItemButton onClick={() => navigate("/adm/paginas-videos")}>
+          <ListItemIcon>
+            <EventNote />
+          </ListItemIcon>
+          <ListItemText primary="Páginas de vídeos" />
+        </ListItemButton>
+
         <ListItemButton onClick={() => navigate("/adm/meditacoes")}>
           <ListItemIcon>
             <EventNote />
           </ListItemIcon>
           <ListItemText primary="Meditações" />
+        </ListItemButton>     
+           <ListItemButton onClick={() => navigate("/adm/comentarios")}>
+          <ListItemIcon>
+            <EventNote />
+          </ListItemIcon>
+          <ListItemText primary="Comentários" />
         </ListItemButton>
+
         <ListItemButton onClick={() => navigate("/adm/criar-pagina")}>
           <ListItemIcon>
             <AddBox />
@@ -51,6 +79,7 @@ const AdminLayout: React.FC = () => {
           <ListItemText primary="Criar Página" />
         </ListItemButton>
       </List>
+
     </>
   );
 

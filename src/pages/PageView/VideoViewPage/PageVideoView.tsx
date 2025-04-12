@@ -17,6 +17,7 @@ import {
   Paper,
   Skeleton,
   Tooltip,
+  Fab,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -157,96 +158,41 @@ export default function PageVideoView({ idToFetch }: VideoPageViewProps) {
           </Typography>
 
           {isAdmin && (
-            <>
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: 16,
-                  right: 16,
-                  display: { xs: "none", sm: "flex" },
-                  gap: 2,
-                }}
-              >
-                <Tooltip title="Editar página de vídeos">
-                  <Button
-                    variant="contained"
-                    color="warning"
-                    onClick={() =>
-                      navigate("/adm/editar-pagina-videos", {
-                        state: { fromTemplatePage: false },
-                      })
-                    }
-                    disabled={isDeleting}
-                    startIcon={<EditIcon />}
-                  >
-                    Editar
-                  </Button>
-                </Tooltip>
-                <Tooltip title="Excluir página de vídeos">
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    onClick={() => setDeleteConfirmOpen(true)}
-                    disabled={isDeleting}
-                    startIcon={<DeleteIcon />}
-                  >
-                    Excluir
-                  </Button>
-                </Tooltip>
-              </Box>
+            <Box
+              sx={{
+                position: "fixed",
+                bottom: 24,
+                right: 24,
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+                zIndex: 1300,
+              }}
+            >
+              <Tooltip title="Editar página de vídeos">
+                <Fab
+                  color="warning"
+                  onClick={() =>
+                    navigate("/adm/editar-pagina-videos", {
+                      state: { fromTemplatePage: false },
+                    })
+                  }
+                  disabled={isDeleting}
+                >
+                  <EditIcon />
+                </Fab>
+              </Tooltip>
 
-              <Box
-                sx={{
-                  position: "fixed",
-                  bottom: 24,
-                  right: 24,
-                  display: { xs: "flex", sm: "none" },
-                  flexDirection: "column",
-                  gap: 2,
-                  zIndex: 1300,
-                }}
-              >
-                <Tooltip title="Editar página de vídeos">
-                  <Button
-                    variant="contained"
-                    color="warning"
-                    onClick={() =>
-                      navigate("/adm/editar-pagina-videos", {
-                        state: { fromTemplatePage: false },
-                      })
-                    }
-                    disabled={isDeleting}
-                    sx={{
-                      borderRadius: "50%",
-                      minWidth: 56,
-                      width: 56,
-                      height: 56,
-                      p: 0,
-                    }}
-                  >
-                    <EditIcon />
-                  </Button>
-                </Tooltip>
-
-                <Tooltip title="Excluir página de vídeos">
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={() => setDeleteConfirmOpen(true)}
-                    disabled={isDeleting}
-                    sx={{
-                      borderRadius: "50%",
-                      minWidth: 56,
-                      width: 56,
-                      height: 56,
-                      p: 0,
-                    }}
-                  >
-                    <DeleteIcon />
-                  </Button>
-                </Tooltip>
-              </Box>
-            </>
+              <Tooltip title="Excluir página de vídeos">
+                <Fab
+                  color="error"
+                  onClick={() => setDeleteConfirmOpen(true)}
+                  disabled={isDeleting}
+                >
+                  <DeleteIcon />
+                </Fab>
+              </Tooltip>
+            </Box>
           )}
         </Paper>
 

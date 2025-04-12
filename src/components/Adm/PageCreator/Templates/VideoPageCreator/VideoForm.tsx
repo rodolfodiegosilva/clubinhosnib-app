@@ -24,6 +24,7 @@ interface VideoFormProps {
   setNewVideo: Dispatch<SetStateAction<VideoItem>>;
   handleUploadFile: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleAddVideo: () => void;
+  isEditing: boolean;
 }
 
 export default function VideoForm({
@@ -32,14 +33,14 @@ export default function VideoForm({
   setNewVideo,
   handleUploadFile,
   handleAddVideo,
+  isEditing,
 }: VideoFormProps) {
   return (
     <>
       <Typography variant="h6" mb={2} fontWeight="medium">
-        Adicionar Novo Vídeo
+        {isEditing ? "Editar Vídeo" : "Adicionar Novo Vídeo"}
       </Typography>
       <Grid container spacing={2} sx={{ mb: 4 }}>
-        {/* Título do Vídeo */}
         <Grid item xs={12} sm={6}>
           <TextField
             label="Título do Vídeo"
@@ -51,7 +52,6 @@ export default function VideoForm({
           />
         </Grid>
 
-        {/* Descrição do Vídeo */}
         <Grid item xs={12} sm={6}>
           <TextField
             label="Descrição do Vídeo"
@@ -63,7 +63,6 @@ export default function VideoForm({
           />
         </Grid>
 
-        {/* Tipo de Vídeo */}
         <Grid item xs={12} sm={6}>
           <FormControl fullWidth>
             <InputLabel>Tipo</InputLabel>
@@ -87,7 +86,6 @@ export default function VideoForm({
           </FormControl>
         </Grid>
 
-        {/* Plataforma (somente para links) */}
         {newVideo.type === "link" && (
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth>
@@ -111,7 +109,6 @@ export default function VideoForm({
           </Grid>
         )}
 
-        {/* URL do Vídeo (somente para links) */}
         {newVideo.type === "link" && (
           <Grid item xs={12}>
             <TextField
@@ -124,14 +121,13 @@ export default function VideoForm({
                 errors.newVideoSrc
                   ? "Campo obrigatório"
                   : errors.newVideoURL
-                  ? "URL inválida para a plataforma selecionada"
-                  : ""
+                    ? "URL inválida para a plataforma selecionada"
+                    : ""
               }
             />
           </Grid>
         )}
 
-        {/* Upload de Vídeo (somente para upload) */}
         {newVideo.type === "upload" && (
           <Grid item xs={12}>
             <Button variant="outlined" component="label">
@@ -141,10 +137,9 @@ export default function VideoForm({
           </Grid>
         )}
 
-        {/* Botão de Adicionar */}
         <Grid item xs={12}>
           <Button variant="contained" fullWidth onClick={handleAddVideo}>
-            Adicionar Vídeo
+            {isEditing ? "Atualizar Vídeo" : "Adicionar Vídeo"}
           </Button>
         </Grid>
       </Grid>

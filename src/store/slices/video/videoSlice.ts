@@ -12,7 +12,9 @@ export interface VideoItem {
   isLocalFile?: boolean;
   createdAt?: string;
   updatedAt?: string;
-  mediaType?:String
+  mediaType?: string;
+  originalName?: string; // Adicionado
+  size?: number; // Adicionado
 }
 
 export interface VideoPageData {
