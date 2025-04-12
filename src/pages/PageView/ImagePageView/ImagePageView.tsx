@@ -140,7 +140,7 @@ export default function PageGalleryView({ idToFetch }: PageGalleryProps) {
           variant="h4"
           fontWeight="bold"
           sx={{
-            fontSize: { xs: '1.5rem', md: '2.125rem' },
+            fontSize: { xs: "1.5rem", md: "2.125rem" },
           }}
         >
           {localData.title}
@@ -158,37 +158,6 @@ export default function PageGalleryView({ idToFetch }: PageGalleryProps) {
           {localData.description}
         </Typography>
 
-        {/* Botões de administrador (desktop) */}
-        {isAdmin && (
-          <Box
-            sx={{
-              mt: 3,
-              display: { xs: "none", sm: "flex" },
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: "center",
-              gap: 1,
-            }}
-          >
-            <Button
-              variant="contained"
-              color="warning"
-              onClick={() => navigate("/adm/editar-pagina-fotos")}
-              disabled={isDeleting}
-            >
-              Editar Página
-            </Button>
-            <Button
-              variant="outlined"
-              color="error"
-              onClick={() => setDeleteConfirmOpen(true)}
-              disabled={isDeleting}
-            >
-              Excluir Página
-            </Button>
-          </Box>
-        )}
-
         {isAdmin && (
           <Box
             sx={{
@@ -196,7 +165,7 @@ export default function PageGalleryView({ idToFetch }: PageGalleryProps) {
               bottom: 20,
               right: 20,
               zIndex: 1300,
-              display: { xs: "flex", sm: "none" },
+              display: "flex",
               flexDirection: "column",
               gap: 1,
             }}

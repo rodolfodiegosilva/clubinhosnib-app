@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   Box,
   Typography,
@@ -8,80 +8,141 @@ import {
   Avatar,
   TextField,
   Button,
-  IconButton,
   Collapse,
+  Snackbar,
+  Alert,
+  CircularProgress,
 } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store/slices';
 import { motion } from 'framer-motion';
 import Slider from 'react-slick';
-import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import CommentIcon from '@mui/icons-material/Comment';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { addComment, likeComment } from 'store/slices/comment/commentsSlice';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import api from '../../config/axiosConfig';
+import { setComments } from 'store/slices/comment/commentsSlice';
 
+// Componente para exibir e gerenciar comentários de professores
 const CommentsSection: React.FC = () => {
+  // Inicializa o dispatch para ações do Redux
   const dispatch = useDispatch();
+
+  // Seleciona o usuário autenticado e os comentários do estado global
   const { user } = useSelector((state: RootState) => state.auth);
-  const comments = useSelector((state: RootState) => state.comments.comments);
+  const rawComments = useSelector((state: RootState) => state.comments.comments);
+
+  // Filtra apenas comentários publicados para exibição
+  const comments = useMemo(() => {
+    const filtered = rawComments?.filter((c) => c.published) || [];
+    return filtered;
+  }, [rawComments]);
+
+  // Gerencia o estado do formulário (aberto/fechado)
   const [formOpen, setFormOpen] = useState(false);
+
+  // Controla o estado de envio do formulário
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Armazena os dados do formulário
   const [formData, setFormData] = useState({
-    nome: '',
-    comentario: '',
+    name: '',
+    comment: '',
     clubinho: '',
-    bairro: '',
+    neighborhood: '',
   });
 
-  const handleSubmit = () => {
-    if (!formData.comentario.trim()) return; // Impede envio vazio
-    const newComment = {
-      id: Date.now().toString(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      nome: formData.nome || user?.name || 'Anônimo',
-      comentario: formData.comentario,
-      clubinho: formData.clubinho,
-      bairro: formData.bairro,
-      curtidas: 0,
+  // Gerencia erros de validação no formulário
+  const [errors, setErrors] = useState({
+    comment: false,
+    clubinho: false,
+    neighborhood: false,
+  });
+
+  // Controla a exibição da notificação de sucesso
+  const [successSnackbarOpen, setSuccessSnackbarOpen] = useState(false);
+
+  // Função para buscar comentários da API
+  const fetchComments = useCallback(async () => {
+    try {
+      const response = await api.get('/comments/published');
+      dispatch(setComments(response.data));
+    } catch (error) {
+      console.error('Erro ao buscar comentários:', error);
+    }
+  }, [dispatch]);
+
+  // Carrega os comentários ao montar o componente
+  useEffect(() => {
+    fetchComments();
+  }, [fetchComments]);
+
+  // Lida com o envio do formulário
+  const handleSubmit = async () => {
+    // Valida os campos obrigatórios
+    const newErrors = {
+      comment: !formData.comment.trim(),
+      clubinho: !formData.clubinho.trim(),
+      neighborhood: !formData.neighborhood.trim(),
     };
-    dispatch(addComment(newComment));
-    setFormData({ nome: '', comentario: '', clubinho: '', bairro: '' });
-    setFormOpen(false);
+    setErrors(newErrors);
+
+    // Impede o envio se houver erros
+    if (Object.values(newErrors).some(Boolean)) return;
+
+    setIsSubmitting(true);
+
+    try {
+      // Prepara os dados para envio
+      const payload = {
+        name: formData.name || user?.name || 'Anônimo',
+        comment: formData.comment,
+        clubinho: formData.clubinho,
+        neighborhood: formData.neighborhood,
+      };
+
+      // Envia o comentário para a API
+      await api.post('/comments', payload);
+
+      // Reseta o formulário e exibe notificação de sucesso
+      setFormData({ name: '', comment: '', clubinho: '', neighborhood: '' });
+      setErrors({ comment: false, clubinho: false, neighborhood: false });
+      setFormOpen(false);
+      setSuccessSnackbarOpen(true);
+
+      // Recarrega os comentários
+      await fetchComments();
+    } catch (error) {
+      console.error('Erro ao enviar comentário:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleLike = (id: string) => {
-    dispatch(likeComment(id));
+  // Fecha a notificação de sucesso
+  const handleCloseSnackbar = () => {
+    setSuccessSnackbarOpen(false);
   };
 
-  // Configurações do carrossel
-  const sliderSettings = {
+  // Configurações do slider para exibição de comentários
+  const sliderSettings = useMemo(() => ({
     dots: true,
     infinite: true,
     speed: 500,
-    slidesToShow: 3, // Mostra 3 comentários por vez
+    slidesToShow: 3,
     slidesToScroll: 1,
-    autoplay: true, // Roda automaticamente
-    autoplaySpeed: 3000, // Intervalo de 3 segundos
-    pauseOnHover: true, // Pausa ao passar o mouse
+    autoplay: true,
+    autoplaySpeed: 3000,
+    pauseOnHover: true,
     responsive: [
-      {
-        breakpoint: 960, // Telas menores que md
-        settings: {
-          slidesToShow: 2,
-        },
-      },
-      {
-        breakpoint: 600, // Telas menores que sm
-        settings: {
-          slidesToShow: 1,
-        },
-      },
+      { breakpoint: 960, settings: { slidesToShow: 2 } },
+      { breakpoint: 600, settings: { slidesToShow: 1 } },
     ],
-  };
+  }), []);
 
   return (
+    // Container principal com estilização
     <Paper
       elevation={2}
       sx={{
@@ -92,15 +153,15 @@ const CommentsSection: React.FC = () => {
         borderRadius: 2,
       }}
     >
-      {/* Título */}
+      {/* Cabeçalho da seção */}
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
         <CommentIcon sx={{ color: '#0288d1', mr: 1 }} />
         <Typography variant="h6" fontWeight="bold" color="#424242">
-          Mural de Comentários
+          Comentários dos Professores
         </Typography>
       </Box>
 
-      {/* Formulário de Novo Comentário */}
+      {/* Formulário para adicionar comentários */}
       <Box sx={{ mb: 4 }}>
         <Button
           variant="outlined"
@@ -114,7 +175,7 @@ const CommentsSection: React.FC = () => {
             borderColor: '#0288d1',
           }}
         >
-          {formOpen ? 'Fechar Formulário' : 'Adicionar Comentário'}
+          {formOpen ? 'Fechar formulário' : 'Adicionar Comentário'}
         </Button>
         <Collapse in={formOpen}>
           <motion.div
@@ -122,6 +183,7 @@ const CommentsSection: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
           >
+            {/* Container do formulário */}
             <Box
               sx={{
                 p: 2,
@@ -130,59 +192,52 @@ const CommentsSection: React.FC = () => {
                 boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
               }}
             >
-              <TextField
-                fullWidth
-                label="Nome (opcional)"
-                variant="outlined"
-                size="small"
-                sx={{ mb: 2 }}
-                value={formData.nome}
-                onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-              />
-              <TextField
-                fullWidth
-                label="Comentário"
-                multiline
-                rows={3}
-                variant="outlined"
-                size="small"
-                sx={{ mb: 2 }}
-                value={formData.comentario}
-                onChange={(e) => setFormData({ ...formData, comentario: e.target.value })}
-              />
-              <TextField
-                fullWidth
-                label="Clubinho"
-                variant="outlined"
-                size="small"
-                sx={{ mb: 2 }}
-                value={formData.clubinho}
-                onChange={(e) => setFormData({ ...formData, clubinho: e.target.value })}
-              />
-              <TextField
-                fullWidth
-                label="Bairro"
-                variant="outlined"
-                size="small"
-                sx={{ mb: 2 }}
-                value={formData.bairro}
-                onChange={(e) => setFormData({ ...formData, bairro: e.target.value })}
-              />
+              {/* Campos do formulário */}
+              {['name', 'comment', 'clubinho', 'neighborhood'].map((field) => (
+                <TextField
+                  key={field}
+                  fullWidth
+                  required={field !== 'name'}
+                  label={`${field.charAt(0).toUpperCase() + field.slice(1)}${field !== 'name' ? ' (Obrigatório)' : ''}`}
+                  variant="outlined"
+                  size="small"
+                  sx={{ mb: 2 }}
+                  multiline={field === 'comment'}
+                  rows={field === 'comment' ? 3 : 1}
+                  value={formData[field as keyof typeof formData]}
+                  onChange={(e) =>
+                    setFormData({ ...formData, [field]: e.target.value })
+                  }
+                  error={errors[field as keyof typeof errors]}
+                  helperText={
+                    errors[field as keyof typeof errors]
+                      ? `${field.charAt(0).toUpperCase() + field.slice(1)} é obrigatório`
+                      : ''
+                  }
+                />
+              ))}
+              {/* Botão de envio */}
               <Button
                 variant="contained"
                 color="primary"
                 onClick={handleSubmit}
                 sx={{ borderRadius: 20, textTransform: 'none' }}
+                disabled={isSubmitting}
+                endIcon={
+                  isSubmitting && (
+                    <CircularProgress color="inherit" size={18} sx={{ ml: 1 }} />
+                  )
+                }
               >
-                Enviar Comentário
+                {isSubmitting ? 'Enviando...' : 'Submeter comentário'}
               </Button>
             </Box>
           </motion.div>
         </Collapse>
       </Box>
 
-      {/* Carrossel de Comentários */}
-      {comments && comments.length > 0 ? (
+      {/* Exibição dos comentários */}
+      {comments.length > 0 ? (
         <Slider {...sliderSettings}>
           {comments.map((comment) => (
             <Box key={comment.id} sx={{ p: 2 }}>
@@ -191,6 +246,7 @@ const CommentsSection: React.FC = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3 }}
               >
+                {/* Card de comentário */}
                 <Card
                   sx={{
                     height: '100%',
@@ -205,38 +261,36 @@ const CommentsSection: React.FC = () => {
                   }}
                 >
                   <CardContent>
+                    {/* Informações do autor */}
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                       <Avatar sx={{ bgcolor: '#0288d1', mr: 2 }}>
-                        {comment.nome.charAt(0)}
+                        {comment.name.charAt(0)}
                       </Avatar>
                       <Box>
-                        <Typography variant="subtitle1" fontWeight="bold" color="#424242">
-                          {comment.nome}
+                        <Typography
+                          variant="subtitle1"
+                          fontWeight="bold"
+                          color="#424242"
+                        >
+                          {comment.name}
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
                           {new Date(comment.createdAt).toLocaleDateString()}
                         </Typography>
                       </Box>
                     </Box>
-                    <Typography variant="body2" color="#616161" sx={{ mb: 2 }}>
-                      {comment.comentario}
+                    {/* Texto do comentário */}
+                    <Typography
+                      variant="body2"
+                      color="#616161"
+                      sx={{ mb: 2 }}
+                    >
+                      {comment.comment}
                     </Typography>
+                    {/* Informações adicionais */}
                     <Typography variant="caption" color="text.secondary">
-                      {comment.clubinho} • {comment.bairro}
+                      {comment.clubinho} • {comment.neighborhood}
                     </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-                      <IconButton onClick={() => handleLike(comment.id)}>
-                        <motion.div
-                          whileHover={{ scale: 1.2 }}
-                          whileTap={{ scale: 0.9 }}
-                        >
-                          <ThumbUpIcon sx={{ color: comment.curtidas > 0 ? '#0288d1' : '#757575' }} />
-                        </motion.div>
-                      </IconButton>
-                      <Typography variant="caption" color="text.secondary">
-                        {comment.curtidas} curtida{comment.curtidas !== 1 ? 's' : ''}
-                      </Typography>
-                    </Box>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -244,10 +298,29 @@ const CommentsSection: React.FC = () => {
           ))}
         </Slider>
       ) : (
+        // Mensagem exibida quando não há comentários
         <Typography variant="body2" color="text.secondary" textAlign="center">
-          Nenhum comentário disponível. Seja o primeiro a compartilhar!
+          Nenhum comentário publicado ainda. Envie o seu e ele aparecerá após
+          avaliação.
         </Typography>
       )}
+
+      {/* Notificação de sucesso */}
+      <Snackbar
+        open={successSnackbarOpen}
+        autoHideDuration={10000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="success"
+          sx={{ width: '100%' }}
+        >
+          Comentário enviado com sucesso! Ele será avaliado antes de ser
+          publicado.
+        </Alert>
+      </Snackbar>
     </Paper>
   );
 };

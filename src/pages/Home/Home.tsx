@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Box, Typography, Grid2, Card as MuiCard, CardContent, CardMedia } from "@mui/material";
+import { Box, Typography, Grid, Card as MuiCard, CardContent, CardMedia } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import { useSelector } from "react-redux";
@@ -19,32 +19,42 @@ const StyledCard = styled(MuiCard)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius * 2,
   boxShadow: theme.shadows[4],
   transition: "transform 0.3s ease, box-shadow 0.3s ease",
-  maxWidth: 300,
-  minHeight: 400,
+  width: "100%",
+  height: "100%",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
   "&:hover": {
     transform: "translateY(-5px)",
     boxShadow: theme.shadows[8],
   },
 }));
 
-const CustomCard = ({ title, description, image, link }: CustomCardProps) => (
-  <StyledCard>
-    <CardMedia
-      component="img"
-      height="300"
-      image={image ?? ""}
-      alt={title ?? "Imagem do card"}
-    />
-    <CardContent>
-      <Typography variant="h6" fontWeight="bold">
-        {title ?? "Sem título"}
-      </Typography>
-      <Typography variant="body2" color="textSecondary">
-        {description ?? ""}
-      </Typography>
-    </CardContent>
-  </StyledCard>
-);
+const CustomCard = ({ title, description, image, link }: CustomCardProps) => {
+  const truncatedDescription =
+    description && description.length > 60
+      ? `${description.slice(0, 57)}...`
+      : description ?? "";
+
+  return (
+    <StyledCard>
+      <CardMedia
+        component="img"
+        height="200"
+        image={image ?? ""}
+        alt={title ?? "Imagem do card"}
+      />
+      <CardContent>
+        <Typography variant="h6" fontWeight="bold" gutterBottom>
+          {title ?? "Sem título"}
+        </Typography>
+        <Typography variant="body2" color="textSecondary">
+          {truncatedDescription}
+        </Typography>
+      </CardContent>
+    </StyledCard>
+  );
+};
 
 const Home: React.FC = () => {
   const { dynamicRoutes, isAuthenticated } = useSelector((state: RootStateType) => ({
@@ -53,7 +63,6 @@ const Home: React.FC = () => {
   }));
 
   const feedImageGalleryId = process.env.REACT_APP_FEED_MINISTERIO_ID ?? "";
-  const excludedTypes = ["WeekMaterialsPage", "meditation"];
 
   const getLatestWeekMaterial = (routes: RouteData[]): RouteData | undefined =>
     routes
@@ -61,16 +70,16 @@ const Home: React.FC = () => {
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
 
   const latestWeekRoute = useMemo(() => getLatestWeekMaterial(dynamicRoutes), [dynamicRoutes]);
-  const filteredCards = useMemo(
-    () =>
-      dynamicRoutes.filter(
-        (card) =>
-          !excludedTypes.includes(card.entityType) &&
-          (card.public || isAuthenticated) &&
-          card.idToFetch !== feedImageGalleryId
-      ),
-    [dynamicRoutes, isAuthenticated, feedImageGalleryId]
-  );
+
+  const filteredCards = useMemo(() => {
+    return dynamicRoutes.filter(
+      (card) =>
+        (isAuthenticated || card.public) &&
+        card.idToFetch !== feedImageGalleryId &&
+        card.entityType !== "WeekMaterialsPage" &&
+        card.entityType !== "meditation"
+    );
+  }, [dynamicRoutes, isAuthenticated, feedImageGalleryId]);
 
   return (
     <Box
@@ -167,15 +176,16 @@ const Home: React.FC = () => {
 
       {filteredCards.length > 0 && (
         <Box sx={{ width: { xs: "95%", sm: "90%", md: "85%" }, py: { xs: 4, sm: 6 } }}>
-          <Grid2 container spacing={{ xs: 2, sm: 3, md: 4 }} justifyContent="center">
+          <Grid container spacing={3} justifyContent="center" alignItems="stretch">
             {filteredCards.map((card, index) => (
-              <Grid2 key={card.id} size={{ xs: 12, sm: 6, md: 4 }}>
+              <Grid item xs={12} sm={6} md={4} lg={3} key={card.id} display="flex">
                 <motion.div
+                  style={{ width: "100%" }}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                 >
-                  <a href={`/${card.path}`} style={{ textDecoration: "none" }}>
+                  <a href={`/${card.path}`} style={{ textDecoration: "none", display: "block", height: "100%" }}>
                     <CustomCard
                       title={card.title}
                       description={card.description}
@@ -184,9 +194,9 @@ const Home: React.FC = () => {
                     />
                   </a>
                 </motion.div>
-              </Grid2>
+              </Grid>
             ))}
-          </Grid2>
+          </Grid>
         </Box>
       )}
     </Box>

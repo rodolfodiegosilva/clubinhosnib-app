@@ -52,6 +52,7 @@ export default function VideoPageCreator({ fromTemplatePage }: VideoProps) {
     isLocalFile: false,
     mediaType: "video",
   });
+  const [editingIndex, setEditingIndex] = useState<number | null>(null); // Novo estado para rastrear o índice do vídeo em edição
   const [errors, setErrors] = useState({
     pageTitle: false,
     pageDescription: false,
@@ -86,13 +87,13 @@ export default function VideoPageCreator({ fromTemplatePage }: VideoProps) {
     }
   }, [fromTemplatePage, videoData, dispatch, navigate]);
 
-  // Função para adicionar novo vídeo
+  // Função para adicionar ou atualizar vídeo
   const handleAddVideo = () => {
     const hasError =
       !newVideo.title ||
       !newVideo.description ||
       (newVideo.type === "link" && !newVideo.url) ||
-      (newVideo.type === "upload" && !newVideo.file);
+      (newVideo.type === "upload" && !newVideo.file && editingIndex === null);
     const isValidURL =
       newVideo.type === "link" && newVideo.platform
         ? validateMediaURL(newVideo.url || "", newVideo.platform)
@@ -102,7 +103,8 @@ export default function VideoPageCreator({ fromTemplatePage }: VideoProps) {
       ...prev,
       newVideoTitle: !newVideo.title,
       newVideoDescription: !newVideo.description,
-      newVideoSrc: newVideo.type === "link" ? !newVideo.url : !newVideo.file,
+      newVideoSrc:
+        newVideo.type === "link" ? !newVideo.url : !newVideo.file && editingIndex === null,
       newVideoURL: newVideo.type === "link" && !isValidURL,
     }));
 
@@ -117,11 +119,23 @@ export default function VideoPageCreator({ fromTemplatePage }: VideoProps) {
 
     const videoToAdd: VideoItem = {
       ...newVideo,
-      id: fromTemplatePage ? Date.now().toString() : undefined, // No modo de edição, novos vídeos não têm id
+      id: editingIndex !== null ? videos[editingIndex].id : fromTemplatePage ? Date.now().toString() : undefined,
       isLocalFile: newVideo.type === "upload",
       mediaType: "video",
     };
-    setVideos([...videos, videoToAdd]);
+
+    if (editingIndex !== null) {
+      // Atualizar vídeo existente
+      setVideos((prev) => prev.map((v, i) => (i === editingIndex ? videoToAdd : v)));
+      setEditingIndex(null);
+      setSnackbarMessage("Vídeo atualizado com sucesso!");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+    } else {
+      // Adicionar novo vídeo
+      setVideos([...videos, videoToAdd]);
+    }
+
     setNewVideo({
       title: "",
       description: "",
@@ -136,6 +150,28 @@ export default function VideoPageCreator({ fromTemplatePage }: VideoProps) {
   // Função para remover vídeo
   const handleRemoveVideo = (index: number) => {
     setVideos((prev) => prev.filter((_, i) => i !== index));
+    if (editingIndex === index) {
+      setEditingIndex(null);
+      setNewVideo({
+        title: "",
+        description: "",
+        type: "link",
+        platform: "youtube",
+        url: "",
+        isLocalFile: false,
+        mediaType: "video",
+      });
+    }
+  };
+
+  // Função para iniciar a edição de um vídeo
+  const handleEditVideo = (index: number) => {
+    const videoToEdit = videos[index];
+    setNewVideo({
+      ...videoToEdit,
+      file: undefined, // Evita carregar o arquivo original
+    });
+    setEditingIndex(index);
   };
 
   // Função para upload de arquivo
@@ -163,7 +199,7 @@ export default function VideoPageCreator({ fromTemplatePage }: VideoProps) {
     }
     if (!description.trim()) {
       setErrors((prev) => ({ ...prev, pageDescription: true }));
-      setSnackbarMessage("A descrição da galeria é obrigatória.");
+      setSnackbarMessage("A descrição da galeria é obrigatório.");
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
       return false;
@@ -203,12 +239,11 @@ export default function VideoPageCreator({ fromTemplatePage }: VideoProps) {
           fieldKey: video.isLocalFile ? fieldKey : "",
         };
 
-        // Inclui o id apenas se existir (modo de edição, vídeos existentes)
         return fromTemplatePage && !video.id ? baseVideo : { ...baseVideo, id: video.id };
       });
 
       const payload = {
-        ...(fromTemplatePage === false && videoData?.id && { id: videoData.id }), // Inclui id da página apenas no modo de edição
+        ...(fromTemplatePage === false && videoData?.id && { id: videoData.id }),
         public: isPublic,
         title,
         description,
@@ -219,11 +254,11 @@ export default function VideoPageCreator({ fromTemplatePage }: VideoProps) {
 
       const response = fromTemplatePage
         ? await api.post("/video-pages", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        })
+            headers: { "Content-Type": "multipart/form-data" },
+          })
         : await api.patch(`/video-pages/${videoData?.id}`, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+            headers: { "Content-Type": "multipart/form-data" },
+          });
 
       await dispatch(fetchRoutes());
       navigate(`/${response.data.route.path}`);
@@ -253,7 +288,7 @@ export default function VideoPageCreator({ fromTemplatePage }: VideoProps) {
         mb={{ xs: 2, md: 3 }}
         textAlign="center"
         sx={{
-          fontSize: { xs: '1.5rem', md: '2.125rem' }, // menor no mobile, maior no desktop
+          fontSize: { xs: '1.5rem', md: '2.125rem' },
         }}
       >
         {fromTemplatePage ? "Criar Galeria de Vídeos" : "Editar Galeria de Vídeos"}
@@ -290,9 +325,14 @@ export default function VideoPageCreator({ fromTemplatePage }: VideoProps) {
         setNewVideo={setNewVideo}
         handleUploadFile={handleUploadFile}
         handleAddVideo={handleAddVideo}
+        isEditing={editingIndex !== null}
       />
 
-      <VideoList videos={videos} handleRemoveVideo={handleRemoveVideo} />
+      <VideoList
+        videos={videos}
+        handleRemoveVideo={handleRemoveVideo}
+        handleEditVideo={handleEditVideo}
+      />
 
       <Box mt={3} display="flex" justifyContent="center">
         <Button

@@ -1,13 +1,14 @@
 import { Box, Card, Grid, IconButton, Typography } from "@mui/material";
-import { Delete } from "@mui/icons-material";
+import { Delete, Edit } from "@mui/icons-material";
 import { VideoItem } from "../../../../../store/slices/video/videoSlice";
 
 interface VideoListProps {
   videos: VideoItem[];
   handleRemoveVideo: (index: number) => void;
+  handleEditVideo: (index: number) => void; // Novo prop para edição
 }
 
-export default function VideoList({ videos, handleRemoveVideo }: VideoListProps) {
+export default function VideoList({ videos, handleRemoveVideo, handleEditVideo }: VideoListProps) {
   return (
     <Grid container spacing={4} justifyContent="center">
       {videos.map((video, index) => (
@@ -39,6 +40,14 @@ export default function VideoList({ videos, handleRemoveVideo }: VideoListProps)
             )}
 
             <Box mt={1} display="flex" justifyContent="flex-end">
+              <IconButton
+                onClick={() => handleEditVideo(index)}
+                size="small"
+                color="primary"
+                sx={{ mr: 1 }}
+              >
+                <Edit fontSize="small" />
+              </IconButton>
               <IconButton
                 onClick={() => handleRemoveVideo(index)}
                 size="small"

@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RouteData } from "../route/routeSlice";
 
 export interface WeekMediaItem {
   id?: string;
@@ -24,6 +25,7 @@ export interface WeekMaterialPageData {
   documents: WeekMediaItem[];
   images: WeekMediaItem[];
   audios: WeekMediaItem[];
+  route: RouteData;
 }
 
 interface WeekMaterialState {

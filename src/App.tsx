@@ -31,6 +31,10 @@ import { fetchCurrentUser } from "./store/slices/auth/authSlice";
 import { RootState as RootStateType, AppDispatch as AppDispatchType } from "./store/slices";
 
 import "./styles/Global.css";
+import WeekMaterialListPage from "components/Adm/PageWeekMaterial/WeekMaterialListPage";
+import ImagePageListPage from "components/Adm/PageImage/ImagePageListPage";
+import VideoPageListPage from "components/Adm/PageVideos/VideoPageListPage";
+import CommentsListPage from "components/Adm/PageComments/CommentsListPage";
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatchType>();
@@ -87,6 +91,12 @@ const App: React.FC = () => {
             <Route path="/adm" element={<AdminLayout />}>
               <Route index element={<AdminDashboardPage />} />
               <Route path="meditacoes" element={<MeditationListPage />} />
+              <Route path="comentarios" element={<CommentsListPage />} />
+
+              <Route path="paginas-materiais-semanais" element={<WeekMaterialListPage />} />
+              <Route path="paginas-fotos" element={<ImagePageListPage />} />              
+              <Route path="paginas-videos" element={<VideoPageListPage />} />
+
               <Route path="criar-pagina" element={<SelecPageTemplate />} />
               <Route
                 path="editar-meditacao"
