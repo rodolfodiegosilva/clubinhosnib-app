@@ -67,7 +67,7 @@ export default function PageVideoView({ idToFetch }: VideoPageViewProps) {
     try {
       if (!videoData?.id) return;
       setIsDeleting(true);
-      await api.delete(`/videos-page/${videoData.id}`);
+      await api.delete(`/video-pages/${videoData.id}`);
       await dispatch(fetchRoutes());
       navigate("/");
     } catch (err) {

@@ -5,7 +5,7 @@ import { VideoItem } from "../../../../../store/slices/video/videoSlice";
 interface VideoListProps {
   videos: VideoItem[];
   handleRemoveVideo: (index: number) => void;
-  handleEditVideo: (index: number) => void; // Novo prop para edição
+  handleEditVideo: (index: number) => void;
 }
 
 export default function VideoList({ videos, handleRemoveVideo, handleEditVideo }: VideoListProps) {

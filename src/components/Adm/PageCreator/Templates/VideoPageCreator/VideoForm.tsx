@@ -7,6 +7,7 @@ import {
   MenuItem,
   Button,
   Typography,
+  CircularProgress,
 } from "@mui/material";
 import { VideoItem } from "../../../../../store/slices/video/videoSlice";
 import { Dispatch, SetStateAction } from "react";
@@ -25,6 +26,7 @@ interface VideoFormProps {
   handleUploadFile: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleAddVideo: () => void;
   isEditing: boolean;
+  uploadProgress: Record<string, boolean>;
 }
 
 export default function VideoForm({
@@ -34,6 +36,7 @@ export default function VideoForm({
   handleUploadFile,
   handleAddVideo,
   isEditing,
+  uploadProgress,
 }: VideoFormProps) {
   return (
     <>
@@ -121,8 +124,8 @@ export default function VideoForm({
                 errors.newVideoSrc
                   ? "Campo obrigatório"
                   : errors.newVideoURL
-                    ? "URL inválida para a plataforma selecionada"
-                    : ""
+                  ? "URL inválida para a plataforma selecionada"
+                  : ""
               }
             />
           </Grid>
@@ -130,15 +133,34 @@ export default function VideoForm({
 
         {newVideo.type === "upload" && (
           <Grid item xs={12}>
-            <Button variant="outlined" component="label">
-              Upload de Vídeo
+            <Button variant="outlined" component="label" sx={{ mr: 2 }}>
+              Escolher Vídeo
               <input type="file" hidden accept="video/*" onChange={handleUploadFile} />
             </Button>
+            {newVideo.file && (
+              <Typography variant="body2" display="inline">
+                {newVideo.file.name}{" "}
+                {uploadProgress[newVideo.file.name] === false ? (
+                  <CircularProgress size={16} sx={{ ml: 1 }} />
+                ) : (
+                  "✔"
+                )}
+              </Typography>
+            )}
           </Grid>
         )}
 
         <Grid item xs={12}>
-          <Button variant="contained" fullWidth onClick={handleAddVideo}>
+          <Button
+            variant="contained"
+            fullWidth
+            onClick={handleAddVideo}
+            disabled={
+              newVideo.type === "upload" &&
+              newVideo.file &&
+              uploadProgress[newVideo.file.name] === false
+            }
+          >
             {isEditing ? "Atualizar Vídeo" : "Adicionar Vídeo"}
           </Button>
         </Grid>

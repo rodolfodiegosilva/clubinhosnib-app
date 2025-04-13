@@ -12,6 +12,11 @@ import {
   CircularProgress,
   Snackbar,
   Alert,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import api from "../../../../../config/axiosConfig";
 import { AppDispatch, RootState } from "../../../../../store/slices";
@@ -25,7 +30,6 @@ interface VideoProps {
   fromTemplatePage?: boolean;
 }
 
-// Função auxiliar para preparar vídeos no modo de edição
 function videoToEditable(video: VideoItem): VideoItem {
   return {
     ...video,
@@ -33,7 +37,7 @@ function videoToEditable(video: VideoItem): VideoItem {
   };
 }
 
-export default function VideoPageCreator({ fromTemplatePage }: VideoProps) {
+export default function VideoPageCreator({ fromTemplatePage = false }: VideoProps) {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const videoData = useSelector((state: RootState) => state.video.videoData);
@@ -52,7 +56,7 @@ export default function VideoPageCreator({ fromTemplatePage }: VideoProps) {
     isLocalFile: false,
     mediaType: "video",
   });
-  const [editingIndex, setEditingIndex] = useState<number | null>(null); // Novo estado para rastrear o índice do vídeo em edição
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [errors, setErrors] = useState({
     pageTitle: false,
     pageDescription: false,
@@ -65,14 +69,18 @@ export default function VideoPageCreator({ fromTemplatePage }: VideoProps) {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
+  // Estado para o modal de confirmação de exclusão
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [videoToDeleteIndex, setVideoToDeleteIndex] = useState<number | null>(null);
+  // Estado para indicar progresso de upload
+  const [uploadProgress, setUploadProgress] = useState<Record<string, boolean>>({});
 
-  // Carregamento inicial de dados
+  // Carregamento inicial
   useEffect(() => {
     if (!videoData && !fromTemplatePage) {
       navigate("/feed-clubinho");
       return;
     }
-
     if (fromTemplatePage) {
       dispatch(clearVideoData());
       setTitle("");
@@ -81,11 +89,124 @@ export default function VideoPageCreator({ fromTemplatePage }: VideoProps) {
       setIsPublic(true);
     } else if (videoData) {
       setTitle(videoData.title ?? "");
-      setDescription(videoData.description);
+      setDescription(videoData.description ?? "");
       setIsPublic(videoData.public ?? true);
       setVideos(videoData.videos.map(videoToEditable));
     }
   }, [fromTemplatePage, videoData, dispatch, navigate]);
+
+  // Verificar se todos os uploads estão completos
+  const areUploadsComplete = () => {
+    return Object.values(uploadProgress).every((isComplete) => isComplete !== false);
+  };
+
+  // Validação
+  const validate = (): boolean => {
+    if (!title.trim()) {
+      setErrors((prev) => ({ ...prev, pageTitle: true }));
+      setSnackbarMessage("O título da galeria é obrigatório.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+      return false;
+    }
+    if (!description.trim()) {
+      setErrors((prev) => ({ ...prev, pageDescription: true }));
+      setSnackbarMessage("A descrição da galeria é obrigatória.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+      return false;
+    }
+    if (videos.length === 0) {
+      setSnackbarMessage("Adicione pelo menos um vídeo.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+      return false;
+    }
+    if (!fromTemplatePage && !videoData?.id) {
+      setSnackbarMessage("ID da página é obrigatório no modo de edição.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+      return false;
+    }
+    if (!areUploadsComplete()) {
+      setSnackbarMessage("Aguarde o upload de todos os vídeos antes de salvar.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+      return false;
+    }
+    return true;
+  };
+
+  // Função para salvar a página
+  const handleSavePage = async () => {
+    if (!validate()) return;
+
+    setLoading(true);
+    try {
+      const formData = new FormData();
+
+      const videosPayload = videos.map((video, index) => {
+        const fieldKey = `video-${index}`;
+        // Anexar arquivo apenas para novos vídeos do tipo upload
+        if (video.type === "upload" && video.file && !video.id) {
+          formData.append(fieldKey, video.file);
+        }
+
+        const baseVideo = {
+          title: video.title,
+          description: video.description,
+          type: video.type,
+          isLocalFile: video.type === "upload",
+          url: video.type === "link" || (video.type === "upload" && video.id) ? video.url : undefined,
+          platform: video.type === "link" ? video.platform : undefined,
+          originalName: video.file?.name,
+          mediaType: "video",
+          fieldKey: video.type === "upload" && !video.id ? fieldKey : undefined,
+        };
+
+        // Incluir id para vídeos existentes no modo de edição
+        return !fromTemplatePage && video.id ? { ...baseVideo, id: video.id } : baseVideo;
+      });
+
+      const payload = fromTemplatePage
+        ? {
+          public: isPublic,
+          title,
+          description,
+          videos: videosPayload,
+        }
+        : {
+          id: videoData!.id, // Garantir que o id da página esteja presente
+          public: isPublic,
+          title,
+          description,
+          videos: videosPayload,
+        };
+
+      formData.append("videosPageData", JSON.stringify(payload));
+
+      const response = fromTemplatePage
+        ? await api.post("/video-pages", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+        : await api.patch(`/video-pages/${videoData!.id}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+
+      await dispatch(fetchRoutes());
+      navigate(`/${response.data.route.path}`);
+      setSnackbarMessage(fromTemplatePage ? "Página criada com sucesso!" : "Página atualizada com sucesso!");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+    } catch (error) {
+      console.error("Erro ao salvar página", error);
+      setSnackbarMessage("Erro ao salvar a página. Tente novamente.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Função para adicionar ou atualizar vídeo
   const handleAddVideo = () => {
@@ -119,21 +240,26 @@ export default function VideoPageCreator({ fromTemplatePage }: VideoProps) {
 
     const videoToAdd: VideoItem = {
       ...newVideo,
-      id: editingIndex !== null ? videos[editingIndex].id : fromTemplatePage ? Date.now().toString() : undefined,
+      id: editingIndex !== null ? videos[editingIndex].id : undefined,
       isLocalFile: newVideo.type === "upload",
       mediaType: "video",
     };
 
     if (editingIndex !== null) {
-      // Atualizar vídeo existente
       setVideos((prev) => prev.map((v, i) => (i === editingIndex ? videoToAdd : v)));
       setEditingIndex(null);
       setSnackbarMessage("Vídeo atualizado com sucesso!");
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
     } else {
-      // Adicionar novo vídeo
       setVideos([...videos, videoToAdd]);
+    }
+
+    if (newVideo.type === "upload" && newVideo.file) {
+      setUploadProgress((prev) => ({
+        ...prev,
+        [newVideo.file.name]: true,
+      }));
     }
 
     setNewVideo({
@@ -147,37 +273,56 @@ export default function VideoPageCreator({ fromTemplatePage }: VideoProps) {
     });
   };
 
-  // Função para remover vídeo
-  const handleRemoveVideo = (index: number) => {
-    setVideos((prev) => prev.filter((_, i) => i !== index));
-    if (editingIndex === index) {
-      setEditingIndex(null);
-      setNewVideo({
-        title: "",
-        description: "",
-        type: "link",
-        platform: "youtube",
-        url: "",
-        isLocalFile: false,
-        mediaType: "video",
-      });
-    }
+  // Função para abrir o modal de confirmação de exclusão
+  const handleOpenDeleteDialog = (index: number) => {
+    setVideoToDeleteIndex(index);
+    setDeleteDialogOpen(true);
   };
 
-  // Função para iniciar a edição de um vídeo
+  // Função para fechar o modal de exclusão
+  const handleCloseDeleteDialog = () => {
+    setDeleteDialogOpen(false);
+    setVideoToDeleteIndex(null);
+  };
+
+  // Função para confirmar a exclusão
+  const handleConfirmDelete = () => {
+    if (videoToDeleteIndex !== null) {
+      setVideos((prev) => prev.filter((_, i) => i !== videoToDeleteIndex));
+      if (editingIndex === videoToDeleteIndex) {
+        setEditingIndex(null);
+        setNewVideo({
+          title: "",
+          description: "",
+          type: "link",
+          platform: "youtube",
+          url: "",
+          isLocalFile: false,
+          mediaType: "video",
+        });
+      }
+      setSnackbarMessage("Vídeo removido com sucesso!");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+    }
+    handleCloseDeleteDialog();
+  };
+
   const handleEditVideo = (index: number) => {
     const videoToEdit = videos[index];
-    setNewVideo({
-      ...videoToEdit,
-      file: undefined, // Evita carregar o arquivo original
-    });
+    setNewVideo({ ...videoToEdit, file: undefined });
     setEditingIndex(index);
   };
 
-  // Função para upload de arquivo
   const handleUploadFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    setUploadProgress((prev) => ({
+      ...prev,
+      [file.name]: false,
+    }));
+
     const previewUrl = URL.createObjectURL(file);
     setNewVideo((prev) => ({
       ...prev,
@@ -186,110 +331,23 @@ export default function VideoPageCreator({ fromTemplatePage }: VideoProps) {
       isLocalFile: true,
       platform: undefined,
     }));
-  };
 
-  // Validação antes de salvar
-  const validate = (): boolean => {
-    if (!title.trim()) {
-      setErrors((prev) => ({ ...prev, pageTitle: true }));
-      setSnackbarMessage("O título da galeria é obrigatório.");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
-      return false;
-    }
-    if (!description.trim()) {
-      setErrors((prev) => ({ ...prev, pageDescription: true }));
-      setSnackbarMessage("A descrição da galeria é obrigatório.");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
-      return false;
-    }
-    if (videos.length === 0) {
-      setSnackbarMessage("Adicione pelo menos um vídeo.");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
-      return false;
-    }
-    return true;
-  };
-
-  // Função para salvar a página
-  const handleSavePage = async () => {
-    if (!validate()) return;
-
-    setLoading(true);
-    try {
-      const formData = new FormData();
-
-      const videosPayload = videos.map((video, index) => {
-        const fieldKey = `video-${index}`;
-        if (video.isLocalFile && video.file) {
-          formData.append(fieldKey, video.file);
-        }
-
-        const baseVideo = {
-          title: video.title,
-          description: video.description,
-          type: video.type,
-          isLocalFile: video.isLocalFile || false,
-          url: video.type === "link" || !video.isLocalFile ? video.url : undefined,
-          platform: video.type === "link" ? video.platform : undefined,
-          originalName: video.file?.name,
-          mediaType: "video",
-          fieldKey: video.isLocalFile ? fieldKey : "",
-        };
-
-        return fromTemplatePage && !video.id ? baseVideo : { ...baseVideo, id: video.id };
-      });
-
-      const payload = {
-        ...(fromTemplatePage === false && videoData?.id && { id: videoData.id }),
-        public: isPublic,
-        title,
-        description,
-        videos: videosPayload,
-      };
-
-      formData.append("videosPageData", JSON.stringify(payload));
-
-      const response = fromTemplatePage
-        ? await api.post("/video-pages", formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-          })
-        : await api.patch(`/video-pages/${videoData?.id}`, formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-          });
-
-      await dispatch(fetchRoutes());
-      navigate(`/${response.data.route.path}`);
-      setSnackbarMessage("Página salva com sucesso!");
-      setSnackbarSeverity("success");
-      setSnackbarOpen(true);
-    } catch (error) {
-      console.error("Erro ao salvar página", error);
-      setSnackbarMessage("Erro ao salvar a página. Tente novamente.");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
-    } finally {
-      setLoading(false);
-    }
+    setTimeout(() => {
+      setUploadProgress((prev) => ({
+        ...prev,
+        [file.name]: true,
+      }));
+    }, 1000);
   };
 
   return (
-    <Container
-      maxWidth={false}
-      sx={{
-        mt: { xs: 0, md: 6 },
-      }}
-    >
+    <Container maxWidth={false} sx={{ mt: { xs: 0, md: 6 } }}>
       <Typography
         variant="h4"
         fontWeight="bold"
         mb={{ xs: 2, md: 3 }}
         textAlign="center"
-        sx={{
-          fontSize: { xs: '1.5rem', md: '2.125rem' },
-        }}
+        sx={{ fontSize: { xs: "1.5rem", md: "2.125rem" } }}
       >
         {fromTemplatePage ? "Criar Galeria de Vídeos" : "Editar Galeria de Vídeos"}
       </Typography>
@@ -302,6 +360,7 @@ export default function VideoPageCreator({ fromTemplatePage }: VideoProps) {
           onChange={(e) => setTitle(e.target.value)}
           margin="normal"
           error={errors.pageTitle}
+          helperText={errors.pageTitle ? "Campo obrigatório" : ""}
         />
         <TextField
           fullWidth
@@ -311,6 +370,7 @@ export default function VideoPageCreator({ fromTemplatePage }: VideoProps) {
           multiline
           rows={3}
           error={errors.pageDescription}
+          helperText={errors.pageDescription ? "Campo obrigatório" : ""}
         />
         <FormControlLabel
           control={<Switch checked={isPublic} onChange={(e) => setIsPublic(e.target.checked)} />}
@@ -326,11 +386,12 @@ export default function VideoPageCreator({ fromTemplatePage }: VideoProps) {
         handleUploadFile={handleUploadFile}
         handleAddVideo={handleAddVideo}
         isEditing={editingIndex !== null}
+        uploadProgress={uploadProgress}
       />
 
       <VideoList
         videos={videos}
-        handleRemoveVideo={handleRemoveVideo}
+        handleRemoveVideo={handleOpenDeleteDialog}
         handleEditVideo={handleEditVideo}
       />
 
@@ -339,12 +400,34 @@ export default function VideoPageCreator({ fromTemplatePage }: VideoProps) {
           variant="contained"
           color="success"
           onClick={handleSavePage}
-          disabled={loading}
+          disabled={loading || !areUploadsComplete()}
           startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
         >
           {loading ? "Salvando..." : "Salvar Página"}
         </Button>
       </Box>
+
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={handleCloseDeleteDialog}
+        aria-labelledby="delete-dialog-title"
+        aria-describedby="delete-dialog-description"
+      >
+        <DialogTitle id="delete-dialog-title">Confirmar Exclusão</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="delete-dialog-description">
+            Tem certeza que deseja excluir este vídeo? Esta ação não pode ser desfeita.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDeleteDialog} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={handleConfirmDelete} color="error" autoFocus>
+            Excluir
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Snackbar
         open={snackbarOpen}

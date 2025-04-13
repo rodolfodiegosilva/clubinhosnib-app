@@ -8,7 +8,7 @@ export interface VideoItem {
   type: "upload" | "link";
   platform?: "youtube" | "googledrive" | "onedrive" | "ANY";
   url?: string;
-  file?: File;
+  file?: File | any;
   isLocalFile?: boolean;
   createdAt?: string;
   updatedAt?: string;
