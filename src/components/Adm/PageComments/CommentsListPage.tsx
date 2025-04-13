@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import {
   Box,
   Typography,
@@ -14,30 +14,42 @@ import {
   DialogContent,
   DialogActions,
   TextField,
+  Tooltip,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from '@mui/material';
 import { Visibility, Delete, Edit, Publish } from '@mui/icons-material';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import api from '../../../config/axiosConfig';
-import { AppDispatch } from '../../../store/slices';
+import { AppDispatch, RootState } from '../../../store/slices';
+import { CommentData, setComments, clearComments } from 'store/slices/comment/commentsSlice';
 import CommentDetailsModal from './CommentDetailsModal';
 
-// Interface para os dados de um comentário
-interface CommentData {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-  name: string;
-  comment: string;
-  clubinho: string;
-  neighborhood: string;
-  published: boolean;
-}
+// Implementação manual de debounce com suporte a cancel
+const debounce = <T extends (...args: any[]) => void>(func: T, delay: number) => {
+  let timeoutId: NodeJS.Timeout | undefined;
+
+  const debounced = (...args: Parameters<T>) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => func(...args), delay);
+  };
+
+  debounced.cancel = () => {
+    clearTimeout(timeoutId);
+    timeoutId = undefined;
+  };
+
+  return debounced as T & { cancel: () => void };
+};
 
 // Componente principal para gerenciamento de comentários
 export default function CommentsListPage() {
-  const [comments, setComments] = useState<CommentData[]>([]);
+  const [filteredComments, setFilteredComments] = useState<CommentData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isFiltering, setIsFiltering] = useState(false);
   const [error, setError] = useState('');
   const [commentToDelete, setCommentToDelete] = useState<CommentData | null>(null);
   const [commentToPublish, setCommentToPublish] = useState<CommentData | null>(null);
@@ -54,16 +66,19 @@ export default function CommentsListPage() {
     clubinho: false,
     neighborhood: false,
   });
+  const [searchTerm, setSearchTerm] = useState('');
+  const [publishFilter, setPublishFilter] = useState('all');
 
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const comments = useSelector((state: RootState) => state.comments.comments);
 
-  // Busca os comentários da API
   const fetchComments = async () => {
     setLoading(true);
     try {
       const response = await api.get('/comments');
-      setComments(response.data);
+      dispatch(setComments(response.data));
+      setFilteredComments(response.data);
     } catch (err) {
       console.error('Erro ao buscar comentários:', err);
       setError('Erro ao buscar comentários');
@@ -72,19 +87,65 @@ export default function CommentsListPage() {
     }
   };
 
-  // Carrega os comentários ao montar o componente
   useEffect(() => {
     fetchComments();
-  }, []);
+  }, [dispatch]);
 
-  // Trunca a descrição para exibição na lista
-  const truncateDescription = (description: string, length: number = 100) => {
+  const filterComments = (term: string, status: string) => {
+    let result = comments || [];
+
+    if (term.trim()) {
+      const lowerSearch = term.toLowerCase();
+      result = result.filter(
+        (comment) =>
+          (comment.name || '').toLowerCase().includes(lowerSearch) ||
+          (comment.clubinho || '').toLowerCase().includes(lowerSearch) ||
+          (comment.neighborhood || '').toLowerCase().includes(lowerSearch)
+      );
+    }
+
+    if (status === 'published') {
+      result = result.filter((comment) => comment.published);
+    } else if (status === 'unpublished') {
+      result = result.filter((comment) => !comment.published);
+    }
+
+    setFilteredComments(result);
+    setIsFiltering(false);
+  };
+
+  const debouncedFilter = useMemo(
+    () =>
+      debounce((term: string) => {
+        filterComments(term, publishFilter);
+      }, 300),
+    [publishFilter, comments]
+  );
+
+  const handleSearchChange = (term: string) => {
+    setSearchTerm(term);
+    setIsFiltering(true);
+    debouncedFilter(term);
+  };
+
+  // Atualiza o filtro por status
+  useEffect(() => {
+    filterComments(searchTerm, publishFilter);
+  }, [publishFilter, comments]);
+
+  // Limpa o debounce ao desmontar
+  useEffect(() => {
+    return () => {
+      debouncedFilter.cancel();
+    };
+  }, [debouncedFilter]);
+
+  const truncateDescription = (description: string, length: number = 80) => {
     return description.length > length ? description.substring(0, length) + '...' : description;
   };
 
-  // Lida com a publicação de um comentário
   const handlePublish = async () => {
-    if (!commentToPublish) return;
+    if (!commentToPublish || !commentToPublish.id) return;
 
     setLoading(true);
     try {
@@ -93,7 +154,7 @@ export default function CommentsListPage() {
         comment: commentToPublish.comment,
         clubinho: commentToPublish.clubinho,
         neighborhood: commentToPublish.neighborhood,
-        published: true, // Enviado como booleano
+        published: true,
       });
       setCommentToPublish(null);
       await fetchComments();
@@ -105,9 +166,8 @@ export default function CommentsListPage() {
     }
   };
 
-  // Lida com a exclusão de um comentário
   const handleDelete = async () => {
-    if (!commentToDelete) return;
+    if (!commentToDelete || !commentToDelete.id) return;
 
     setLoading(true);
     try {
@@ -122,7 +182,6 @@ export default function CommentsListPage() {
     }
   };
 
-  // Abre o modal de edição com os dados do comentário
   const handleEditOpen = (comment: CommentData) => {
     setCommentToEdit(comment);
     setEditFormData({
@@ -134,9 +193,8 @@ export default function CommentsListPage() {
     setEditErrors({ comment: false, clubinho: false, neighborhood: false });
   };
 
-  // Lida com o salvamento e publicação do comentário editado
   const handleEditSave = async () => {
-    if (!commentToEdit) return;
+    if (!commentToEdit || !commentToEdit.id) return;
 
     const newErrors = {
       comment: !editFormData.comment.trim(),
@@ -154,7 +212,7 @@ export default function CommentsListPage() {
         comment: editFormData.comment,
         clubinho: editFormData.clubinho,
         neighborhood: editFormData.neighborhood,
-        published: true, // Enviado como booleano
+        published: true,
       });
       setCommentToEdit(null);
       await fetchComments();
@@ -167,83 +225,147 @@ export default function CommentsListPage() {
   };
 
   return (
-    // Container principal com estilização administrativa
     <Box
       sx={{
-        px: { xs: 0, md: 1 },
-        py: { xs: 0, md: 1 },
-        mt: { xs: 0, md: 4 },
-        bgcolor: '#f5f7fa',
+        px: { xs: 2, md: 4 },
+        py: { xs: 2, md: 3 },
+        mt: { xs: 0, md: 2 },
+        bgcolor: '#f9fafb',
         minHeight: '100vh',
       }}
     >
-      {/* Título da página */}
       <Typography
         variant="h4"
         fontWeight="bold"
         textAlign="center"
-        sx={{ mt: 0, mb: { xs: 6, md: 3 }, fontSize: { xs: '1.5rem', md: '2.4rem' } }}
+        sx={{
+          mt: 0,
+          mb: { xs: 3, md: 4 },
+          fontSize: { xs: '1.8rem', md: '2.5rem' },
+          color: '#1a3c34',
+        }}
       >
         Gerenciamento de Comentários
       </Typography>
 
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', sm: 'row' },
+          gap: 2,
+          mb: 4,
+          alignItems: { sm: 'center' },
+          position: 'relative',
+        }}
+      >
+        <Box sx={{ flex: 1, position: 'relative' }}>
+          <TextField
+            fullWidth
+            label="Buscar por nome, clubinho ou bairro"
+            variant="outlined"
+            size="small"
+            value={searchTerm}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            sx={{ maxWidth: { sm: 400 } }}
+          />
+          {isFiltering && (
+            <CircularProgress
+              size={20}
+              sx={{
+                position: 'absolute',
+                right: 10,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: '#1976d2',
+              }}
+            />
+          )}
+        </Box>
+        <FormControl sx={{ minWidth: 160 }} size="small">
+          <InputLabel>Status</InputLabel>
+          <Select
+            value={publishFilter}
+            onChange={(e) => setPublishFilter(e.target.value)}
+            label="Status"
+          >
+            <MenuItem value="all">Todos</MenuItem>
+            <MenuItem value="published">Publicado</MenuItem>
+            <MenuItem value="unpublished">Não Publicado</MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
+
       {loading ? (
-        // Exibe indicador de carregamento
         <Box textAlign="center" mt={10}>
           <CircularProgress />
         </Box>
       ) : error ? (
-        // Exibe mensagem de erro
         <Box textAlign="center" mt={10}>
           <Alert severity="error">{error}</Alert>
         </Box>
-      ) : comments.length === 0 ? (
-        // Exibe mensagem quando não há comentários
+      ) : !comments || comments.length === 0 ? (
         <Box textAlign="center" mt={10}>
           <Alert severity="info">Nenhum comentário encontrado.</Alert>
         </Box>
+      ) : filteredComments.length === 0 ? (
+        <Box textAlign="center" mt={10}>
+          <Alert severity="info">Nenhum comentário corresponde aos filtros.</Alert>
+        </Box>
       ) : (
-        // Lista os comentários em um grid
-        <Grid container spacing={4} justifyContent="center">
-          {comments.map((comment) => (
+        <Grid container spacing={3} justifyContent="center">
+          {filteredComments.map((comment) => (
             <Grid
               item
-              key={comment.id}
-              sx={{
-                flexBasis: { xs: '100%', sm: '50%', md: '33.33%', lg: '25%' },
-                maxWidth: { xs: '100%', sm: '50%', md: '33.33%', lg: '25%' },
-                minWidth: 280,
-                display: 'flex',
-              }}
+              key={comment.id || `${comment.createdAt}-${comment.name}`}
+              xs={12}
+              sm={6}
+              md={4}
+              lg={3}
             >
               <Card
                 sx={{
-                  flex: 1,
                   borderRadius: 3,
-                  boxShadow: 3,
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                   p: 2,
-                  bgcolor: '#fff',
-                  border: '1px solid #e0e0e0',
+                  bgcolor: comment.published ? '#e6f4ea' : '#fff3e0',
+                  border: comment.published ? '1px solid #4caf50' : '1px solid #ff9800',
+                  transition: 'transform 0.2s, box-shadow 0.2s',
+                  '&:hover': {
+                    transform: 'translateY(-4px)',
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+                  },
                   position: 'relative',
+                  display: 'flex',
+                  flexDirection: 'column',
                 }}
               >
-                {/* Botão de exclusão */}
-                <IconButton
-                  size="small"
-                  onClick={() => setCommentToDelete(comment)}
-                  sx={{ position: 'absolute', top: 8, right: 8, color: '#d32f2f' }}
-                  title="Excluir Comentário"
-                >
-                  <Delete fontSize="small" />
-                </IconButton>
+                <Tooltip title="Excluir Comentário">
+                  <IconButton
+                    size="small"
+                    onClick={() => setCommentToDelete(comment)}
+                    sx={{
+                      position: 'absolute',
+                      top: 8,
+                      right: 8,
+                      color: '#d32f2f',
+                      bgcolor: 'rgba(255,255,255,0.8)',
+                      '&:hover': { bgcolor: '#ffebee' },
+                    }}
+                  >
+                    <Delete fontSize="small" />
+                  </IconButton>
+                </Tooltip>
 
-                <CardContent>
+                <CardContent sx={{ flexGrow: 1, pb: 2 }}>
                   <Typography
                     variant="h6"
                     fontWeight="bold"
-                    textAlign="center"
+                    textAlign="left"
                     gutterBottom
-                    sx={{ mt: { xs: 0, md: 2 }, mb: { xs: 1, md: 2 }, fontSize: { xs: '1rem', md: '1.5rem' } }}
+                    sx={{
+                      fontSize: { xs: '1.1rem', md: '1.3rem' },
+                      color: '#1a3c34',
+                    }}
                   >
                     {comment.name || 'Sem Nome'}
                   </Typography>
@@ -251,57 +373,116 @@ export default function CommentsListPage() {
                   <Typography
                     variant="body2"
                     color="text.secondary"
-                    textAlign="center"
-                    sx={{ mt: { xs: 0, md: 2 }, mb: { xs: 1, md: 2 }, fontSize: { xs: '.8rem', md: '1rem' } }}
+                    textAlign="left"
+                    sx={{
+                      mb: 2,
+                      fontSize: { xs: '0.85rem', md: '0.95rem' },
+                      lineHeight: 1.5,
+                    }}
                   >
                     {truncateDescription(comment.comment)}
                   </Typography>
 
                   <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    textAlign="center"
-                    sx={{ mt: { xs: 0, md: 2 }, mb: { xs: 1, md: 2 }, fontSize: { xs: '.8rem', md: '1rem' } }}
+                    variant="caption"
+                    color={comment.published ? 'success.main' : 'warning.main'}
+                    textAlign="left"
+                    sx={{
+                      fontWeight: 'medium',
+                      fontSize: { xs: '0.8rem', md: '0.9rem' },
+                    }}
                   >
-                    {comment.published ? 'Publicado' : 'Não Publicado'}
+                    {comment.published !== undefined
+                      ? comment.published
+                        ? 'Publicado'
+                        : 'Não Publicado'
+                      : 'Não informado'}
                   </Typography>
+                </CardContent>
 
-                  <Box textAlign="center" mt={3}>
-                    <Button
-                      variant="contained"
-                      startIcon={<Visibility />}
-                      onClick={() => setSelectedComment(comment)}
-                      sx={{ mr: 2 }}
-                    >
-                      Ver Detalhes
-                    </Button>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    gap: 1,
+                    justifyContent: 'center',
+                    flexWrap: 'wrap',
+                    p: 2,
+                    borderTop: '1px solid #e0e0e0',
+                  }}
+                >
+                  <Tooltip title="Ver detalhes do comentário">
                     <Button
                       variant="outlined"
+                      size="small"
+                      startIcon={<Visibility />}
+                      onClick={() => setSelectedComment(comment)}
+                      sx={{
+                        flex: 1,
+                        minWidth: 100,
+                        borderColor: '#1976d2',
+                        color: '#1976d2',
+                        fontSize: { xs: '0.75rem', md: '0.85rem' },
+                        transition: 'all 0.2s',
+                        '&:hover': {
+                          borderColor: '#1565c0',
+                          bgcolor: '#e3f2fd',
+                        },
+                      }}
+                    >
+                      Detalhes
+                    </Button>
+                  </Tooltip>
+                  <Tooltip title="Editar comentário">
+                    <Button
+                      variant="outlined"
+                      size="small"
                       startIcon={<Edit />}
                       onClick={() => handleEditOpen(comment)}
-                      sx={{ mr: 2 }}
+                      sx={{
+                        flex: 1,
+                        minWidth: 100,
+                        borderColor: '#0288d1',
+                        color: '#0288d1',
+                        fontSize: { xs: '0.75rem', md: '0.85rem' },
+                        transition: 'all 0.2s',
+                        '&:hover': {
+                          borderColor: '#0277bd',
+                          bgcolor: '#e1f5fe',
+                        },
+                      }}
                     >
                       Editar
                     </Button>
-                    {!comment.published && (
+                  </Tooltip>
+                  {comment.published !== undefined && !comment.published && (
+                    <Tooltip title="Publicar comentário">
                       <Button
                         variant="contained"
+                        size="small"
                         startIcon={<Publish />}
                         onClick={() => setCommentToPublish(comment)}
-                        color="success"
+                        sx={{
+                          flex: 1,
+                          minWidth: 100,
+                          bgcolor: '#4caf50',
+                          fontSize: { xs: '0.75rem', md: '0.85rem' },
+                          transition: 'all 0.2s',
+                          '&:hover': {
+                            bgcolor: '#43a047',
+                          },
+                        }}
                       >
                         Publicar
                       </Button>
-                    )}
-                  </Box>
-                </CardContent>
+                    </Tooltip>
+                  )}
+                </Box>
               </Card>
             </Grid>
           ))}
         </Grid>
       )}
 
-      {/* Modal de confirmação de exclusão */}
       <Dialog
         open={!!commentToDelete}
         onClose={() => setCommentToDelete(null)}
@@ -316,14 +497,23 @@ export default function CommentsListPage() {
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setCommentToDelete(null)}>Cancelar</Button>
-          <Button color="error" variant="contained" onClick={handleDelete}>
+          <Button
+            onClick={() => setCommentToDelete(null)}
+            sx={{ color: '#757575' }}
+          >
+            Cancelar
+          </Button>
+          <Button
+            color="error"
+            variant="contained"
+            onClick={handleDelete}
+            sx={{ bgcolor: '#d32f2f', '&:hover': { bgcolor: '#b71c1c' } }}
+          >
             Excluir
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* Modal de confirmação de publicação */}
       <Dialog
         open={!!commentToPublish}
         onClose={() => setCommentToPublish(null)}
@@ -338,14 +528,23 @@ export default function CommentsListPage() {
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setCommentToPublish(null)}>Cancelar</Button>
-          <Button color="success" variant="contained" onClick={handlePublish}>
+          <Button
+            onClick={() => setCommentToPublish(null)}
+            sx={{ color: '#757575' }}
+          >
+            Cancelar
+          </Button>
+          <Button
+            color="success"
+            variant="contained"
+            onClick={handlePublish}
+            sx={{ bgcolor: '#4caf50', '&:hover': { bgcolor: '#43a047' } }}
+          >
             Publicar
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* Modal de edição */}
       <Dialog
         open={!!commentToEdit}
         onClose={() => setCommentToEdit(null)}
@@ -381,19 +580,24 @@ export default function CommentsListPage() {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setCommentToEdit(null)}>Cancelar</Button>
+          <Button
+            onClick={() => setCommentToEdit(null)}
+            sx={{ color: '#757575' }}
+          >
+            Cancelar
+          </Button>
           <Button
             color="primary"
             variant="contained"
             onClick={handleEditSave}
             disabled={loading}
+            sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#1565c0' } }}
           >
             Salvar e Publicar
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* Modal de detalhes */}
       <CommentDetailsModal
         comment={selectedComment}
         open={!!selectedComment}
