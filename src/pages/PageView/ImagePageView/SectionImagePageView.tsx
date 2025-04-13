@@ -20,10 +20,11 @@ import { RoleUser } from "store/slices/auth/authSlice";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-
 import type { SectionData } from "store/slices/image/imageSlice";
+import { motion } from "framer-motion";
 
-export interface SectionItemProps extends Omit<SectionData, "id"> {}
+
+export interface SectionItemProps extends Omit<SectionData, "id"> { }
 
 const formatDateTime = (value: string | Date) => {
   const date = new Date(value);
@@ -55,6 +56,7 @@ const SectionImagePageView: React.FC<SectionItemProps> = ({
 }) => {
   const [openModal, setOpenModal] = useState(false);
   const [startIndex, setStartIndex] = useState(0);
+  const [showAll, setShowAll] = useState(false);
 
   const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
   const isUserLogged = isAuthenticated && (user?.role === RoleUser.ADMIN || user?.role === RoleUser.USER);
@@ -69,6 +71,8 @@ const SectionImagePageView: React.FC<SectionItemProps> = ({
     setStartIndex(index);
     setOpenModal(true);
   };
+
+  const thumbnails = showAll ? mediaItems.slice(1) : mediaItems.slice(1, 7);
 
   return (
     <Paper
@@ -122,7 +126,6 @@ const SectionImagePageView: React.FC<SectionItemProps> = ({
         </Box>
       </Box>
 
-      {/* Imagem principal */}
       <Box mt={2}>
         <Box
           component="img"
@@ -131,7 +134,7 @@ const SectionImagePageView: React.FC<SectionItemProps> = ({
           sx={{
             width: "100%",
             height: "auto",
-            maxHeight: { xs: 500, sm: 800, md: 1000 },
+            maxHeight: { xs: 200, sm: 400, md: 600 },
             objectFit: "cover",
             borderRadius: 2,
             cursor: "pointer",
@@ -147,9 +150,9 @@ const SectionImagePageView: React.FC<SectionItemProps> = ({
       </Box>
 
       {/* Miniaturas */}
-      <Grid container spacing={1} mt={1}>
-        {mediaItems.slice(1).map((item, index) => (
-          <Grid item xs={3} sm={2} md={1.5} key={item.id || index}>
+      <Grid container spacing={1} mt={1} justifyContent="center">
+        {thumbnails.map((item, index) => (
+          <Grid item xs={4} sm={2} md={2} key={item.id || index}>
             {item.url && (
               <Tooltip title={item.platform ?? "Imagem"} arrow>
                 <Box
@@ -193,6 +196,35 @@ const SectionImagePageView: React.FC<SectionItemProps> = ({
           </Grid>
         ))}
       </Grid>
+
+      {/* Botão Mostrar mais/menos */}
+      {mediaItems.length > 7 && (
+        <Box textAlign="center" mt={2}>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Typography
+              variant="body2"
+              onClick={() => setShowAll(prev => !prev)}
+              sx={{
+                cursor: "pointer",
+                fontWeight: "bold",
+                color: "primary.main",
+                "&:hover": {
+                  textDecoration: "underline",
+                  transform: "scale(1.05)",
+                  transition: "transform 0.2s ease",
+                },
+              }}
+            >
+              {showAll ? "Mostrar menos" : "Mostrar mais fotos"}
+            </Typography>
+          </motion.div>
+        </Box>
+
+      )}
 
       {/* Modal */}
       <Modal open={openModal} onClose={() => setOpenModal(false)}>
