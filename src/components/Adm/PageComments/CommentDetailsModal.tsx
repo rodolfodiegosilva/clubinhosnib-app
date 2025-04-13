@@ -11,18 +11,7 @@ import {
   Paper,
   Grid,
 } from '@mui/material';
-
-// Interface para os dados de um comentário
-interface CommentData {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-  name: string;
-  comment: string;
-  clubinho: string;
-  neighborhood: string;
-  published: boolean;
-}
+import { CommentData } from 'store/slices/comment/commentsSlice';
 
 interface CommentDetailsModalProps {
   comment: CommentData | null;
@@ -30,11 +19,9 @@ interface CommentDetailsModalProps {
   onClose: () => void;
 }
 
-// Componente para exibir os detalhes de um comentário
 export default function CommentDetailsModal({ comment, open, onClose }: CommentDetailsModalProps) {
   const navigate = useNavigate();
 
-  // Formata a data para exibição
   const formatDate = (date?: string | Date) => {
     if (!date) return 'Não disponível';
     return new Date(date).toLocaleString('pt-BR');
@@ -124,7 +111,12 @@ export default function CommentDetailsModal({ comment, open, onClose }: CommentD
 
                   <Grid item xs={12} md={6}>
                     <Typography variant="body1" sx={{ color: '#333', wordBreak: 'break-word' }}>
-                      <strong>Status:</strong> {comment.published ? 'Publicado' : 'Não Publicado'}
+                      <strong>Status:</strong>{' '}
+                      {comment.published !== undefined
+                        ? comment.published
+                          ? 'Publicado'
+                          : 'Não Publicado'
+                        : 'Não informado'}
                     </Typography>
                   </Grid>
 
@@ -139,6 +131,14 @@ export default function CommentDetailsModal({ comment, open, onClose }: CommentD
                       <strong>Atualizado em:</strong> {formatDate(comment.updatedAt)}
                     </Typography>
                   </Grid>
+
+                  {comment.id && (
+                    <Grid item xs={12} md={6}>
+                      <Typography variant="body1" sx={{ color: '#333', wordBreak: 'break-word' }}>
+                        <strong>ID:</strong> {comment.id}
+                      </Typography>
+                    </Grid>
+                  )}
                 </Grid>
               </Box>
             </Paper>
