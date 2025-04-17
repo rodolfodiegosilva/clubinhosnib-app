@@ -59,13 +59,28 @@ const AdminLayout: React.FC = () => {
           <ListItemText primary="Páginas de vídeos" />
         </ListItemButton>
 
+        <ListItemButton onClick={() => navigate("/adm/paginas-ideias")}>
+          <ListItemIcon>
+            <EventNote />
+          </ListItemIcon>
+          <ListItemText primary="Páginas de ideias" />
+        </ListItemButton>
+
         <ListItemButton onClick={() => navigate("/adm/meditacoes")}>
           <ListItemIcon>
             <EventNote />
           </ListItemIcon>
           <ListItemText primary="Meditações" />
-        </ListItemButton>     
-           <ListItemButton onClick={() => navigate("/adm/comentarios")}>
+        </ListItemButton>
+
+        <ListItemButton onClick={() => navigate("/adm/documentos")}>
+          <ListItemIcon>
+            <EventNote />
+          </ListItemIcon>
+          <ListItemText primary="Documentos" />
+        </ListItemButton>
+
+        <ListItemButton onClick={() => navigate("/adm/comentarios")}>
           <ListItemIcon>
             <EventNote />
           </ListItemIcon>

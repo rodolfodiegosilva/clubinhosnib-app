@@ -35,6 +35,9 @@ import WeekMaterialListPage from "components/Adm/PageWeekMaterial/WeekMaterialLi
 import ImagePageListPage from "components/Adm/PageImage/ImagePageListPage";
 import VideoPageListPage from "components/Adm/PageVideos/VideoPageListPage";
 import CommentsListPage from "components/Adm/PageComments/CommentsListPage";
+import DocumentManager from "components/Adm/PageDocuments/DocumentManager";
+import IdeasPageListPage from "components/Adm/PageIdeasMaterial/IdeasPageListPage";
+import { IdeasMaterialPageCreator } from "components/Adm/PageCreator/Templates/IdeasMaterialPageCreator/IdeasMaterialPageCreator";
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatchType>();
@@ -72,7 +75,6 @@ const App: React.FC = () => {
       <Navbar />
       <div className="mainContainer">
         <Routes>
-          {/* Rotas públicas */}
           <Route path="/" element={<Home />} />
           <Route path="/sobre" element={<About />} />
           <Route path="/contato" element={<Contact />} />
@@ -81,21 +83,23 @@ const App: React.FC = () => {
           <Route path="/login" element={<Login />} />
           <Route path="*" element={<Home />} />
 
-          {/* Rotas protegidas (qualquer usuário logado) */}
           <Route element={<ProtectedRoute />}>
             <Route path="/area-do-professor" element={<TeacherArea />} />
           </Route>
 
-          {/* Rotas administrativas (apenas admin) */}
           <Route element={<ProtectedRoute requiredRole="admin" />}>
             <Route path="/adm" element={<AdminLayout />}>
               <Route index element={<AdminDashboardPage />} />
               <Route path="meditacoes" element={<MeditationListPage />} />
               <Route path="comentarios" element={<CommentsListPage />} />
 
+              <Route path="documentos" element={<DocumentManager />} />
+
               <Route path="paginas-materiais-semanais" element={<WeekMaterialListPage />} />
-              <Route path="paginas-fotos" element={<ImagePageListPage />} />              
+              <Route path="paginas-fotos" element={<ImagePageListPage />} />
               <Route path="paginas-videos" element={<VideoPageListPage />} />
+
+              <Route path="paginas-ideias" element={<IdeasPageListPage />} />
 
               <Route path="criar-pagina" element={<SelecPageTemplate />} />
               <Route
@@ -103,7 +107,7 @@ const App: React.FC = () => {
                 element={<MeditationPageCreator fromTemplatePage={false} />}
               />
               <Route
-                path="editar-pagina-fotos"
+                path="editar-pagina-imagens"
                 element={<ImagePageCreator fromTemplatePage={false} />}
               />
               <Route
@@ -114,10 +118,15 @@ const App: React.FC = () => {
                 path="editar-pagina-semana"
                 element={<WeekMaterialPageCreator fromTemplatePage={false} />}
               />
+
+              <Route
+                path="editar-pagina-ideias"
+                element={<IdeasMaterialPageCreator fromTemplatePage={false} />}
+              />
+
             </Route>
           </Route>
 
-          {/* Rotas dinâmicas da API */}
           {dynamicRoutes.map((route: DynamicRouteType) => (
             <Route
               key={route.id}
