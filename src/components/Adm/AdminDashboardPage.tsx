@@ -37,6 +37,12 @@ const cardData = [
     path: "/adm/paginas-videos",
   },
   {
+    title: "Páginas de Ideias",
+    description: "Gerencie as páginas de ideias que os professores podem acessar.",
+    icon: <EventNote fontSize="large" color="primary" />,
+    path: "/adm/pagina-ideias",
+  },
+  {
     title: "Meditações",
     description: "Crie, edite e visualize meditações semanais.",
     icon: <EventNote fontSize="large" color="primary" />,
@@ -46,6 +52,12 @@ const cardData = [
     description: "Gerencie comentários e feedbacks dos usuários.",
     icon: <EventNote fontSize="large" color="primary" />,
     path: "/adm/comentarios",
+  },  
+  {
+    title: "Documentos",
+    description: "Gerencie documentos que os professores podem acessar.",
+    icon: <EventNote fontSize="large" color="primary" />,
+    path: "/adm/documentos",
   },
   {
     title: "Criar Página",
