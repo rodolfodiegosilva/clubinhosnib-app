@@ -150,11 +150,18 @@ export default function WeekMaterialPageCreator({
         mediaType: type,
         uploadType: item.uploadType,
         isLocalFile: item.uploadType === MediaUploadType.UPLOAD,
-        ...(item.platformType && { platformType : item.platformType }),
-        ...(item.url && { url: item.url }),
-        ...(item.fileField && { fieldKey: item.fileField }),
-        ...(item.size && { size: item.size }),
+        platformType:
+          item.uploadType === MediaUploadType.UPLOAD ? null : item.platformType ?? null,
+        ...(item.uploadType === MediaUploadType.LINK && item.url && { url: item.url }),
+        ...(item.uploadType === MediaUploadType.UPLOAD && item.fileField && {
+          fieldKey: item.fileField,
+        }),
+        ...(item.uploadType === MediaUploadType.UPLOAD && item.size && {
+          size: item.size,
+        }),
       });
+      
+      
 
       const payload = {
         ...(fromTemplatePage ? {} : { id: studyData?.id }),

@@ -40,7 +40,7 @@ const cardData = [
     title: "Páginas de Ideias",
     description: "Gerencie as páginas de ideias que os professores podem acessar.",
     icon: <EventNote fontSize="large" color="primary" />,
-    path: "/adm/pagina-ideias",
+    path: "/adm/paginas-ideias",
   },
   {
     title: "Meditações",

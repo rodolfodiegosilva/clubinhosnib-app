@@ -44,7 +44,6 @@ const App: React.FC = () => {
   const dynamicRoutes = useSelector((state: RootStateType) => state.routes.routes);
   const { loadingUser, accessToken } = useSelector((state: RootStateType) => state.auth);
 
-  // Carrega rotas dinâmicas e verifica usuário ao iniciar
   useEffect(() => {
     dispatch(fetchRoutes());
     if (accessToken) {
@@ -52,7 +51,6 @@ const App: React.FC = () => {
     }
   }, [dispatch, accessToken]);
 
-  // Exibe spinner durante o carregamento inicial do usuário
   if (loadingUser) {
     return (
       <Box
@@ -92,15 +90,11 @@ const App: React.FC = () => {
               <Route index element={<AdminDashboardPage />} />
               <Route path="meditacoes" element={<MeditationListPage />} />
               <Route path="comentarios" element={<CommentsListPage />} />
-
               <Route path="documentos" element={<DocumentManager />} />
-
               <Route path="paginas-materiais-semanais" element={<WeekMaterialListPage />} />
               <Route path="paginas-fotos" element={<ImagePageListPage />} />
               <Route path="paginas-videos" element={<VideoPageListPage />} />
-
               <Route path="paginas-ideias" element={<IdeasPageListPage />} />
-
               <Route path="criar-pagina" element={<SelecPageTemplate />} />
               <Route
                 path="editar-meditacao"

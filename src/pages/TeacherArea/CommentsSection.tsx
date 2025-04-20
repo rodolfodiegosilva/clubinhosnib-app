@@ -12,6 +12,7 @@ import {
   Snackbar,
   Alert,
   CircularProgress,
+  Grid,
 } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store/slices';
@@ -24,28 +25,15 @@ import 'slick-carousel/slick/slick-theme.css';
 import api from '../../config/axiosConfig';
 import { setComments } from 'store/slices/comment/commentsSlice';
 
-// Componente para exibir e gerenciar comentários de professores
 const CommentsSection: React.FC = () => {
-  // Inicializa o dispatch para ações do Redux
   const dispatch = useDispatch();
-
-  // Seleciona o usuário autenticado e os comentários do estado global
-  const { user } = useSelector((state: RootState) => state.auth);
   const rawComments = useSelector((state: RootState) => state.comments.comments);
+  const comments = useMemo(() => rawComments?.filter((c) => c.published) || [], [rawComments]);
 
-  // Filtra apenas comentários publicados para exibição
-  const comments = useMemo(() => {
-    const filtered = rawComments?.filter((c) => c.published) || [];
-    return filtered;
-  }, [rawComments]);
-
-  // Gerencia o estado do formulário (aberto/fechado)
   const [formOpen, setFormOpen] = useState(false);
-
-  // Controla o estado de envio do formulário
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successSnackbarOpen, setSuccessSnackbarOpen] = useState(false);
 
-  // Armazena os dados do formulário
   const [formData, setFormData] = useState({
     name: '',
     comment: '',
@@ -53,17 +41,13 @@ const CommentsSection: React.FC = () => {
     neighborhood: '',
   });
 
-  // Gerencia erros de validação no formulário
   const [errors, setErrors] = useState({
+    name: false,
     comment: false,
     clubinho: false,
     neighborhood: false,
   });
 
-  // Controla a exibição da notificação de sucesso
-  const [successSnackbarOpen, setSuccessSnackbarOpen] = useState(false);
-
-  // Função para buscar comentários da API
   const fetchComments = useCallback(async () => {
     try {
       const response = await api.get('/comments/published');
@@ -73,45 +57,33 @@ const CommentsSection: React.FC = () => {
     }
   }, [dispatch]);
 
-  // Carrega os comentários ao montar o componente
   useEffect(() => {
     fetchComments();
   }, [fetchComments]);
 
-  // Lida com o envio do formulário
   const handleSubmit = async () => {
-    // Valida os campos obrigatórios
     const newErrors = {
+      name: !formData.name.trim(),
       comment: !formData.comment.trim(),
       clubinho: !formData.clubinho.trim(),
       neighborhood: !formData.neighborhood.trim(),
     };
     setErrors(newErrors);
-
-    // Impede o envio se houver erros
     if (Object.values(newErrors).some(Boolean)) return;
 
     setIsSubmitting(true);
-
     try {
-      // Prepara os dados para envio
-      const payload = {
-        name: formData.name || user?.name || 'Anônimo',
+      await api.post('/comments', {
+        name: formData.name,
         comment: formData.comment,
         clubinho: formData.clubinho,
         neighborhood: formData.neighborhood,
-      };
+      });
 
-      // Envia o comentário para a API
-      await api.post('/comments', payload);
-
-      // Reseta o formulário e exibe notificação de sucesso
       setFormData({ name: '', comment: '', clubinho: '', neighborhood: '' });
-      setErrors({ comment: false, clubinho: false, neighborhood: false });
+      setErrors({ name: false, comment: false, clubinho: false, neighborhood: false });
       setFormOpen(false);
       setSuccessSnackbarOpen(true);
-
-      // Recarrega os comentários
       await fetchComments();
     } catch (error) {
       console.error('Erro ao enviar comentário:', error);
@@ -120,48 +92,72 @@ const CommentsSection: React.FC = () => {
     }
   };
 
-  // Fecha a notificação de sucesso
   const handleCloseSnackbar = () => {
     setSuccessSnackbarOpen(false);
   };
 
-  // Configurações do slider para exibição de comentários
-  const sliderSettings = useMemo(() => ({
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 3000,
-    pauseOnHover: true,
-    responsive: [
-      { breakpoint: 960, settings: { slidesToShow: 2 } },
-      { breakpoint: 600, settings: { slidesToShow: 1 } },
-    ],
-  }), []);
+  const sliderSettings = useMemo(
+    () => ({
+      dots: true,
+      infinite: true,
+      speed: 500,
+      slidesToShow: 3,
+      slidesToScroll: 1,
+      autoplay: true,
+      autoplaySpeed: 3000,
+      pauseOnHover: true,
+      responsive: [
+        { breakpoint: 960, settings: { slidesToShow: 2 } },
+        { breakpoint: 600, settings: { slidesToShow: 1 } },
+      ],
+    }),
+    []
+  );
+
+  const labels: Record<string, string> = {
+    name: 'Nome (obrigatório)',
+    comment: 'Comentário (obrigatório)',
+    clubinho: 'Clubinho (obrigatório)',
+    neighborhood: 'Bairro (obrigatório)',
+  };
+
+  const placeholders: Record<string, string> = {
+    name: 'Seu nome',
+    comment: 'Escreva seu comentário aqui...',
+    clubinho: 'Ex: Clubinho do Amor',
+    neighborhood: 'Ex: Jardim das Flores',
+  };
 
   return (
-    // Container principal com estilização
     <Paper
       elevation={2}
       sx={{
-        p: { xs: 2, md: 3 },
+        p: { xs: 0, md: 3 },
         mt: 5,
         borderLeft: '5px solid #0288d1',
         backgroundColor: '#e1f5fe',
         borderRadius: 2,
       }}
     >
-      {/* Cabeçalho da seção */}
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', px: { xs: 0, md: 3 }, }}>
         <CommentIcon sx={{ color: '#0288d1', mr: 1 }} />
-        <Typography variant="h6" fontWeight="bold" color="#424242">
+        <Typography
+          variant="h6"
+          fontWeight="bold"
+          color="#424242"
+
+          sx={{
+            mt: { xs: 2, md: 3 },
+
+            fontSize: { xs: '1.2rem', md: '1.5rem' },
+          }}
+        >
           Comentários dos Professores
         </Typography>
+
+
       </Box>
 
-      {/* Formulário para adicionar comentários */}
       <Box sx={{ mb: 4 }}>
         <Button
           variant="outlined"
@@ -183,40 +179,41 @@ const CommentsSection: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
           >
-            {/* Container do formulário */}
             <Box
               sx={{
                 p: 2,
                 borderRadius: 2,
-                backgroundColor: '#ffffff',
+                backgroundColor: '#fff',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
               }}
             >
-              {/* Campos do formulário */}
-              {['name', 'comment', 'clubinho', 'neighborhood'].map((field) => (
-                <TextField
-                  key={field}
-                  fullWidth
-                  required={field !== 'name'}
-                  label={`${field.charAt(0).toUpperCase() + field.slice(1)}${field !== 'name' ? ' (Obrigatório)' : ''}`}
-                  variant="outlined"
-                  size="small"
-                  sx={{ mb: 2 }}
-                  multiline={field === 'comment'}
-                  rows={field === 'comment' ? 3 : 1}
-                  value={formData[field as keyof typeof formData]}
-                  onChange={(e) =>
-                    setFormData({ ...formData, [field]: e.target.value })
-                  }
-                  error={errors[field as keyof typeof errors]}
-                  helperText={
-                    errors[field as keyof typeof errors]
-                      ? `${field.charAt(0).toUpperCase() + field.slice(1)} é obrigatório`
-                      : ''
-                  }
-                />
-              ))}
-              {/* Botão de envio */}
+              <Grid container spacing={2} sx={{ mb: 2 }}>
+                {['name', 'comment', 'clubinho', 'neighborhood'].map((field) => (
+                  <Grid item xs={12} md={6} key={field}>
+                    <TextField
+                      fullWidth
+                      required
+                      label={labels[field]}
+                      placeholder={placeholders[field]}
+                      variant="outlined"
+                      size="small"
+                      multiline={field === 'comment'}
+                      rows={field === 'comment' ? 3 : 1}
+                      value={formData[field as keyof typeof formData]}
+                      onChange={(e) =>
+                        setFormData({ ...formData, [field]: e.target.value })
+                      }
+                      error={errors[field as keyof typeof errors]}
+                      helperText={
+                        errors[field as keyof typeof errors]
+                          ? `${labels[field].split(' ')[0]} é obrigatório`
+                          : ''
+                      }
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+
               <Button
                 variant="contained"
                 color="primary"
@@ -236,7 +233,6 @@ const CommentsSection: React.FC = () => {
         </Collapse>
       </Box>
 
-      {/* Exibição dos comentários */}
       {comments.length > 0 ? (
         <Slider {...sliderSettings}>
           {comments.map((comment) => (
@@ -246,13 +242,12 @@ const CommentsSection: React.FC = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3 }}
               >
-                {/* Card de comentário */}
                 <Card
                   sx={{
                     height: '100%',
                     boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                     borderRadius: 2,
-                    backgroundColor: '#ffffff',
+                    backgroundColor: '#fff',
                     transition: 'all 0.3s ease',
                     '&:hover': {
                       boxShadow: '0 6px 18px rgba(0,0,0,0.15)',
@@ -261,7 +256,6 @@ const CommentsSection: React.FC = () => {
                   }}
                 >
                   <CardContent>
-                    {/* Informações do autor */}
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                       <Avatar sx={{ bgcolor: '#0288d1', mr: 2 }}>
                         {comment.name.charAt(0)}
@@ -279,15 +273,9 @@ const CommentsSection: React.FC = () => {
                         </Typography>
                       </Box>
                     </Box>
-                    {/* Texto do comentário */}
-                    <Typography
-                      variant="body2"
-                      color="#616161"
-                      sx={{ mb: 2 }}
-                    >
+                    <Typography variant="body2" color="#616161" sx={{ mb: 2 }}>
                       {comment.comment}
                     </Typography>
-                    {/* Informações adicionais */}
                     <Typography variant="caption" color="text.secondary">
                       {comment.clubinho} • {comment.neighborhood}
                     </Typography>
@@ -298,14 +286,12 @@ const CommentsSection: React.FC = () => {
           ))}
         </Slider>
       ) : (
-        // Mensagem exibida quando não há comentários
         <Typography variant="body2" color="text.secondary" textAlign="center">
           Nenhum comentário publicado ainda. Envie o seu e ele aparecerá após
           avaliação.
         </Typography>
       )}
 
-      {/* Notificação de sucesso */}
       <Snackbar
         open={successSnackbarOpen}
         autoHideDuration={10000}

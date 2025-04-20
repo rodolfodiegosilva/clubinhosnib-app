@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -10,10 +10,11 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { motion } from "framer-motion";
-import { useSelector } from "react-redux";
-import banner from "../../assets/banner_2.png";
+import { useDispatch, useSelector } from "react-redux";
+import banner from "../../assets/banner.jpg";
 import WeekBanner from "../../components/WeekBanner/WeekBanner";
-import { RootState as RootStateType } from "../../store/slices";
+import { AppDispatch, RootState as RootStateType } from "../../store/slices";
+import { fetchCurrentWeekMaterial } from "../../store/slices/week-material/weekMaterialSlice";
 
 interface CustomCardProps {
   title: string;
@@ -64,6 +65,12 @@ const CustomCard = ({ title, description, image, link }: CustomCardProps) => {
 };
 
 const Home: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    dispatch(fetchCurrentWeekMaterial());
+  }, [dispatch]);
+
   const {
     dynamicRoutes,
     isAuthenticated,
@@ -103,7 +110,6 @@ const Home: React.FC = () => {
         width: "100%",
       }}
     >
-      {/* Banner Principal */}
       <Box
         sx={{
           position: "relative",
@@ -200,7 +206,10 @@ const Home: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                 >
-                  <a href={`/${card.path}`} style={{ textDecoration: "none", display: "block", height: "100%" }}>
+                  <a
+                    href={`/${card.path}`}
+                    style={{ textDecoration: "none", display: "block", height: "100%" }}
+                  >
                     <CustomCard
                       title={card.title}
                       description={card.description}

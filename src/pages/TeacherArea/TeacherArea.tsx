@@ -26,7 +26,6 @@ import DocumentsSection from './DocumentsSection';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import InfoIcon from '@mui/icons-material/Info';
 import LightbulbIcon from '@mui/icons-material/Lightbulb';
-import PhotoIcon from '@mui/icons-material/Photo';
 import api from '../../config/axiosConfig';
 import IdeasGallerySection from './IdeasGallerySection';
 
@@ -67,7 +66,7 @@ const TeacherArea: React.FC = () => {
   }
 
   return (
-    <Container maxWidth={false} sx={{ width: '100%', mt: 10, mb: 8, mx: 'auto', bgcolor: '#f5f7fa' }}>
+    <Container maxWidth={false} sx={{ width: '100%', mt: 10, mb: 8, mx: 0, px: 0, bgcolor: '#f5f7fa' }}>
       <Box
         sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3, mb: 6 }}
       >
@@ -103,7 +102,7 @@ const TeacherArea: React.FC = () => {
 
       <Paper
         elevation={4}
-        sx={{ p: { xs: 3, md: 5 }, borderRadius: 3, background: 'linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%)' }}
+        sx={{ p: { xs: 1, md: 5 }, borderRadius: 3, background: 'linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%)' }}
       >
         <Typography variant="h4" fontWeight="bold" color="#424242" gutterBottom>
           Área do Professor
@@ -184,12 +183,8 @@ const TeacherArea: React.FC = () => {
                 </motion.div>
               </Grid>
             </Grid>
-
             <DocumentsSection />
-
             <IdeasGallerySection />
-
-
             <TrainingVideosSection />
             <CommentsSection />
           </Box>

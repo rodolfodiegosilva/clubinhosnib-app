@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import PhotoIcon from '@mui/icons-material/Photo';
+import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
 import api from '../../config/axiosConfig';
 
 interface IdeasGalleryRoute {
@@ -41,7 +41,7 @@ const IdeasGallerySection: React.FC = () => {
             title: page.title,
             subtitle: page.subtitle,
             description: page.description,
-            image: page.route?.image || 'https://via.placeholder.com/300x140?text=Galeria',
+            image: page.route?.image,
             path: `/${page.route.path}`,
           }));
 
@@ -72,7 +72,7 @@ const IdeasGallerySection: React.FC = () => {
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-        <PhotoIcon sx={{ color: '#ab47bc', mr: 1 }} />
+        <LightbulbOutlinedIcon sx={{ color: '#ab47bc', mr: 1 }} />
         <Typography variant="h6" fontWeight="bold" color="#424242">
           Galeria de Ideias
         </Typography>

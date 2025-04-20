@@ -16,7 +16,6 @@ interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
 }
 
-// === Interceptor de Request ===
 apiAxios.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = store.getState().auth.accessToken;
@@ -36,7 +35,6 @@ apiAxios.interceptors.request.use(
   }
 );
 
-// === Interceptor de Response ===
 apiAxios.interceptors.response.use(
   (response: AxiosResponse) => {
     return response;
@@ -58,7 +56,6 @@ apiAxios.interceptors.response.use(
         const { accessToken, refreshToken: newRefresh } = response.data;
         console.log("[Axios][Response] Novo token obtido via refresh");
 
-        // Dispatch login sem user, pois o refresh não retorna user
         store.dispatch(login({ accessToken, refreshToken: newRefresh }));
 
         originalRequest.headers = originalRequest.headers || {};
