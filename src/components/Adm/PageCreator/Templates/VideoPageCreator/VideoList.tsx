@@ -1,9 +1,6 @@
-import { Box, Card, Grid, IconButton, Typography } from "@mui/material";
-import { Delete, Edit } from "@mui/icons-material";
-import {
-  MediaItem,
-  MediaUploadType,
-} from "store/slices/types";
+import { Box, Card, Grid, IconButton, Typography } from '@mui/material';
+import { Delete, Edit } from '@mui/icons-material';
+import { MediaItem, MediaUploadType } from 'store/slices/types';
 
 interface VideoListProps {
   videos: MediaItem[];
@@ -27,16 +24,16 @@ export default function VideoList({ videos, handleRemoveVideo, handleEditVideo }
             {video.uploadType === MediaUploadType.LINK ? (
               <Box
                 sx={{
-                  width: "100%",
-                  aspectRatio: "16/9",
+                  width: '100%',
+                  aspectRatio: '16/9',
                   mb: 2,
-                  iframe: { width: "100%", height: "100%", border: 0 },
+                  iframe: { width: '100%', height: '100%', border: 0 },
                 }}
               >
                 <iframe src={video.url} title={`Vídeo ${index + 1}`} allowFullScreen />
               </Box>
             ) : (
-              <video controls style={{ width: "100%", marginBottom: "16px" }}>
+              <video controls style={{ width: '100%', marginBottom: '16px' }}>
                 <source src={video.url} />
                 Seu navegador não suporta vídeo.
               </video>
@@ -51,11 +48,7 @@ export default function VideoList({ videos, handleRemoveVideo, handleEditVideo }
               >
                 <Edit fontSize="small" />
               </IconButton>
-              <IconButton
-                onClick={() => handleRemoveVideo(index)}
-                size="small"
-                color="error"
-              >
+              <IconButton onClick={() => handleRemoveVideo(index)} size="small" color="error">
                 <Delete fontSize="small" />
               </IconButton>
             </Box>

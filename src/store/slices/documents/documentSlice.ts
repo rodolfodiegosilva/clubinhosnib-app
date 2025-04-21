@@ -40,11 +40,6 @@ const documentSlice = createSlice({
   },
 });
 
-export const {
-  setDocumentData,
-  clearDocumentData,
-  setMedia,
-  clearMedia,
-} = documentSlice.actions;
+export const { setDocumentData, clearDocumentData, setMedia, clearMedia } = documentSlice.actions;
 
 export default documentSlice.reducer;

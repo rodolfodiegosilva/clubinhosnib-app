@@ -35,8 +35,8 @@ const IdeasGallerySection: React.FC = () => {
         const pages = response.data as any[];
 
         const mapped: IdeasGalleryRoute[] = pages
-          .filter(page => page.route?.path)
-          .map(page => ({
+          .filter((page) => page.route?.path)
+          .map((page) => ({
             id: page.id,
             title: page.title,
             subtitle: page.subtitle,
@@ -116,12 +116,7 @@ const IdeasGallerySection: React.FC = () => {
                     }}
                   />
                   <CardContent>
-                    <Typography
-                      variant="subtitle1"
-                      fontWeight="bold"
-                      color="#424242"
-                      gutterBottom
-                    >
+                    <Typography variant="subtitle1" fontWeight="bold" color="#424242" gutterBottom>
                       {idea.title}
                     </Typography>
                     <Typography variant="body2" color="#616161" noWrap>

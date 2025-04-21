@@ -1,14 +1,6 @@
-import React from "react";
-import {
-  Grid,
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Button,
-} from "@mui/material";
-import { MediaUploadType, MediaPlatform } from "store/slices/types";
+import React from 'react';
+import { Grid, TextField, FormControl, InputLabel, Select, MenuItem, Button } from '@mui/material';
+import { MediaUploadType, MediaPlatform } from 'store/slices/types';
 
 interface Props {
   mediaTitle: string;
@@ -91,13 +83,9 @@ const DocumentMediaForm: React.FC<Props> = ({
               <Select
                 value={platformType}
                 label="Plataforma"
-                onChange={(e) =>
-                  setPlatformType(e.target.value as MediaPlatform)
-                }
+                onChange={(e) => setPlatformType(e.target.value as MediaPlatform)}
               >
-                <MenuItem value={MediaPlatform.GOOGLE_DRIVE}>
-                  Google Drive
-                </MenuItem>
+                <MenuItem value={MediaPlatform.GOOGLE_DRIVE}>Google Drive</MenuItem>
                 <MenuItem value={MediaPlatform.ONEDRIVE}>OneDrive</MenuItem>
                 <MenuItem value={MediaPlatform.DROPBOX}>Dropbox</MenuItem>
                 <MenuItem value={MediaPlatform.ANY}>Outro</MenuItem>
@@ -110,7 +98,7 @@ const DocumentMediaForm: React.FC<Props> = ({
       {uploadType === MediaUploadType.UPLOAD && (
         <Grid item xs={12}>
           <Button component="label" variant="outlined" fullWidth>
-            {file ? file.name : "Selecionar Arquivo (PDF, DOC, DOCX)"}
+            {file ? file.name : 'Selecionar Arquivo (PDF, DOC, DOCX)'}
             <input
               type="file"
               hidden

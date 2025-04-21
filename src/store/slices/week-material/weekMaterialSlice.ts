@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { RouteData } from "../route/routeSlice";
-import { MediaItem } from "../types";
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { RouteData } from '../route/routeSlice';
+import { MediaItem } from '../types';
 import api from '../../../config/axiosConfig';
 
 export interface WeekMaterialPageData {
@@ -42,7 +42,7 @@ export const fetchCurrentWeekMaterial = createAsyncThunk<WeekMaterialPageData>(
 
 // Slice
 const studyMaterialSlice = createSlice({
-  name: "studyMaterial",
+  name: 'studyMaterial',
   initialState,
   reducers: {
     setWeekMaterialData: (state, action: PayloadAction<WeekMaterialPageData>) => {
@@ -64,7 +64,7 @@ const studyMaterialSlice = createSlice({
       })
       .addCase(fetchCurrentWeekMaterial.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message ?? "Erro ao buscar material da semana.";
+        state.error = action.error.message ?? 'Erro ao buscar material da semana.';
       });
   },
 });

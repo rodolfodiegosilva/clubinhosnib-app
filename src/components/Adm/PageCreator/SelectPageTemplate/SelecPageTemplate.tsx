@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { clearImageData } from "../../../../store/slices/image/imageSlice";
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { clearImageData } from '../../../../store/slices/image/imageSlice';
 
 import {
   Box,
@@ -11,43 +11,42 @@ import {
   FormControl,
   InputLabel,
   SelectChangeEvent,
-} from "@mui/material";
-import { ReactElement } from "react";
-import VideoPageCreator from "../Templates/VideoPageCreator/VideoPageCreator";
-import PhotoPageCreator from "../Templates/ImagePageCreator/ImagePageCreator";
-import InforamtivePageCreator from "../Templates/InforamtivePageCreator/InforamtivePageCreator";
-import EventPageCreator from "../Templates/EventPageCreator/EventPageCreator";
-import MeditationPageCreator from "../Templates/MeditationPageCreator/MeditationPageCreator";
-import WeekMaterialPageCreator from "../Templates/WeekMaterialPageCreator/WeekMaterialPageCreator";
-import { IdeasMaterialPageCreator } from "../Templates/IdeasMaterialPageCreator/IdeasMaterialPageCreator";
+} from '@mui/material';
+import { ReactElement } from 'react';
+import VideoPageCreator from '../Templates/VideoPageCreator/VideoPageCreator';
+import PhotoPageCreator from '../Templates/ImagePageCreator/ImagePageCreator';
+import EventPageCreator from '../Templates/EventPageCreator/EventPageCreator';
+import MeditationPageCreator from '../Templates/MeditationPageCreator/MeditationPageCreator';
+import WeekMaterialPageCreator from '../Templates/WeekMaterialPageCreator/WeekMaterialPageCreator';
+import { IdeasMaterialPageCreator } from '../Templates/IdeasMaterialPageCreator/IdeasMaterialPageCreator';
 
 enum Options {
-  WEEK_MATERIALS = "Adicionar Materiais da Semana",
-  MEDITATION = "Adicionar meditação da Semana",
-  GALLERY = "Adicionar galeria de Fotos",
-  VIDEOS = "Adicionar galeria de Videos",
-  IDEAS = "Adicionar uma pagina de Ideias",
-  EVENTS = "Adicionar pagina de Eventos",
+  WEEK_MATERIALS = 'Adicionar Materiais da Semana',
+  MEDITATION = 'Adicionar meditação da Semana',
+  GALLERY = 'Adicionar galeria de Fotos',
+  VIDEOS = 'Adicionar galeria de Videos',
+  IDEAS = 'Adicionar uma pagina de Ideias',
+  EVENTS = 'Adicionar pagina de Eventos',
 }
 
 const componentMap: Record<keyof typeof Options, () => ReactElement> = {
   GALLERY: () => <PhotoPageCreator fromTemplatePage={true} />,
   VIDEOS: () => <VideoPageCreator fromTemplatePage={true} />,
   MEDITATION: () => <MeditationPageCreator fromTemplatePage={true} />,
-  IDEAS: () => <IdeasMaterialPageCreator fromTemplatePage={true}/>,
+  IDEAS: () => <IdeasMaterialPageCreator fromTemplatePage={true} />,
   WEEK_MATERIALS: () => <WeekMaterialPageCreator fromTemplatePage={true} />,
   EVENTS: () => <EventPageCreator />,
 };
 
 export default function SelecPageTemplate() {
-  const [selectedOption, setSelectedOption] = useState<keyof typeof Options | "">("");
+  const [selectedOption, setSelectedOption] = useState<keyof typeof Options | ''>('');
   const dispatch = useDispatch();
 
   const handleChange = (event: SelectChangeEvent) => {
     const selected = event.target.value as keyof typeof Options;
     setSelectedOption(selected);
 
-    if (selected === "GALLERY") {
+    if (selected === 'GALLERY') {
       dispatch(clearImageData());
     }
   };
@@ -55,23 +54,36 @@ export default function SelecPageTemplate() {
   return (
     <Box
       sx={{
-        minHeight: "100vh",
+        minHeight: '100vh',
         px: { xs: 0, md: 0 },
         py: { xs: 0, md: 8 },
         mt: { xs: 0, md: 0 },
         mb: { xs: 0, md: 0 },
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        bgcolor: "linear-gradient(to bottom, #f4f4f4, #e8e8e8)",
-        textAlign: "center",
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        bgcolor: 'linear-gradient(to bottom, #f4f4f4, #e8e8e8)',
+        textAlign: 'center',
       }}
     >
-      <Typography variant="h4" fontWeight="bold" gutterBottom  sx={{ mt: { xs: 0, md: 0 }, mb: { xs: 1, md: 3 }, fontSize: { xs: "1.5rem", md: "2.4rem" } }}>
+      <Typography
+        variant="h4"
+        fontWeight="bold"
+        gutterBottom
+        sx={{
+          mt: { xs: 0, md: 0 },
+          mb: { xs: 1, md: 3 },
+          fontSize: { xs: '1.5rem', md: '2.4rem' },
+        }}
+      >
         Escolha um Modelo
       </Typography>
 
-      <Typography variant="subtitle1" color="text.secondary"  sx={{ mt: { xs: 0, md: 0 }, mb: { xs: 2, md: 3 }, fontSize: { xs: "1rem", md: "1.5rem" } }}>
+      <Typography
+        variant="subtitle1"
+        color="text.secondary"
+        sx={{ mt: { xs: 0, md: 0 }, mb: { xs: 2, md: 3 }, fontSize: { xs: '1rem', md: '1.5rem' } }}
+      >
         Selecione um modelo abaixo para visualizar e criar um novo conteúdo.
       </Typography>
 
@@ -97,15 +109,14 @@ export default function SelecPageTemplate() {
       <Paper
         elevation={3}
         sx={{
-          width: "95%",
-          maxWidth: "95%",
+          width: '95%',
+          maxWidth: '95%',
           p: 1,
           mt: 2,
-          transition: "all 0.3s ease-in-out",
+          transition: 'all 0.3s ease-in-out',
           opacity: selectedOption ? 1 : 0.5,
         }}
       >
-
         {selectedOption ? (
           componentMap[selectedOption as keyof typeof Options]()
         ) : (

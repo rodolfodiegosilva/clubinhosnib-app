@@ -1,38 +1,22 @@
-import { useEffect, useState } from "react";
-import {
-  Box,
-  Typography,
-  Grid,
-  CircularProgress,
-  Alert,
-  TextField,
-} from "@mui/material";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import api from "../../../config/axiosConfig";
-import { AppDispatch } from "../../../store/slices";
-import {
-  setMeditationData,
-  MeditationData,
-  DayItem,
-} from "../../../store/slices/meditation/meditationSlice";
-import MeditationCard from "./MeditationCard";
-import DayDetailsDialog from "./DayDetailsDialog";
-import MediaPreviewDialog from "./MediaPreviewDialog";
-import DeleteConfirmDialog from "./DeleteConfirmDialog";
+import { useEffect, useState } from 'react';
+import { Box, Typography, Grid, CircularProgress, Alert, TextField } from '@mui/material';
+import api from '../../../config/axiosConfig';
+import { MeditationData, DayItem } from '../../../store/slices/meditation/meditationSlice';
+import MeditationCard from './MeditationCard';
+import DayDetailsDialog from './DayDetailsDialog';
+import MediaPreviewDialog from './MediaPreviewDialog';
+import DeleteConfirmDialog from './DeleteConfirmDialog';
 
 export default function MeditationListPage() {
+  const [allMeditations, setAllMeditations] = useState<MeditationData[]>([]);
   const [meditations, setMeditations] = useState<MeditationData[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [isFiltering, setIsFiltering] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [selectedDay, setSelectedDay] = useState<DayItem | null>(null);
   const [mediaUrl, setMediaUrl] = useState<string | null>(null);
   const [meditationToDelete, setMeditationToDelete] = useState<MeditationData | null>(null);
-
-  const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
 
   useEffect(() => {
     loadMeditations();
@@ -41,7 +25,7 @@ export default function MeditationListPage() {
   const loadMeditations = async () => {
     setLoading(true);
     try {
-      const res = await api.get("/meditations");
+      const res = await api.get('/meditations');
       const list: MeditationData[] = res.data.map((item: any) => ({
         ...item.meditation,
         media: {
@@ -51,9 +35,10 @@ export default function MeditationListPage() {
           platformType: item.meditation.media.platformType,
         },
       }));
+      setAllMeditations(list);
       setMeditations(list);
     } catch (err) {
-      setError("Erro ao buscar meditações.");
+      setError('Erro ao buscar meditações.');
     } finally {
       setLoading(false);
     }
@@ -62,13 +47,14 @@ export default function MeditationListPage() {
   useEffect(() => {
     const timer = setTimeout(() => {
       const lower = searchTerm.toLowerCase();
-      const filtered = meditations.filter(m => m.topic.toLowerCase().includes(lower));
-      setIsFiltering(false);
+      const filtered = allMeditations.filter((m) => m.topic.toLowerCase().includes(lower));
       setMeditations(filtered);
+      setIsFiltering(false);
     }, 300);
+
     setIsFiltering(true);
     return () => clearTimeout(timer);
-  }, [searchTerm]);
+  }, [searchTerm, allMeditations]);
 
   const handleDelete = async () => {
     if (!meditationToDelete) return;
@@ -78,28 +64,47 @@ export default function MeditationListPage() {
       await api.delete(`/meditations/${meditationToDelete.id}`);
       await loadMeditations();
     } catch (err) {
-      setError("Erro ao deletar meditação.");
+      setError('Erro ao deletar meditação.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Box sx={{ px: { xs: 1, md: 3 }, py: { xs: 1, md: 2 }, mt: { xs: 0, md: 4 }, bgcolor: "#f5f7fa", minHeight: "100vh" }}>
+    <Box
+      sx={{
+        px: { xs: 1, md: 3 },
+        py: { xs: 1, md: 2 },
+        mt: { xs: 0, md: 4 },
+        bgcolor: '#f5f7fa',
+        minHeight: '100vh',
+      }}
+    >
       <Typography variant="h4" fontWeight="bold" textAlign="center" sx={{ mb: { xs: 4, md: 3 } }}>
         Meditações Semanais
       </Typography>
 
       <Box maxWidth={500} mx="auto" mb={5}>
-        <TextField fullWidth placeholder="Buscar por tema..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+        <TextField
+          fullWidth
+          placeholder="Buscar por tema..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </Box>
 
       {loading || isFiltering ? (
-        <Box textAlign="center" mt={10}><CircularProgress /></Box>
+        <Box textAlign="center" mt={10}>
+          <CircularProgress />
+        </Box>
       ) : error ? (
-        <Box textAlign="center" mt={10}><Alert severity="error">{error}</Alert></Box>
+        <Box textAlign="center" mt={10}>
+          <Alert severity="error">{error}</Alert>
+        </Box>
       ) : meditations.length === 0 ? (
-        <Box textAlign="center" mt={10}><Alert severity="info">Nenhuma meditação encontrada.</Alert></Box>
+        <Box textAlign="center" mt={10}>
+          <Alert severity="info">Nenhuma meditação encontrada.</Alert>
+        </Box>
       ) : (
         <Grid container spacing={4} justifyContent="center">
           {meditations.map((meditation) => (
@@ -107,10 +112,10 @@ export default function MeditationListPage() {
               item
               key={meditation.id}
               sx={{
-                flexBasis: { xs: "100%", sm: "50%", md: "33.33%", lg: "25%" },
-                maxWidth: { xs: "100%", sm: "50%", md: "33.33%", lg: "25%" },
+                flexBasis: { xs: '100%', sm: '50%', md: '33.33%', lg: '25%' },
+                maxWidth: { xs: '100%', sm: '50%', md: '33.33%', lg: '25%' },
                 minWidth: 280,
-                display: "flex",
+                display: 'flex',
               }}
             >
               <MeditationCard

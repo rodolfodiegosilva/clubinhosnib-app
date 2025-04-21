@@ -1,13 +1,6 @@
-import { useState } from "react";
-import {
-  Box,
-  Typography,
-  TextField,
-  Button,
-  Grid,
-  IconButton,
-} from "@mui/material";
-import { Delete } from "@mui/icons-material";
+import { useState } from 'react';
+import { Box, Typography, TextField, Button, Grid, IconButton } from '@mui/material';
+import { Delete } from '@mui/icons-material';
 
 interface InfoItem {
   title: string;
@@ -15,10 +8,10 @@ interface InfoItem {
 }
 
 export default function InforamtivePageCreator() {
-  const [pageTitle, setPageTitle] = useState("");
-  const [pageDescription, setPageDescription] = useState("");
+  const [pageTitle, setPageTitle] = useState('');
+  const [pageDescription, setPageDescription] = useState('');
   const [infos, setInfos] = useState<InfoItem[]>([]);
-  const [newInfo, setNewInfo] = useState<InfoItem>({ title: "", content: "" });
+  const [newInfo, setNewInfo] = useState<InfoItem>({ title: '', content: '' });
 
   const [errors, setErrors] = useState({
     pageTitle: false,
@@ -37,7 +30,7 @@ export default function InforamtivePageCreator() {
     if (hasError) return;
 
     setInfos([...infos, newInfo]);
-    setNewInfo({ title: "", content: "" });
+    setNewInfo({ title: '', content: '' });
   };
 
   const handleRemoveInfo = (index: number) => {
@@ -60,28 +53,28 @@ export default function InforamtivePageCreator() {
     };
 
     try {
-      const res = await fetch("/informative-page", {
-        method: "POST",
+      const res = await fetch('/informative-page', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),
       });
-      if (!res.ok) throw new Error("Erro ao salvar página");
+      if (!res.ok) throw new Error('Erro ao salvar página');
     } catch (err) {
-      console.error("Erro ao salvar página", err);
+      console.error('Erro ao salvar página', err);
     }
   };
 
   return (
-    <Box sx={{ width: { xs: "95%", md: "100%" }, maxWidth: 1000, mx: "auto", p: 0 }}>
+    <Box sx={{ width: { xs: '95%', md: '100%' }, maxWidth: 1000, mx: 'auto', p: 0 }}>
       <Typography
         variant="h4"
         mb={3}
         fontWeight="bold"
         sx={{
-          textAlign: "center",
-          fontSize: { xs: "1.6rem", sm: "2rem", md: "2.25rem" },
+          textAlign: 'center',
+          fontSize: { xs: '1.6rem', sm: '2rem', md: '2.25rem' },
         }}
       >
         Criar Página Informativa
@@ -95,7 +88,7 @@ export default function InforamtivePageCreator() {
             value={pageTitle}
             onChange={(e) => setPageTitle(e.target.value)}
             error={errors.pageTitle}
-            helperText={errors.pageTitle ? "Campo obrigatório" : ""}
+            helperText={errors.pageTitle ? 'Campo obrigatório' : ''}
           />
         </Grid>
         <Grid item xs={12}>
@@ -107,7 +100,7 @@ export default function InforamtivePageCreator() {
             value={pageDescription}
             onChange={(e) => setPageDescription(e.target.value)}
             error={errors.pageDescription}
-            helperText={errors.pageDescription ? "Campo obrigatório" : ""}
+            helperText={errors.pageDescription ? 'Campo obrigatório' : ''}
           />
         </Grid>
       </Grid>
@@ -124,7 +117,7 @@ export default function InforamtivePageCreator() {
             value={newInfo.title}
             onChange={(e) => setNewInfo((prev) => ({ ...prev, title: e.target.value }))}
             error={errors.newInfoTitle}
-            helperText={errors.newInfoTitle ? "Campo obrigatório" : ""}
+            helperText={errors.newInfoTitle ? 'Campo obrigatório' : ''}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -134,7 +127,7 @@ export default function InforamtivePageCreator() {
             value={newInfo.content}
             onChange={(e) => setNewInfo((prev) => ({ ...prev, content: e.target.value }))}
             error={errors.newInfoContent}
-            helperText={errors.newInfoContent ? "Campo obrigatório" : ""}
+            helperText={errors.newInfoContent ? 'Campo obrigatório' : ''}
           />
         </Grid>
         <Grid item xs={12}>
@@ -154,7 +147,7 @@ export default function InforamtivePageCreator() {
                 size="small"
                 color="error"
                 onClick={() => handleRemoveInfo(index)}
-                sx={{ position: "absolute", top: 8, right: 8 }}
+                sx={{ position: 'absolute', top: 8, right: 8 }}
               >
                 <Delete fontSize="small" />
               </IconButton>

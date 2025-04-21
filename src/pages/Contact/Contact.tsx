@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Box,
   TextField,
@@ -9,11 +9,11 @@ import {
   useMediaQuery,
   Alert,
   CircularProgress,
-} from "@mui/material";
-import api from "../../config/axiosConfig";
+} from '@mui/material';
+import api from '../../config/axiosConfig';
 
 const formatPhone = (value: string) => {
-  const cleaned = value.replace(/\D/g, "").slice(0, 11);
+  const cleaned = value.replace(/\D/g, '').slice(0, 11);
   const match = cleaned.match(/^(\d{0,2})(\d{0,5})(\d{0,4})$/);
 
   if (!match) return value;
@@ -22,15 +22,15 @@ const formatPhone = (value: string) => {
   if (ddd && prefixo && sufixo) return `(${ddd}) ${prefixo}-${sufixo}`;
   if (ddd && prefixo) return `(${ddd}) ${prefixo}`;
   if (ddd) return `(${ddd}`;
-  return "";
+  return '';
 };
 
 const Contact: React.FC = () => {
   const [form, setForm] = useState({
-    nome: "",
-    email: "",
-    telefone: "",
-    mensagem: "",
+    nome: '',
+    email: '',
+    telefone: '',
+    mensagem: '',
   });
 
   // Interface para erros com mensagens específicas
@@ -42,10 +42,10 @@ const Contact: React.FC = () => {
   }
 
   const [errors, setErrors] = useState<FormErrors>({
-    nome: { hasError: false, message: "" },
-    email: { hasError: false, message: "" },
-    telefone: { hasError: false, message: "" },
-    mensagem: { hasError: false, message: "" },
+    nome: { hasError: false, message: '' },
+    email: { hasError: false, message: '' },
+    telefone: { hasError: false, message: '' },
+    mensagem: { hasError: false, message: '' },
   });
 
   const [submitted, setSubmitted] = useState(false);
@@ -53,7 +53,7 @@ const Contact: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   // Regex para validações
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -61,60 +61,121 @@ const Contact: React.FC = () => {
   const nomeRegex = /^[A-Za-zÀ-ÿ\s]+$/;
 
   const validDDDs = [
-    "11", "12", "13", "14", "15", "16", "17", "18", "19", "21", "22", "24",
-    "27", "28", "31", "32", "33", "34", "35", "37", "38", "41", "42", "43",
-    "44", "45", "46", "47", "48", "49", "51", "53", "54", "55", "61", "62",
-    "63", "64", "65", "66", "67", "68", "69", "71", "73", "74", "75", "77",
-    "79", "81", "82", "83", "84", "85", "86", "87", "88", "89", "91", "92",
-    "93", "94", "95", "96", "97", "98", "99",
+    '11',
+    '12',
+    '13',
+    '14',
+    '15',
+    '16',
+    '17',
+    '18',
+    '19',
+    '21',
+    '22',
+    '24',
+    '27',
+    '28',
+    '31',
+    '32',
+    '33',
+    '34',
+    '35',
+    '37',
+    '38',
+    '41',
+    '42',
+    '43',
+    '44',
+    '45',
+    '46',
+    '47',
+    '48',
+    '49',
+    '51',
+    '53',
+    '54',
+    '55',
+    '61',
+    '62',
+    '63',
+    '64',
+    '65',
+    '66',
+    '67',
+    '68',
+    '69',
+    '71',
+    '73',
+    '74',
+    '75',
+    '77',
+    '79',
+    '81',
+    '82',
+    '83',
+    '84',
+    '85',
+    '86',
+    '87',
+    '88',
+    '89',
+    '91',
+    '92',
+    '93',
+    '94',
+    '95',
+    '96',
+    '97',
+    '98',
+    '99',
   ];
 
   const validateField = (name: keyof typeof form, value: string) => {
-    let error: { hasError: boolean; message: string } = { hasError: false, message: "" };
+    let error: { hasError: boolean; message: string } = { hasError: false, message: '' };
 
     switch (name) {
-      case "nome":
-        if (value.trim() === "") {
-          error = { hasError: true, message: "Nome é obrigatório." };
+      case 'nome':
+        if (value.trim() === '') {
+          error = { hasError: true, message: 'Nome é obrigatório.' };
         } else if (value.trim().length < 2) {
-          error = { hasError: true, message: "Nome deve ter pelo menos 2 caracteres." };
+          error = { hasError: true, message: 'Nome deve ter pelo menos 2 caracteres.' };
         } else if (!nomeRegex.test(value)) {
-          error = { hasError: true, message: "Nome deve conter apenas letras." };
+          error = { hasError: true, message: 'Nome deve conter apenas letras.' };
         }
         break;
 
-      case "email":
-        if (value.trim() === "") {
-          error = { hasError: true, message: "Email é obrigatório." };
+      case 'email':
+        if (value.trim() === '') {
+          error = { hasError: true, message: 'Email é obrigatório.' };
         } else if (!emailRegex.test(value)) {
-          if (!value.includes("@")) {
+          if (!value.includes('@')) {
             error = { hasError: true, message: "Email deve conter '@'." };
-          } else if (!value.includes(".")) {
-            error = { hasError: true, message: "Email deve conter um domínio (ex.: .com)." };
+          } else if (!value.includes('.')) {
+            error = { hasError: true, message: 'Email deve conter um domínio (ex.: .com).' };
           } else {
-            error = { hasError: true, message: "Email inválido." };
+            error = { hasError: true, message: 'Email inválido.' };
           }
         }
         break;
 
-      case "telefone":
-        if (value.trim() === "") {
-          error = { hasError: true, message: "Telefone é obrigatório." };
+      case 'telefone':
+        if (value.trim() === '') {
+          error = { hasError: true, message: 'Telefone é obrigatório.' };
         } else if (!telefoneRegex.test(value)) {
-          error = { hasError: true, message: "Telefone inválido (ex.: (11) 91234-5678)." };
+          error = { hasError: true, message: 'Telefone inválido (ex.: (11) 91234-5678).' };
         } else {
           const ddd = value.slice(1, 3); // Extrai o DDD
           if (!validDDDs.includes(ddd)) {
-            error = { hasError: true, message: "DDD inválido." };
+            error = { hasError: true, message: 'DDD inválido.' };
           }
         }
         break;
 
-      case "mensagem":
-        if (value.trim() === "") {
-          error = { hasError: true, message: "Mensagem é obrigatória." };
+      case 'mensagem':
+        if (value.trim() === '') {
+          error = { hasError: true, message: 'Mensagem é obrigatória.' };
         } else if (value.trim().length < 10) {
-          error = { hasError: true, message: "Mensagem deve ter pelo menos 10 caracteres." };
+          error = { hasError: true, message: 'Mensagem deve ter pelo menos 10 caracteres.' };
         }
         break;
 
@@ -128,21 +189,19 @@ const Contact: React.FC = () => {
   // Validação completa do formulário
   const validateForm = () => {
     const newErrors: FormErrors = {
-      nome: validateField("nome", form.nome),
-      email: validateField("email", form.email),
-      telefone: validateField("telefone", form.telefone),
-      mensagem: validateField("mensagem", form.mensagem),
+      nome: validateField('nome', form.nome),
+      email: validateField('email', form.email),
+      telefone: validateField('telefone', form.telefone),
+      mensagem: validateField('mensagem', form.mensagem),
     };
 
     setErrors(newErrors);
     return !Object.values(newErrors).some((err) => err.hasError);
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    const formattedValue = name === "telefone" ? formatPhone(value) : value;
+    const formattedValue = name === 'telefone' ? formatPhone(value) : value;
 
     setForm((prevForm) => ({ ...prevForm, [name]: formattedValue }));
 
@@ -165,7 +224,7 @@ const Contact: React.FC = () => {
     setError(false);
 
     try {
-      await api.post("/contact", {
+      await api.post('/contact', {
         name: form.nome,
         email: form.email,
         phone: form.telefone,
@@ -173,16 +232,16 @@ const Contact: React.FC = () => {
       });
 
       setSubmitted(true);
-      setForm({ nome: "", email: "", telefone: "", mensagem: "" });
+      setForm({ nome: '', email: '', telefone: '', mensagem: '' });
       setErrors({
-        nome: { hasError: false, message: "" },
-        email: { hasError: false, message: "" },
-        telefone: { hasError: false, message: "" },
-        mensagem: { hasError: false, message: "" },
+        nome: { hasError: false, message: '' },
+        email: { hasError: false, message: '' },
+        telefone: { hasError: false, message: '' },
+        mensagem: { hasError: false, message: '' },
       });
     } catch (err) {
       setError(true);
-      console.error("Erro ao enviar contato:", err);
+      console.error('Erro ao enviar contato:', err);
     } finally {
       setLoading(false);
     }
@@ -199,9 +258,9 @@ const Contact: React.FC = () => {
       mt={{ xs: 7, md: 5 }}
       mb={0}
       sx={{
-        background: "linear-gradient(135deg, white 0%, #007bff 100%)",
+        background: 'linear-gradient(135deg, white 0%, #007bff 100%)',
         fontFamily: "'Roboto', sans-serif",
-        width: "100%",
+        width: '100%',
       }}
     >
       <Paper
@@ -210,17 +269,17 @@ const Contact: React.FC = () => {
           p: { xs: 2, sm: 3, md: 4 },
           mt: { xs: 4, md: 6 },
           mb: { xs: 2, md: 4 },
-          width: "100%",
-          maxWidth: { xs: "100%", sm: 700 },
+          width: '100%',
+          maxWidth: { xs: '100%', sm: 700 },
           borderRadius: 3,
-          transition: "transform 0.3s ease-in-out",
-          "&:hover": {
-            transform: "translateY(-4px)",
+          transition: 'transform 0.3s ease-in-out',
+          '&:hover': {
+            transform: 'translateY(-4px)',
           },
-          minHeight: "70%",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
+          minHeight: '70%',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
         }}
         role="region"
         aria-label="Formulário de Contato do Clubinhos NIB"
@@ -231,7 +290,7 @@ const Contact: React.FC = () => {
           gutterBottom
           textAlign="center"
           sx={{
-            fontSize: { xs: "1.5rem", sm: "2rem", md: "2.5rem" },
+            fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
           }}
         >
           Fale Conosco
@@ -241,7 +300,7 @@ const Contact: React.FC = () => {
           gutterBottom
           textAlign="center"
           sx={{
-            fontSize: { xs: "0.9rem", sm: "1rem" },
+            fontSize: { xs: '0.9rem', sm: '1rem' },
           }}
         >
           Entre em contato para saber mais informações.
@@ -328,7 +387,7 @@ const Contact: React.FC = () => {
             disabled={loading}
             startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
           >
-            {loading ? "Enviando..." : "Enviar"}
+            {loading ? 'Enviando...' : 'Enviar'}
           </Button>
         </Box>
       </Paper>

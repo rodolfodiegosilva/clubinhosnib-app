@@ -22,11 +22,7 @@ interface DocumentViewModalProps {
   } | null;
 }
 
-const DocumentViewModal: React.FC<DocumentViewModalProps> = ({
-  open,
-  onClose,
-  document,
-}) => {
+const DocumentViewModal: React.FC<DocumentViewModalProps> = ({ open, onClose, document }) => {
   return (
     <Dialog
       open={open}
@@ -57,9 +53,7 @@ const DocumentViewModal: React.FC<DocumentViewModalProps> = ({
             title="Visualização do Documento"
           />
         ) : (
-          <Typography>
-            Não há documento disponível para visualização.
-          </Typography>
+          <Typography>Não há documento disponível para visualização.</Typography>
         )}
       </DialogContent>
 

@@ -8,9 +8,9 @@ import {
   TextField,
   FormControlLabel,
   Switch,
-} from "@mui/material";
-import ImageItem from "./ImageItem";
-import { MediaItem } from "store/slices/types";
+} from '@mui/material';
+import ImageItem from './ImageItem';
+import { MediaItem } from 'store/slices/types';
 
 interface ImageSectionProps {
   mediaItems: MediaItem[];
@@ -37,11 +37,11 @@ export default function ImageSection({
   onOpenModal,
   onRemoveSection,
 }: ImageSectionProps) {
-  const isCaptionEmpty = caption.trim() === "";
-  const isDescriptionEmpty = description.trim() === "";
+  const isCaptionEmpty = caption.trim() === '';
+  const isDescriptionEmpty = description.trim() === '';
 
   return (
-    <Container maxWidth={false} sx={{ maxWidth: "95% !important", p: 0 }}>
+    <Container maxWidth={false} sx={{ maxWidth: '95% !important', p: 0 }}>
       <Card sx={{ mb: 4, p: 2 }}>
         <Grid container spacing={2}>
           {/* Área da Imagem */}
@@ -58,7 +58,7 @@ export default function ImageSection({
                 value={caption}
                 onChange={(e) => onCaptionChange(e.target.value)}
                 error={isCaptionEmpty}
-                helperText={isCaptionEmpty ? "A legenda da seção é obrigatória." : ""}
+                helperText={isCaptionEmpty ? 'A legenda da seção é obrigatória.' : ''}
                 margin="normal"
               />
 
@@ -70,17 +70,14 @@ export default function ImageSection({
                 multiline
                 rows={3}
                 error={isDescriptionEmpty}
-                helperText={isDescriptionEmpty ? "A descrição da seção é obrigatória." : ""}
+                helperText={isDescriptionEmpty ? 'A descrição da seção é obrigatória.' : ''}
                 margin="normal"
               />
 
               <FormControlLabel
                 sx={{ mt: 1 }}
                 control={
-                  <Switch
-                    checked={isPublic}
-                    onChange={(e) => onPublicChange(e.target.checked)}
-                  />
+                  <Switch checked={isPublic} onChange={(e) => onPublicChange(e.target.checked)} />
                 }
                 label="Seção pública"
               />

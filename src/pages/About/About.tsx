@@ -1,9 +1,8 @@
-import React from "react";
-import { Box, Typography, useTheme, useMediaQuery, Paper } from "@mui/material";
+import React from 'react';
+import { Box, Typography, useTheme, Paper } from '@mui/material';
 
 const About: React.FC = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const Section: React.FC<{
     title: string;
@@ -17,7 +16,7 @@ const About: React.FC = () => {
         sx={{
           color: theme.palette.secondary.main,
           fontFamily: "'Poppins', sans-serif",
-          fontSize: { xs: "1.25rem", sm: "1.5rem" },
+          fontSize: { xs: '1.25rem', sm: '1.5rem' },
         }}
       >
         {title}
@@ -25,7 +24,7 @@ const About: React.FC = () => {
       <Typography
         variant="body1"
         sx={{
-          fontSize: { xs: "1rem", sm: "1.1rem" },
+          fontSize: { xs: '1rem', sm: '1.1rem' },
           lineHeight: 1.8,
           color: theme.palette.text.primary,
         }}
@@ -46,9 +45,9 @@ const About: React.FC = () => {
       mt={{ xs: 7, md: 5 }}
       mb={0}
       sx={{
-        background: "linear-gradient(135deg, white 0%, #007bff 100%)",
+        background: 'linear-gradient(135deg, white 0%, #007bff 100%)',
         fontFamily: "'Roboto', sans-serif",
-        width: "100%",
+        width: '100%',
       }}
     >
       <Paper
@@ -57,17 +56,17 @@ const About: React.FC = () => {
           p: { xs: 2, sm: 3, md: 4 },
           mt: { xs: 4, md: 6 },
           mb: { xs: 2, md: 4 },
-          width: "100%",
-          maxWidth: { xs: "100%", sm: 900 },
+          width: '100%',
+          maxWidth: { xs: '100%', sm: 900 },
           borderRadius: 3,
-          transition: "transform 0.3s ease-in-out",
-          "&:hover": {
-            transform: "translateY(-4px)",
+          transition: 'transform 0.3s ease-in-out',
+          '&:hover': {
+            transform: 'translateY(-4px)',
           },
-          minHeight: "70%",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
+          minHeight: '70%',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
         }}
         role="region"
         aria-label="Sobre o Clubinhos NIB"
@@ -81,7 +80,7 @@ const About: React.FC = () => {
           sx={{
             fontFamily: "'Poppins', sans-serif",
             color: theme.palette.primary.main,
-            fontSize: { xs: "1.8rem", sm: "2.5rem", md: "3rem" },
+            fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem' },
           }}
         >
           Quem Somos
@@ -91,10 +90,10 @@ const About: React.FC = () => {
           variant="body1"
           paragraph
           sx={{
-            fontSize: { xs: "1rem", sm: "1.1rem" },
+            fontSize: { xs: '1rem', sm: '1.1rem' },
             lineHeight: 1.8,
             color: theme.palette.text.primary,
-            textAlign: { xs: "justify", sm: "left" },
+            textAlign: { xs: 'justify', sm: 'left' },
           }}
         >
           O Clubinhos NIB é uma plataforma dedicada ao evangelismo e à edificação espiritual,

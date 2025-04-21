@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   CircularProgress,
@@ -14,17 +14,17 @@ import {
   DialogActions,
   Tooltip,
   Fab,
-} from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
-import api from "../../../config/axiosConfig";
-import { setImageData } from "../../../store/slices/image/imageSlice";
-import { RootState, AppDispatch } from "../../../store/slices";
-import { fetchRoutes } from "../../../store/slices/route/routeSlice";
-import { RoleUser } from "store/slices/auth/authSlice";
-import type { ImagePageData } from "../../../store/slices/image/imageSlice";
-import SectionImagePageView from "./SectionImagePageView";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+} from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
+import api from '../../../config/axiosConfig';
+import { setImageData } from '../../../store/slices/image/imageSlice';
+import { RootState, AppDispatch } from '../../../store/slices';
+import { fetchRoutes } from '../../../store/slices/route/routeSlice';
+import { RoleUser } from 'store/slices/auth/authSlice';
+import type { ImagePageData } from '../../../store/slices/image/imageSlice';
+import SectionImagePageView from './SectionImagePageView';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 interface PageGalleryProps {
   idToFetch?: string;
@@ -42,7 +42,8 @@ export default function PageGalleryView({ idToFetch }: PageGalleryProps) {
   const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
 
   const isAdmin = isAuthenticated && user?.role === RoleUser.ADMIN;
-  const isUserLogged = isAuthenticated && (user?.role === RoleUser.ADMIN || user?.role === RoleUser.USER);
+  const isUserLogged =
+    isAuthenticated && (user?.role === RoleUser.ADMIN || user?.role === RoleUser.USER);
 
   const defaultGalleryId = process.env.REACT_APP_FEED_MINISTERIO_ID;
 
@@ -52,14 +53,14 @@ export default function PageGalleryView({ idToFetch }: PageGalleryProps) {
         setLoading(true);
         const galleryId = idToFetch ?? defaultGalleryId;
 
-        if (!galleryId) throw new Error("Nenhum ID de galeria fornecido.");
+        if (!galleryId) throw new Error('Nenhum ID de galeria fornecido.');
 
         const { data } = await api.get<ImagePageData>(`/image-pages/${galleryId}`);
         setLocalData(data);
         dispatch(setImageData(data));
       } catch (err) {
-        console.error("Erro ao buscar a galeria:", err);
-        setError("Erro ao carregar a galeria. Tente novamente mais tarde.");
+        console.error('Erro ao buscar a galeria:', err);
+        setError('Erro ao carregar a galeria. Tente novamente mais tarde.');
       } finally {
         setLoading(false);
       }
@@ -75,10 +76,10 @@ export default function PageGalleryView({ idToFetch }: PageGalleryProps) {
       setIsDeleting(true);
       await api.delete(`/image-pages/${localData.id}`);
       await dispatch(fetchRoutes());
-      navigate("/");
+      navigate('/');
     } catch (err) {
-      console.error("Erro ao excluir a galeria:", err);
-      setError("Erro ao excluir a galeria. Tente novamente mais tarde.");
+      console.error('Erro ao excluir a galeria:', err);
+      setError('Erro ao excluir a galeria. Tente novamente mais tarde.');
     } finally {
       setIsDeleting(false);
       setDeleteConfirmOpen(false);
@@ -87,7 +88,7 @@ export default function PageGalleryView({ idToFetch }: PageGalleryProps) {
 
   if (loading) {
     return (
-      <Container sx={{ mt: 10, maxWidth: "95% !important", p: 0 }}>
+      <Container sx={{ mt: 10, maxWidth: '95% !important', p: 0 }}>
         <Box display="flex" flexDirection="column" alignItems="center" mt={5}>
           <CircularProgress />
           <Typography mt={2}>Carregando...</Typography>
@@ -98,9 +99,9 @@ export default function PageGalleryView({ idToFetch }: PageGalleryProps) {
 
   if (error || !localData) {
     return (
-      <Container sx={{ mt: 10, maxWidth: "95% !important", p: 0 }}>
+      <Container sx={{ mt: 10, maxWidth: '95% !important', p: 0 }}>
         <Alert severity="error" sx={{ mt: 4 }}>
-          {error ?? "Dados não encontrados."}
+          {error ?? 'Dados não encontrados.'}
         </Alert>
       </Container>
     );
@@ -108,7 +109,7 @@ export default function PageGalleryView({ idToFetch }: PageGalleryProps) {
 
   if (!localData.public && !isUserLogged) {
     return (
-      <Container sx={{ mt: 10, maxWidth: "95% !important", p: 0 }}>
+      <Container sx={{ mt: 10, maxWidth: '95% !important', p: 0 }}>
         <Alert severity="warning" sx={{ mt: 4 }}>
           Esta galeria não está disponível publicamente.
         </Alert>
@@ -121,26 +122,26 @@ export default function PageGalleryView({ idToFetch }: PageGalleryProps) {
       sx={{
         mt: 10,
         p: 0,
-        maxWidth: "95% !important",
-        overflowX: "hidden",
+        maxWidth: '95% !important',
+        overflowX: 'hidden',
       }}
     >
       <Box
         sx={{
-          textAlign: "center",
+          textAlign: 'center',
           mb: 5,
           px: 2,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          position: "relative",
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          position: 'relative',
         }}
       >
         <Typography
           variant="h4"
           fontWeight="bold"
           sx={{
-            fontSize: { xs: "1.5rem", md: "2.125rem" },
+            fontSize: { xs: '1.5rem', md: '2.125rem' },
           }}
         >
           {localData.title}
@@ -151,8 +152,8 @@ export default function PageGalleryView({ idToFetch }: PageGalleryProps) {
           color="text.secondary"
           sx={{
             mt: 1,
-            textAlign: "justify",
-            maxWidth: "1000px",
+            textAlign: 'justify',
+            maxWidth: '1000px',
           }}
         >
           {localData.description}
@@ -161,12 +162,12 @@ export default function PageGalleryView({ idToFetch }: PageGalleryProps) {
         {isAdmin && (
           <Box
             sx={{
-              position: "fixed",
+              position: 'fixed',
               bottom: 20,
               right: 20,
               zIndex: 1300,
-              display: "flex",
-              flexDirection: "column",
+              display: 'flex',
+              flexDirection: 'column',
               gap: 1,
             }}
           >
@@ -174,7 +175,7 @@ export default function PageGalleryView({ idToFetch }: PageGalleryProps) {
               <Fab
                 color="warning"
                 size="medium"
-                onClick={() => navigate("/adm/editar-pagina-imagens")}
+                onClick={() => navigate('/adm/editar-pagina-imagens')}
                 disabled={isDeleting}
               >
                 <EditIcon />
@@ -205,16 +206,13 @@ export default function PageGalleryView({ idToFetch }: PageGalleryProps) {
               mediaItems={section.mediaItems}
               caption={section.caption}
               description={section.description}
-              createdAt={section.createdAt || ""}
-              updatedAt={section.updatedAt || ""}
+              createdAt={section.createdAt || ''}
+              updatedAt={section.updatedAt || ''}
             />
           ))}
       </Box>
 
-      <Dialog
-        open={deleteConfirmOpen}
-        onClose={() => !isDeleting && setDeleteConfirmOpen(false)}
-      >
+      <Dialog open={deleteConfirmOpen} onClose={() => !isDeleting && setDeleteConfirmOpen(false)}>
         <DialogTitle>Confirmar exclusão</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -222,10 +220,7 @@ export default function PageGalleryView({ idToFetch }: PageGalleryProps) {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button
-            onClick={() => setDeleteConfirmOpen(false)}
-            disabled={isDeleting}
-          >
+          <Button onClick={() => setDeleteConfirmOpen(false)} disabled={isDeleting}>
             Cancelar
           </Button>
           <Button
@@ -235,7 +230,7 @@ export default function PageGalleryView({ idToFetch }: PageGalleryProps) {
             disabled={isDeleting}
             startIcon={isDeleting && <CircularProgress size={20} />}
           >
-            {isDeleting ? "Excluindo..." : "Confirmar Exclusão"}
+            {isDeleting ? 'Excluindo...' : 'Confirmar Exclusão'}
           </Button>
         </DialogActions>
       </Dialog>

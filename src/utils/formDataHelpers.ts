@@ -1,7 +1,4 @@
-import {
-  MediaItem,
-  MediaUploadType,
-} from "store/slices/types";
+import { MediaItem, MediaUploadType } from 'store/slices/types';
 
 export const buildFileItem = (
   item: MediaItem,

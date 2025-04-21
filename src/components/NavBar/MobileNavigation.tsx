@@ -36,8 +36,6 @@ const MobileNavigation: React.FC = () => {
           },
         }}
       >
-
-
         <NavLinks closeMenu={closeDrawer} isMobile />
       </Drawer>
     </Box>

@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Typography,
   Grid,
-  useTheme,
   Button,
   Dialog,
   DialogTitle,
@@ -18,14 +17,14 @@ import {
   Skeleton,
   Tooltip,
   Fab,
-} from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import api from "../../../config/axiosConfig";
-import { RootState, AppDispatch } from "../../../store/slices";
-import { setVideoData } from "../../../store/slices/video/videoSlice";
-import { fetchRoutes } from "../../../store/slices/route/routeSlice";
-import VideoCard from "./VideoCard";
+} from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import api from '../../../config/axiosConfig';
+import { RootState, AppDispatch } from '../../../store/slices';
+import { setVideoData } from '../../../store/slices/video/videoSlice';
+import { fetchRoutes } from '../../../store/slices/route/routeSlice';
+import VideoCard from './VideoCard';
 
 interface VideoPageViewProps {
   idToFetch: string;
@@ -36,14 +35,12 @@ export default function PageVideoView({ idToFetch }: VideoPageViewProps) {
   const [error, setError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-
-  const theme = useTheme();
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   const videoData = useSelector((state: RootState) => state.video.videoData);
   const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
-  const isAdmin = isAuthenticated && user?.role === "admin";
+  const isAdmin = isAuthenticated && user?.role === 'admin';
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,8 +50,8 @@ export default function PageVideoView({ idToFetch }: VideoPageViewProps) {
         const response = await api.get(`/video-pages/${idToFetch}`);
         dispatch(setVideoData(response.data));
       } catch (error) {
-        console.error("Erro ao buscar dados da página de vídeos", error);
-        setError("Erro ao carregar a página de vídeos. Tente novamente mais tarde.");
+        console.error('Erro ao buscar dados da página de vídeos', error);
+        setError('Erro ao carregar a página de vídeos. Tente novamente mais tarde.');
       } finally {
         setLoading(false);
       }
@@ -69,10 +66,10 @@ export default function PageVideoView({ idToFetch }: VideoPageViewProps) {
       setIsDeleting(true);
       await api.delete(`/video-pages/${videoData.id}`);
       await dispatch(fetchRoutes());
-      navigate("/");
+      navigate('/');
     } catch (err) {
-      console.error("Erro ao excluir a página de vídeos:", err);
-      setError("Erro ao excluir a página. Tente novamente mais tarde.");
+      console.error('Erro ao excluir a página de vídeos:', err);
+      setError('Erro ao excluir a página. Tente novamente mais tarde.');
     } finally {
       setIsDeleting(false);
       setDeleteConfirmOpen(false);
@@ -117,8 +114,8 @@ export default function PageVideoView({ idToFetch }: VideoPageViewProps) {
   return (
     <Box
       sx={{
-        bgcolor: "#f5f7fa",
-        minHeight: "100vh",
+        bgcolor: '#f5f7fa',
+        minHeight: '100vh',
         pt: { xs: 4, md: 8 },
         pb: { xs: 4, md: 0 },
         mt: { xs: 4, md: 4 },
@@ -132,8 +129,8 @@ export default function PageVideoView({ idToFetch }: VideoPageViewProps) {
             p: 4,
             mb: 4,
             borderRadius: 3,
-            background: "linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%)",
-            position: "relative",
+            background: 'linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%)',
+            position: 'relative',
           }}
         >
           <Typography
@@ -152,7 +149,7 @@ export default function PageVideoView({ idToFetch }: VideoPageViewProps) {
           <Typography
             variant="subtitle1"
             color="textSecondary"
-            sx={{ maxWidth: "600px", mx: "auto" }}
+            sx={{ maxWidth: '600px', mx: 'auto' }}
           >
             {videoData.description}
           </Typography>
@@ -160,11 +157,11 @@ export default function PageVideoView({ idToFetch }: VideoPageViewProps) {
           {isAdmin && (
             <Box
               sx={{
-                position: "fixed",
+                position: 'fixed',
                 bottom: 24,
                 right: 24,
-                display: "flex",
-                flexDirection: "column",
+                display: 'flex',
+                flexDirection: 'column',
                 gap: 2,
                 zIndex: 1300,
               }}
@@ -173,7 +170,7 @@ export default function PageVideoView({ idToFetch }: VideoPageViewProps) {
                 <Fab
                   color="warning"
                   onClick={() =>
-                    navigate("/adm/editar-pagina-videos", {
+                    navigate('/adm/editar-pagina-videos', {
                       state: { fromTemplatePage: false },
                     })
                   }
@@ -184,11 +181,7 @@ export default function PageVideoView({ idToFetch }: VideoPageViewProps) {
               </Tooltip>
 
               <Tooltip title="Excluir página de vídeos">
-                <Fab
-                  color="error"
-                  onClick={() => setDeleteConfirmOpen(true)}
-                  disabled={isDeleting}
-                >
+                <Fab color="error" onClick={() => setDeleteConfirmOpen(true)} disabled={isDeleting}>
                   <DeleteIcon />
                 </Fab>
               </Tooltip>
@@ -219,13 +212,8 @@ export default function PageVideoView({ idToFetch }: VideoPageViewProps) {
             <Button onClick={() => setDeleteConfirmOpen(false)} disabled={isDeleting}>
               Cancelar
             </Button>
-            <Button
-              onClick={handleDeletePage}
-              color="error"
-              autoFocus
-              disabled={isDeleting}
-            >
-              {isDeleting ? "Excluindo..." : "Confirmar Exclusão"}
+            <Button onClick={handleDeletePage} color="error" autoFocus disabled={isDeleting}>
+              {isDeleting ? 'Excluindo...' : 'Confirmar Exclusão'}
             </Button>
           </DialogActions>
         </Dialog>

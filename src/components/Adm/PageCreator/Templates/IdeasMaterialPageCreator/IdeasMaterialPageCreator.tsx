@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   Box,
   TextField,
@@ -17,21 +17,18 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-} from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "store/slices";
-import { fetchRoutes } from "store/slices/route/routeSlice";
-import {
-  clearIdeasData,
-  IdeasSection,
-} from "store/slices/ideas/ideasSlice";
-import api from "config/axiosConfig";
-import { IdeasMaterialSection } from "./IdeasMaterialSection";
-import { MediaUploadType } from "store/slices/types";
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from 'store/slices';
+import { fetchRoutes } from 'store/slices/route/routeSlice';
+import { clearIdeasData, IdeasSection } from 'store/slices/ideas/ideasSlice';
+import api from 'config/axiosConfig';
+import { IdeasMaterialSection } from './IdeasMaterialSection';
+import { MediaUploadType } from 'store/slices/types';
 
 interface PageCreatorProps {
   fromTemplatePage?: boolean;
@@ -42,17 +39,17 @@ export function IdeasMaterialPageCreator({ fromTemplatePage }: PageCreatorProps)
   const navigate = useNavigate();
   const ideasData = useSelector((state: RootState) => state.ideas.ideasData);
 
-  const [pageTitle, setPageTitle] = useState("");
-  const [pageSubtitle, setPageSubtitle] = useState("");
-  const [pageDescription, setPageDescription] = useState("");
+  const [pageTitle, setPageTitle] = useState('');
+  const [pageSubtitle, setPageSubtitle] = useState('');
+  const [pageDescription, setPageDescription] = useState('');
   const [sections, setSections] = useState<IdeasSection[]>([]);
   const [expandedSectionIndex, setExpandedSectionIndex] = useState<number | null>(null);
 
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
-    message: "",
-    severity: "success" as "success" | "error",
+    message: '',
+    severity: 'success' as 'success' | 'error',
   });
 
   const [errors, setErrors] = useState({
@@ -67,22 +64,22 @@ export function IdeasMaterialPageCreator({ fromTemplatePage }: PageCreatorProps)
   useEffect(() => {
     if (fromTemplatePage) {
       dispatch(clearIdeasData());
-      setPageTitle("");
-      setPageSubtitle("");
-      setPageDescription("");
+      setPageTitle('');
+      setPageSubtitle('');
+      setPageDescription('');
       setSections([]);
     } else if (ideasData) {
-      setPageTitle(ideasData.title || "");
-      setPageSubtitle(ideasData.subtitle || "");
-      setPageDescription(ideasData.description || "");
+      setPageTitle(ideasData.title || '');
+      setPageSubtitle(ideasData.subtitle || '');
+      setPageDescription(ideasData.description || '');
       setSections(ideasData.sections || []);
     }
   }, [fromTemplatePage, ideasData, dispatch]);
 
   const handleAddSection = () => {
     const newSection: IdeasSection = {
-      title: "",
-      description: "",
+      title: '',
+      description: '',
       medias: [],
     };
     setSections((prev) => [...prev, newSection]);
@@ -90,9 +87,7 @@ export function IdeasMaterialPageCreator({ fromTemplatePage }: PageCreatorProps)
   };
 
   const handleUpdateSection = (index: number, updatedSection: IdeasSection) => {
-    setSections((prev) =>
-      prev.map((s, i) => (i === index ? updatedSection : s))
-    );
+    setSections((prev) => prev.map((s, i) => (i === index ? updatedSection : s)));
   };
 
   const handleDeleteSectionClick = (index: number) => {
@@ -122,8 +117,8 @@ export function IdeasMaterialPageCreator({ fromTemplatePage }: PageCreatorProps)
     if (hasError) {
       setSnackbar({
         open: true,
-        message: "Preencha todos os campos obrigatórios e adicione pelo menos uma seção.",
-        severity: "error",
+        message: 'Preencha todos os campos obrigatórios e adicione pelo menos uma seção.',
+        severity: 'error',
       });
       return;
     }
@@ -152,7 +147,7 @@ export function IdeasMaterialPageCreator({ fromTemplatePage }: PageCreatorProps)
                 isLocalFile: media.uploadType === MediaUploadType.UPLOAD,
               };
               if (media.uploadType === MediaUploadType.UPLOAD && media.file) {
-                const extension = media.file.name.split(".").pop() || "bin";
+                const extension = media.file.name.split('.').pop() || 'bin';
                 const fieldKey = `${media.mediaType}_${sectionIndex}_${midiaIndex}.${extension}`;
                 formData.append(fieldKey, media.file, fieldKey);
                 return { ...baseItem, fieldKey };
@@ -165,35 +160,35 @@ export function IdeasMaterialPageCreator({ fromTemplatePage }: PageCreatorProps)
         }),
       };
 
-      formData.append("ideasMaterialsPageData", JSON.stringify(payload));
+      formData.append('ideasMaterialsPageData', JSON.stringify(payload));
 
       let res;
       if (fromTemplatePage) {
-        res = await api.post("/ideas-pages", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
+        res = await api.post('/ideas-pages', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
         });
       } else {
         res = await api.patch(`/ideas-pages/${ideasData?.id}`, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
+          headers: { 'Content-Type': 'multipart/form-data' },
         });
       }
 
-      if (!res?.data) throw new Error("Erro ao salvar");
+      if (!res?.data) throw new Error('Erro ao salvar');
 
       await dispatch(fetchRoutes());
       setSnackbar({
         open: true,
-        message: "Página salva com sucesso!",
-        severity: "success",
+        message: 'Página salva com sucesso!',
+        severity: 'success',
       });
 
       if (res.data.route?.path) navigate(`/${res.data.route.path}`);
     } catch (err) {
-      console.error("Erro ao salvar:", err);
+      console.error('Erro ao salvar:', err);
       setSnackbar({
         open: true,
-        message: "Erro ao salvar a página.",
-        severity: "error",
+        message: 'Erro ao salvar a página.',
+        severity: 'error',
       });
     } finally {
       setLoading(false);
@@ -201,9 +196,9 @@ export function IdeasMaterialPageCreator({ fromTemplatePage }: PageCreatorProps)
   };
 
   return (
-    <Box sx={{ p: 2, maxWidth: 1200, mx: "auto", mt: fromTemplatePage ? 0 : 4 }}>
-      <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: "bold" }}>
-        {fromTemplatePage ? "Nova Página de Ideias" : "Editar Página de Ideias"}
+    <Box sx={{ p: 2, maxWidth: 1200, mx: 'auto', mt: fromTemplatePage ? 0 : 4 }}>
+      <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: 'bold' }}>
+        {fromTemplatePage ? 'Nova Página de Ideias' : 'Editar Página de Ideias'}
       </Typography>
 
       <Paper elevation={2} sx={{ p: 3, mb: 4 }}>
@@ -213,7 +208,7 @@ export function IdeasMaterialPageCreator({ fromTemplatePage }: PageCreatorProps)
           value={pageTitle}
           onChange={(e) => setPageTitle(e.target.value)}
           error={errors.title}
-          helperText={errors.title ? "Campo obrigatório" : ""}
+          helperText={errors.title ? 'Campo obrigatório' : ''}
           sx={{ mb: 2 }}
         />
         <TextField
@@ -222,7 +217,7 @@ export function IdeasMaterialPageCreator({ fromTemplatePage }: PageCreatorProps)
           value={pageSubtitle}
           onChange={(e) => setPageSubtitle(e.target.value)}
           error={errors.subtitle}
-          helperText={errors.subtitle ? "Campo obrigatório" : ""}
+          helperText={errors.subtitle ? 'Campo obrigatório' : ''}
           sx={{ mb: 2 }}
         />
         <TextField
@@ -233,13 +228,13 @@ export function IdeasMaterialPageCreator({ fromTemplatePage }: PageCreatorProps)
           value={pageDescription}
           onChange={(e) => setPageDescription(e.target.value)}
           error={errors.description}
-          helperText={errors.description ? "Campo obrigatório" : ""}
+          helperText={errors.description ? 'Campo obrigatório' : ''}
         />
       </Paper>
 
       {sections.length > 0 && (
         <>
-          <Typography variant="h5" align="center" gutterBottom sx={{ fontWeight: "bold" }}>
+          <Typography variant="h5" align="center" gutterBottom sx={{ fontWeight: 'bold' }}>
             Seções
           </Typography>
 
@@ -247,7 +242,9 @@ export function IdeasMaterialPageCreator({ fromTemplatePage }: PageCreatorProps)
             <Accordion
               key={index}
               expanded={expandedSectionIndex === index}
-              onChange={() => setExpandedSectionIndex(expandedSectionIndex === index ? null : index)}
+              onChange={() =>
+                setExpandedSectionIndex(expandedSectionIndex === index ? null : index)
+              }
               sx={{ mb: 2, borderRadius: 2 }}
             >
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -275,7 +272,7 @@ export function IdeasMaterialPageCreator({ fromTemplatePage }: PageCreatorProps)
         </>
       )}
 
-      <Box sx={{ textAlign: "center", mt: 4 }}>
+      <Box sx={{ textAlign: 'center', mt: 4 }}>
         <Button
           variant="outlined"
           startIcon={<AddIcon />}
@@ -286,7 +283,7 @@ export function IdeasMaterialPageCreator({ fromTemplatePage }: PageCreatorProps)
         </Button>
       </Box>
 
-      <Box sx={{ textAlign: "center", mt: 6 }}>
+      <Box sx={{ textAlign: 'center', mt: 6 }}>
         <Button
           variant="contained"
           size="large"
@@ -295,14 +292,11 @@ export function IdeasMaterialPageCreator({ fromTemplatePage }: PageCreatorProps)
           startIcon={loading ? <CircularProgress size={20} /> : null}
           sx={{ borderRadius: 20, px: 4 }}
         >
-          {loading ? "Salvando..." : "Salvar Página"}
+          {loading ? 'Salvando...' : 'Salvar Página'}
         </Button>
       </Box>
 
-      <Dialog
-        open={openDeleteSectionDialog}
-        onClose={() => setOpenDeleteSectionDialog(false)}
-      >
+      <Dialog open={openDeleteSectionDialog} onClose={() => setOpenDeleteSectionDialog(false)}>
         <DialogTitle>Confirmar Exclusão</DialogTitle>
         <DialogContent>
           <DialogContentText>

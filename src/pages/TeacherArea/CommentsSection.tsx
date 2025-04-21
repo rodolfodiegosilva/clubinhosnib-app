@@ -139,13 +139,12 @@ const CommentsSection: React.FC = () => {
         borderRadius: 2,
       }}
     >
-      <Box sx={{ display: 'flex', alignItems: 'center', px: { xs: 0, md: 3 }, }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', px: { xs: 0, md: 3 } }}>
         <CommentIcon sx={{ color: '#0288d1', mr: 1 }} />
         <Typography
           variant="h6"
           fontWeight="bold"
           color="#424242"
-
           sx={{
             mt: { xs: 2, md: 3 },
 
@@ -154,8 +153,6 @@ const CommentsSection: React.FC = () => {
         >
           Comentários dos Professores
         </Typography>
-
-
       </Box>
 
       <Box sx={{ mb: 4 }}>
@@ -200,9 +197,7 @@ const CommentsSection: React.FC = () => {
                       multiline={field === 'comment'}
                       rows={field === 'comment' ? 3 : 1}
                       value={formData[field as keyof typeof formData]}
-                      onChange={(e) =>
-                        setFormData({ ...formData, [field]: e.target.value })
-                      }
+                      onChange={(e) => setFormData({ ...formData, [field]: e.target.value })}
                       error={errors[field as keyof typeof errors]}
                       helperText={
                         errors[field as keyof typeof errors]
@@ -221,9 +216,7 @@ const CommentsSection: React.FC = () => {
                 sx={{ borderRadius: 20, textTransform: 'none' }}
                 disabled={isSubmitting}
                 endIcon={
-                  isSubmitting && (
-                    <CircularProgress color="inherit" size={18} sx={{ ml: 1 }} />
-                  )
+                  isSubmitting && <CircularProgress color="inherit" size={18} sx={{ ml: 1 }} />
                 }
               >
                 {isSubmitting ? 'Enviando...' : 'Submeter comentário'}
@@ -257,15 +250,9 @@ const CommentsSection: React.FC = () => {
                 >
                   <CardContent>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      <Avatar sx={{ bgcolor: '#0288d1', mr: 2 }}>
-                        {comment.name.charAt(0)}
-                      </Avatar>
+                      <Avatar sx={{ bgcolor: '#0288d1', mr: 2 }}>{comment.name.charAt(0)}</Avatar>
                       <Box>
-                        <Typography
-                          variant="subtitle1"
-                          fontWeight="bold"
-                          color="#424242"
-                        >
+                        <Typography variant="subtitle1" fontWeight="bold" color="#424242">
                           {comment.name}
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
@@ -287,8 +274,7 @@ const CommentsSection: React.FC = () => {
         </Slider>
       ) : (
         <Typography variant="body2" color="text.secondary" textAlign="center">
-          Nenhum comentário publicado ainda. Envie o seu e ele aparecerá após
-          avaliação.
+          Nenhum comentário publicado ainda. Envie o seu e ele aparecerá após avaliação.
         </Typography>
       )}
 
@@ -298,13 +284,8 @@ const CommentsSection: React.FC = () => {
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity="success"
-          sx={{ width: '100%' }}
-        >
-          Comentário enviado com sucesso! Ele será avaliado antes de ser
-          publicado.
+        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+          Comentário enviado com sucesso! Ele será avaliado antes de ser publicado.
         </Alert>
       </Snackbar>
     </Paper>

@@ -1,32 +1,22 @@
-import { useEffect, useState } from "react";
-import {
-  Box,
-  Typography,
-  Grid,
-  CircularProgress,
-  Alert,
-  TextField,
-} from "@mui/material";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import api from "../../../config/axiosConfig";
-import { AppDispatch } from "../../../store/slices";
-import {
-  setImageData,
-  ImagePageData,
-} from "store/slices/image/imageSlice";
+import { useEffect, useState } from 'react';
+import { Box, Typography, Grid, CircularProgress, Alert, TextField } from '@mui/material';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import api from '../../../config/axiosConfig';
+import { AppDispatch } from '../../../store/slices';
+import { setImageData, ImagePageData } from 'store/slices/image/imageSlice';
 
-import ImagePageCard from "./ImagePageCard";
-import DeleteConfirmDialog from "./DeleteConfirmDialog";
-import ImagePageDetailsModal from "./ImagePageDetailsModal";
+import ImagePageCard from './ImagePageCard';
+import DeleteConfirmDialog from './DeleteConfirmDialog';
+import ImagePageDetailsModal from './ImagePageDetailsModal';
 
 export default function ImagePageListPage() {
   const [imagePages, setImagePages] = useState<ImagePageData[]>([]);
   const [filteredPages, setFilteredPages] = useState<ImagePageData[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [isFiltering, setIsFiltering] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [pageToDelete, setPageToDelete] = useState<ImagePageData | null>(null);
   const [selectedPage, setSelectedPage] = useState<ImagePageData | null>(null);
 
@@ -40,12 +30,12 @@ export default function ImagePageListPage() {
   const fetchImagePages = async () => {
     setLoading(true);
     try {
-      const response = await api.get("/image-pages");
+      const response = await api.get('/image-pages');
       setImagePages(response.data);
       setFilteredPages(response.data);
     } catch (err) {
-      console.error("Erro ao buscar páginas de imagens:", err);
-      setError("Erro ao buscar páginas de imagens");
+      console.error('Erro ao buscar páginas de imagens:', err);
+      setError('Erro ao buscar páginas de imagens');
     } finally {
       setLoading(false);
     }
@@ -55,9 +45,7 @@ export default function ImagePageListPage() {
     setIsFiltering(true);
     const timer = setTimeout(() => {
       const term = searchTerm.toLowerCase();
-      const filtered = imagePages.filter((page) =>
-        page.title?.toLowerCase().includes(term)
-      );
+      const filtered = imagePages.filter((page) => page.title?.toLowerCase().includes(term));
       setFilteredPages(filtered);
       setIsFiltering(false);
     }, 300);
@@ -66,7 +54,7 @@ export default function ImagePageListPage() {
 
   const handleEdit = (page: ImagePageData) => {
     dispatch(setImageData(page));
-    navigate("/adm/editar-pagina-imagens");
+    navigate('/adm/editar-pagina-imagens');
   };
 
   const handleDelete = async () => {
@@ -77,8 +65,8 @@ export default function ImagePageListPage() {
       await api.delete(`/image-pages/${pageToDelete.id}`);
       await fetchImagePages();
     } catch (error) {
-      console.error("Erro ao deletar página de imagens:", error);
-      setError("Erro ao deletar página de imagens");
+      console.error('Erro ao deletar página de imagens:', error);
+      setError('Erro ao deletar página de imagens');
     } finally {
       setLoading(false);
     }
@@ -90,15 +78,15 @@ export default function ImagePageListPage() {
         px: { xs: 0, md: 1 },
         py: { xs: 0, md: 1 },
         mt: { xs: 0, md: 4 },
-        bgcolor: "#f5f7fa",
-        minHeight: "100vh",
+        bgcolor: '#f5f7fa',
+        minHeight: '100vh',
       }}
     >
       <Typography
         variant="h4"
         fontWeight="bold"
         textAlign="center"
-        sx={{ mt: 0, mb: { xs: 6, md: 3 }, fontSize: { xs: "1.5rem", md: "2.4rem" } }}
+        sx={{ mt: 0, mb: { xs: 6, md: 3 }, fontSize: { xs: '1.5rem', md: '2.4rem' } }}
       >
         Páginas de Imagens
       </Typography>
@@ -131,10 +119,10 @@ export default function ImagePageListPage() {
               item
               key={page.id}
               sx={{
-                flexBasis: { xs: "100%", sm: "50%", md: "33.33%", lg: "25%" },
-                maxWidth: { xs: "100%", sm: "50%", md: "33.33%", lg: "25%" },
+                flexBasis: { xs: '100%', sm: '50%', md: '33.33%', lg: '25%' },
+                maxWidth: { xs: '100%', sm: '50%', md: '33.33%', lg: '25%' },
                 minWidth: 280,
-                display: "flex",
+                display: 'flex',
               }}
             >
               <ImagePageCard

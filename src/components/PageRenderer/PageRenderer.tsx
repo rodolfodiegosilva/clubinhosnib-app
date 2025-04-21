@@ -1,9 +1,8 @@
-
-import IdeasPageView from "pages/PageView/IdeasMaterialViewpage/IdeasPageView";
-import PageGalleryView from "pages/PageView/ImagePageView/ImagePageView";
-import PageVideoView from "pages/PageView/VideoViewPage/PageVideoView";
-import WeekMaterialsPageView from "pages/PageView/WeekMaterialViewPage/WeekMaterialsPageView";
-import React from "react";
+import IdeasPageView from 'pages/PageView/IdeasMaterialViewpage/IdeasPageView';
+import PageGalleryView from 'pages/PageView/ImagePageView/ImagePageView';
+import PageVideoView from 'pages/PageView/VideoViewPage/PageVideoView';
+import WeekMaterialsPageView from 'pages/PageView/WeekMaterialViewPage/WeekMaterialsPageView';
+import React from 'react';
 
 interface PageRendererProps {
   entityType: string;
@@ -12,13 +11,13 @@ interface PageRendererProps {
 
 const PageRenderer: React.FC<PageRendererProps> = ({ entityType, idToFetch }) => {
   switch (entityType) {
-    case "ImagesPage":
+    case 'ImagesPage':
       return <PageGalleryView idToFetch={idToFetch} />;
-    case "VideosPage":
+    case 'VideosPage':
       return <PageVideoView idToFetch={idToFetch} />;
-    case "WeekMaterialsPage":
+    case 'WeekMaterialsPage':
       return <WeekMaterialsPageView idToFetch={idToFetch} />;
-    case "IdeasPage":
+    case 'IdeasPage':
       return <IdeasPageView idToFetch={idToFetch} />;
     default:
       return <div>Tipo de página desconhecido: {entityType}</div>;

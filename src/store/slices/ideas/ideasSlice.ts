@@ -1,6 +1,6 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RouteData } from "../route/routeSlice";
-import { MediaItem } from "../types";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RouteData } from '../route/routeSlice';
+import { MediaItem } from '../types';
 
 export interface IdeasSection {
   id?: string;
@@ -33,7 +33,7 @@ const initialState: IdeasState = {
 };
 
 const ideasSlice = createSlice({
-  name: "ideas",
+  name: 'ideas',
   initialState,
   reducers: {
     setIdeasData: (state, action: PayloadAction<IdeasPageData>) => {

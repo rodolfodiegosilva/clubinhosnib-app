@@ -1,4 +1,11 @@
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography } from "@mui/material";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Typography,
+} from '@mui/material';
 
 interface Props {
   open: boolean;
@@ -12,11 +19,15 @@ export default function DeleteConfirmDialog({ open, title, onClose, onConfirm }:
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
       <DialogTitle>Confirmar Exclusão</DialogTitle>
       <DialogContent>
-        <Typography>Tem certeza que deseja excluir o material <strong>{title || "Sem Título"}</strong>?</Typography>
+        <Typography>
+          Tem certeza que deseja excluir o material <strong>{title || 'Sem Título'}</strong>?
+        </Typography>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancelar</Button>
-        <Button color="error" variant="contained" onClick={onConfirm}>Excluir</Button>
+        <Button color="error" variant="contained" onClick={onConfirm}>
+          Excluir
+        </Button>
       </DialogActions>
     </Dialog>
   );

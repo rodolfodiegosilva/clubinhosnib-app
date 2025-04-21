@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Box,
   Typography,
@@ -22,56 +22,54 @@ import {
   AccordionSummary,
   AccordionDetails,
   Fab,
-} from "@mui/material";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import PlaceIcon from "@mui/icons-material/Place";
-import EditCalendarIcon from "@mui/icons-material/EditCalendar";
-import CloseIcon from "@mui/icons-material/Close";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import AddIcon from "@mui/icons-material/Add";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../store/slices";
-import { useNavigate } from "react-router-dom";
-import dayjs from "dayjs";
-import "dayjs/locale/pt-br";
-import api from "../../config/axiosConfig";
-import { setEvents } from "../../store/slices/events/eventsSlice";
+} from '@mui/material';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import PlaceIcon from '@mui/icons-material/Place';
+import EditCalendarIcon from '@mui/icons-material/EditCalendar';
+import CloseIcon from '@mui/icons-material/Close';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../../store/slices';
+import dayjs from 'dayjs';
+import 'dayjs/locale/pt-br';
+import api from '../../config/axiosConfig';
+import { setEvents } from '../../store/slices/events/eventsSlice';
 
-dayjs.locale("pt-br");
+dayjs.locale('pt-br');
 
 const getDestaque = (dateISO: string) => {
   const eventoDate = dayjs(dateISO);
   const hoje = dayjs();
 
-  if (eventoDate.isSame(hoje, "day")) return "hoje";
-  if (eventoDate.diff(hoje, "day") <= 7 && eventoDate.isAfter(hoje, "day")) return "semana";
-  if (eventoDate.month() === hoje.month() && eventoDate.year() === hoje.year()) return "mes";
-  return "fora";
+  if (eventoDate.isSame(hoje, 'day')) return 'hoje';
+  if (eventoDate.diff(hoje, 'day') <= 7 && eventoDate.isAfter(hoje, 'day')) return 'semana';
+  if (eventoDate.month() === hoje.month() && eventoDate.year() === hoje.year()) return 'mes';
+  return 'fora';
 };
 
 const getEstiloCard = (destaque: string, theme: any) => {
   switch (destaque) {
-    case "hoje":
-      return { borderLeft: "8px solid red" };
-    case "semana":
+    case 'hoje':
+      return { borderLeft: '8px solid red' };
+    case 'semana':
       return { borderLeft: `6px solid ${theme.palette.secondary.main}` };
-    case "mes":
+    case 'mes':
       return { borderLeft: `4px solid ${theme.palette.primary.main}` };
     default:
-      return { borderLeft: "4px solid #ccc" };
+      return { borderLeft: '4px solid #ccc' };
   }
 };
 
 const Eventos: React.FC = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const navigate = useNavigate();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const dispatch = useDispatch();
 
   const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
-  const isAdmin = isAuthenticated && user?.role === "admin";
+  const isAdmin = isAuthenticated && user?.role === 'admin';
 
   const hoje = dayjs();
   const [eventos, setEventos] = useState<any[]>([]);
@@ -81,27 +79,27 @@ const Eventos: React.FC = () => {
   const [editMode, setEditMode] = useState(false);
 
   const [dialogAddEditOpen, setDialogAddEditOpen] = useState(false);
-  const [dialogAddEditMode, setDialogAddEditMode] = useState<"add" | "edit">("add");
+  const [dialogAddEditMode, setDialogAddEditMode] = useState<'add' | 'edit'>('add');
   const [currentEditEvent, setCurrentEditEvent] = useState<any | null>(null);
 
   const [dialogDeleteOpen, setDialogDeleteOpen] = useState(false);
   const [deleteTargetEvent, setDeleteTargetEvent] = useState<any | null>(null);
 
-  const [formTitle, setFormTitle] = useState("");
-  const [formDate, setFormDate] = useState("");
-  const [formLocation, setFormLocation] = useState("");
-  const [formDescription, setFormDescription] = useState("");
+  const [formTitle, setFormTitle] = useState('');
+  const [formDate, setFormDate] = useState('');
+  const [formLocation, setFormLocation] = useState('');
+  const [formDescription, setFormDescription] = useState('');
 
   const eventosAntigosRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const fetchEventos = async () => {
       try {
-        const response = await api.get("/events");
+        const response = await api.get('/events');
         dispatch(setEvents(response.data));
         setEventos(response.data);
       } catch (error) {
-        console.error("Erro ao carregar eventos:", error);
+        console.error('Erro ao carregar eventos:', error);
       } finally {
         setLoading(false);
       }
@@ -112,7 +110,7 @@ const Eventos: React.FC = () => {
   useEffect(() => {
     if (mostrarAntigos && eventosAntigosRef.current) {
       setTimeout(() => {
-        eventosAntigosRef.current?.scrollIntoView({ behavior: "smooth" });
+        eventosAntigosRef.current?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
     }
   }, [mostrarAntigos]);
@@ -123,9 +121,9 @@ const Eventos: React.FC = () => {
   const eventosOrdenados = [...eventos].sort(
     (a, b) => dayjs(a.date).valueOf() - dayjs(b.date).valueOf()
   );
-  const eventosAnterioresFull = eventosOrdenados.filter((e) => dayjs(e.date).isBefore(hoje, "day"));
-  const eventosHojeFull = eventosOrdenados.filter((e) => dayjs(e.date).isSame(hoje, "day"));
-  const eventosFuturosFull = eventosOrdenados.filter((e) => dayjs(e.date).isAfter(hoje, "day"));
+  const eventosAnterioresFull = eventosOrdenados.filter((e) => dayjs(e.date).isBefore(hoje, 'day'));
+  const eventosHojeFull = eventosOrdenados.filter((e) => dayjs(e.date).isSame(hoje, 'day'));
+  const eventosFuturosFull = eventosOrdenados.filter((e) => dayjs(e.date).isAfter(hoje, 'day'));
 
   const eventoAnterior = eventosAnterioresFull.at(-1) || null;
   const leftoverAnteriores = eventoAnterior ? eventosAnterioresFull.slice(0, -1) : [];
@@ -137,7 +135,7 @@ const Eventos: React.FC = () => {
   const renderCard = (evento: any) => {
     const destaque = getDestaque(evento.date);
     const estilo = getEstiloCard(destaque, theme);
-    const dataFormatada = dayjs(evento.date).format("DD [de] MMMM");
+    const dataFormatada = dayjs(evento.date).format('DD [de] MMMM');
 
     return (
       <Card
@@ -145,11 +143,11 @@ const Eventos: React.FC = () => {
         sx={{
           borderRadius: 3,
           ...estilo,
-          backgroundColor: "#ffffff",
-          transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
-          "&:hover": {
-            transform: "scale(1.03)",
-            boxShadow: "0 8px 16px rgba(0,0,0,0.2)",
+          backgroundColor: '#ffffff',
+          transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
+          '&:hover': {
+            transform: 'scale(1.03)',
+            boxShadow: '0 8px 16px rgba(0,0,0,0.2)',
           },
         }}
       >
@@ -157,12 +155,12 @@ const Eventos: React.FC = () => {
           <Box
             sx={{
               height: 180,
-              backgroundColor: "#e0e0e0",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+              backgroundColor: '#e0e0e0',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
               mb: 2,
-              borderRadius: "8px 8px 0 0",
+              borderRadius: '8px 8px 0 0',
             }}
           >
             <Typography variant="h6" color="text.secondary">
@@ -172,34 +170,34 @@ const Eventos: React.FC = () => {
           <Typography
             variant="h6"
             fontWeight="bold"
-            color={destaque === "hoje" ? "error" : "primary"}
+            color={destaque === 'hoje' ? 'error' : 'primary'}
             gutterBottom
-            sx={{ fontFamily: "Roboto, sans-serif" }}
+            sx={{ fontFamily: 'Roboto, sans-serif' }}
           >
             {evento.title}
           </Typography>
           <Box display="flex" alignItems="center" gap={1} mb={1}>
             <CalendarTodayIcon fontSize="small" color="action" />
-            <Typography variant="body2" sx={{ fontFamily: "Roboto, sans-serif" }}>
+            <Typography variant="body2" sx={{ fontFamily: 'Roboto, sans-serif' }}>
               <strong>Data:</strong> {dataFormatada}
             </Typography>
           </Box>
           <Box display="flex" alignItems="center" gap={1}>
             <PlaceIcon fontSize="small" color="action" />
-            <Typography variant="body2" sx={{ fontFamily: "Roboto, sans-serif" }}>
+            <Typography variant="body2" sx={{ fontFamily: 'Roboto, sans-serif' }}>
               <strong>Local:</strong> {evento.location}
             </Typography>
           </Box>
         </CardContent>
         <Divider />
-        <CardActions sx={{ px: 2, pb: 2, display: "flex", justifyContent: "space-between" }}>
+        <CardActions sx={{ px: 2, pb: 2, display: 'flex', justifyContent: 'space-between' }}>
           {!editMode ? (
             <Button
               variant="outlined"
               color="primary"
               fullWidth={isMobile}
               onClick={() => setEventoSelecionado(evento)}
-              sx={{ fontWeight: "bold", textTransform: "none", fontFamily: "Roboto, sans-serif" }}
+              sx={{ fontWeight: 'bold', textTransform: 'none', fontFamily: 'Roboto, sans-serif' }}
             >
               Ver Detalhes
             </Button>
@@ -222,7 +220,7 @@ const Eventos: React.FC = () => {
                 color="primary"
                 fullWidth={isMobile}
                 onClick={() => setEventoSelecionado(evento)}
-                sx={{ fontWeight: "bold", textTransform: "none", fontFamily: "Roboto, sans-serif" }}
+                sx={{ fontWeight: 'bold', textTransform: 'none', fontFamily: 'Roboto, sans-serif' }}
               >
                 Ver Detalhes
               </Button>
@@ -234,20 +232,20 @@ const Eventos: React.FC = () => {
   };
 
   const handleAddNewEvent = () => {
-    setDialogAddEditMode("add");
+    setDialogAddEditMode('add');
     setCurrentEditEvent(null);
-    setFormTitle("");
-    setFormDate("");
-    setFormLocation("");
-    setFormDescription("");
+    setFormTitle('');
+    setFormDate('');
+    setFormLocation('');
+    setFormDescription('');
     setDialogAddEditOpen(true);
   };
 
   const handleEditEvent = (evento: any) => {
-    setDialogAddEditMode("edit");
+    setDialogAddEditMode('edit');
     setCurrentEditEvent(evento);
     setFormTitle(evento.title);
-    setFormDate(dayjs(evento.date).format("YYYY-MM-DD"));
+    setFormDate(dayjs(evento.date).format('YYYY-MM-DD'));
     setFormLocation(evento.location);
     setFormDescription(evento.description);
     setDialogAddEditOpen(true);
@@ -255,8 +253,8 @@ const Eventos: React.FC = () => {
 
   const handleSubmitAddEdit = async () => {
     try {
-      if (dialogAddEditMode === "add") {
-        await api.post("/events", {
+      if (dialogAddEditMode === 'add') {
+        await api.post('/events', {
           title: formTitle,
           date: formDate,
           location: formLocation,
@@ -274,7 +272,7 @@ const Eventos: React.FC = () => {
       setDialogAddEditOpen(false);
       await reloadEventsAndLeaveEditMode();
     } catch (error) {
-      console.error("Erro ao criar/editar evento:", error);
+      console.error('Erro ao criar/editar evento:', error);
     }
   };
 
@@ -291,7 +289,7 @@ const Eventos: React.FC = () => {
       setDeleteTargetEvent(null);
       await reloadEventsAndLeaveEditMode();
     } catch (error) {
-      console.error("Erro ao deletar evento:", error);
+      console.error('Erro ao deletar evento:', error);
     }
   };
 
@@ -303,11 +301,11 @@ const Eventos: React.FC = () => {
   const reloadEventsAndLeaveEditMode = async () => {
     setLoading(true);
     try {
-      const response = await api.get("/events");
+      const response = await api.get('/events');
       dispatch(setEvents(response.data));
       setEventos(response.data);
     } catch (err) {
-      console.error("Erro ao recarregar eventos:", err);
+      console.error('Erro ao recarregar eventos:', err);
     } finally {
       setLoading(false);
       setEditMode(false);
@@ -340,7 +338,7 @@ const Eventos: React.FC = () => {
             variant="h6"
             color="text.secondary"
             gutterBottom
-            sx={{ fontFamily: "Roboto, sans-serif" }}
+            sx={{ fontFamily: 'Roboto, sans-serif' }}
           >
             Nenhum evento encontrado
           </Typography>
@@ -350,7 +348,7 @@ const Eventos: React.FC = () => {
               startIcon={<AddIcon />}
               color="primary"
               onClick={handleAddNewEvent}
-              sx={{ boxShadow: "0 4px 6px rgba(0,0,0,0.1)", fontFamily: "Roboto, sans-serif" }}
+              sx={{ boxShadow: '0 4px 6px rgba(0,0,0,0.1)', fontFamily: 'Roboto, sans-serif' }}
             >
               Adicionar Evento
             </Button>
@@ -362,11 +360,11 @@ const Eventos: React.FC = () => {
         <Box sx={{ mt: { xs: 10, md: 11 }, mb: { xs: 5, md: 6 }, px: { xs: 0, md: 4 } }}>
           <Box
             sx={{
-              display: "flex",
-              flexDirection: { xs: "column", md: "row" },
-              justifyContent: { xs: "center", md: "space-between" },
-              alignItems: { xs: "center", md: "center" },
-              textAlign: { xs: "center", md: "left" },
+              display: 'flex',
+              flexDirection: { xs: 'column', md: 'row' },
+              justifyContent: { xs: 'center', md: 'space-between' },
+              alignItems: { xs: 'center', md: 'center' },
+              textAlign: { xs: 'center', md: 'left' },
               mb: { xs: 1, md: 1 },
               gap: { xs: 2, md: 0 },
             }}
@@ -376,11 +374,11 @@ const Eventos: React.FC = () => {
                 variant="h4"
                 fontWeight="bold"
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
+                  display: 'flex',
+                  alignItems: 'center',
                   //  gap: 1,
-                  justifyContent: { xs: "center", md: "flex-start" },
-                  fontFamily: "Roboto, sans-serif",
+                  justifyContent: { xs: 'center', md: 'flex-start' },
+                  fontFamily: 'Roboto, sans-serif',
                 }}
               >
                 <CalendarTodayIcon color="primary" /> Eventos
@@ -388,12 +386,12 @@ const Eventos: React.FC = () => {
               <Typography
                 variant="subtitle1"
                 color="text.secondary"
-                sx={{ fontFamily: "Roboto, sans-serif" }}
+                sx={{ fontFamily: 'Roboto, sans-serif' }}
               >
                 Participe das atividades e encontros do Clubinho!
               </Typography>
             </Box>
-            <Box textAlign={{ xs: "center", md: "right" }}>
+            <Box textAlign={{ xs: 'center', md: 'right' }}>
               {!isMobile && isAdmin && !editMode && (
                 <Button
                   variant="contained"
@@ -402,8 +400,8 @@ const Eventos: React.FC = () => {
                   onClick={handleEnterEditMode}
                   sx={{
                     mb: 1,
-                    boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-                    fontFamily: "Roboto, sans-serif",
+                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                    fontFamily: 'Roboto, sans-serif',
                   }}
                 >
                   Editar Página
@@ -419,8 +417,8 @@ const Eventos: React.FC = () => {
                     sx={{
                       mr: 2,
                       mb: 1,
-                      boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-                      fontFamily: "Roboto, sans-serif",
+                      boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                      fontFamily: 'Roboto, sans-serif',
                     }}
                   >
                     Adicionar Evento
@@ -431,8 +429,8 @@ const Eventos: React.FC = () => {
                     onClick={handleCancelEditMode}
                     sx={{
                       mb: 1,
-                      boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-                      fontFamily: "Roboto, sans-serif",
+                      boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                      fontFamily: 'Roboto, sans-serif',
                     }}
                   >
                     Cancelar
@@ -445,14 +443,14 @@ const Eventos: React.FC = () => {
                   color="secondary"
                   onClick={() => setMostrarAntigos(!mostrarAntigos)}
                   sx={{
-                    fontWeight: "bold",
-                    display: "block",
+                    fontWeight: 'bold',
+                    display: 'block',
                     mt: 1,
                     mb: 0,
-                    fontFamily: "Roboto, sans-serif",
+                    fontFamily: 'Roboto, sans-serif',
                   }}
                 >
-                  {mostrarAntigos ? "Esconder Eventos Antigos" : "Ver Eventos Antigos"}
+                  {mostrarAntigos ? 'Esconder Eventos Antigos' : 'Ver Eventos Antigos'}
                 </Button>
               )}
             </Box>
@@ -462,11 +460,11 @@ const Eventos: React.FC = () => {
           {isMobile && isAdmin && (
             <Box
               sx={{
-                position: "fixed",
+                position: 'fixed',
                 bottom: 16,
                 right: 16,
-                display: "flex",
-                flexDirection: "column",
+                display: 'flex',
+                flexDirection: 'column',
                 gap: 1,
                 zIndex: 1000,
               }}
@@ -477,7 +475,7 @@ const Eventos: React.FC = () => {
                     color="warning"
                     aria-label="editar"
                     onClick={handleEnterEditMode}
-                    sx={{ boxShadow: "0 4px 6px rgba(0,0,0,0.3)" }}
+                    sx={{ boxShadow: '0 4px 6px rgba(0,0,0,0.3)' }}
                   >
                     <EditCalendarIcon />
                   </Fab>
@@ -489,7 +487,7 @@ const Eventos: React.FC = () => {
                       color="primary"
                       aria-label="adicionar"
                       onClick={handleAddNewEvent}
-                      sx={{ boxShadow: "0 4px 6px rgba(0,0,0,0.3)" }}
+                      sx={{ boxShadow: '0 4px 6px rgba(0,0,0,0.3)' }}
                     >
                       <AddIcon />
                     </Fab>
@@ -499,7 +497,7 @@ const Eventos: React.FC = () => {
                       color="default"
                       aria-label="cancelar"
                       onClick={handleCancelEditMode}
-                      sx={{ boxShadow: "0 4px 6px rgba(0,0,0,0.3)" }}
+                      sx={{ boxShadow: '0 4px 6px rgba(0,0,0,0.3)' }}
                     >
                       <CloseIcon />
                     </Fab>
@@ -517,9 +515,9 @@ const Eventos: React.FC = () => {
               pt: { xs: 1, md: 2 },
               pb: { xs: 6, md: 3 },
               px: { xs: 2, md: 4 },
-              backgroundColor: "#f5f5f5",
+              backgroundColor: '#f5f5f5',
               borderRadius: 3,
-              boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+              boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
             }}
           >
             <Grid container spacing={4} justifyContent="center" sx={{ mt: 1, mb: 1 }}>
@@ -532,7 +530,7 @@ const Eventos: React.FC = () => {
                         textAlign="center"
                         fontWeight="bold"
                         mb={1}
-                        sx={{ fontFamily: "Roboto, sans-serif" }}
+                        sx={{ fontFamily: 'Roboto, sans-serif' }}
                       >
                         Evento Anterior
                       </Typography>
@@ -545,7 +543,7 @@ const Eventos: React.FC = () => {
                       textAlign="center"
                       fontWeight="bold"
                       mb={1}
-                      sx={{ fontFamily: "Roboto, sans-serif" }}
+                      sx={{ fontFamily: 'Roboto, sans-serif' }}
                     >
                       Evento de Hoje
                     </Typography>
@@ -558,7 +556,7 @@ const Eventos: React.FC = () => {
                         textAlign="center"
                         fontWeight="bold"
                         mb={1}
-                        sx={{ fontFamily: "Roboto, sans-serif" }}
+                        sx={{ fontFamily: 'Roboto, sans-serif' }}
                       >
                         Próximo Evento
                       </Typography>
@@ -575,7 +573,7 @@ const Eventos: React.FC = () => {
                         textAlign="center"
                         fontWeight="bold"
                         mb={1}
-                        sx={{ fontFamily: "Roboto, sans-serif" }}
+                        sx={{ fontFamily: 'Roboto, sans-serif' }}
                       >
                         Evento Anterior
                       </Typography>
@@ -589,7 +587,7 @@ const Eventos: React.FC = () => {
                         textAlign="center"
                         fontWeight="bold"
                         mb={1}
-                        sx={{ fontFamily: "Roboto, sans-serif" }}
+                        sx={{ fontFamily: 'Roboto, sans-serif' }}
                       >
                         Próximo Evento
                       </Typography>
@@ -603,7 +601,7 @@ const Eventos: React.FC = () => {
                         textAlign="center"
                         fontWeight="bold"
                         mb={1}
-                        sx={{ fontFamily: "Roboto, sans-serif" }}
+                        sx={{ fontFamily: 'Roboto, sans-serif' }}
                       >
                         Evento Posterior
                       </Typography>
@@ -621,7 +619,7 @@ const Eventos: React.FC = () => {
               defaultExpanded
               sx={{
                 mb: 6,
-                boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
                 borderRadius: 2,
               }}
             >
@@ -630,7 +628,7 @@ const Eventos: React.FC = () => {
                   variant="h6"
                   fontWeight="bold"
                   color="text.secondary"
-                  sx={{ fontFamily: "Roboto, sans-serif" }}
+                  sx={{ fontFamily: 'Roboto, sans-serif' }}
                 >
                   Próximos Eventos
                 </Typography>
@@ -653,7 +651,7 @@ const Eventos: React.FC = () => {
               ref={eventosAntigosRef}
               sx={{
                 mb: 6,
-                boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
                 borderRadius: 2,
               }}
             >
@@ -662,7 +660,7 @@ const Eventos: React.FC = () => {
                   variant="h6"
                   fontWeight="bold"
                   color="text.secondary"
-                  sx={{ fontFamily: "Roboto, sans-serif" }}
+                  sx={{ fontFamily: 'Roboto, sans-serif' }}
                 >
                   Eventos Anteriores
                 </Typography>
@@ -689,25 +687,25 @@ const Eventos: React.FC = () => {
           maxWidth="sm"
           fullWidth
           sx={{
-            "& .MuiDialog-paper": {
+            '& .MuiDialog-paper': {
               borderRadius: 3,
-              boxShadow: "0 8px 16px rgba(0,0,0,0.2)",
+              boxShadow: '0 8px 16px rgba(0,0,0,0.2)',
             },
           }}
         >
           <DialogTitle
             sx={{
-              textAlign: "center",
-              fontWeight: "bold",
+              textAlign: 'center',
+              fontWeight: 'bold',
               color: theme.palette.primary.main,
-              fontFamily: "Roboto, sans-serif",
+              fontFamily: 'Roboto, sans-serif',
             }}
           >
             {eventoSelecionado.title}
             <IconButton
               aria-label="close"
               onClick={() => setEventoSelecionado(null)}
-              sx={{ position: "absolute", right: 8, top: 8, color: theme.palette.grey[500] }}
+              sx={{ position: 'absolute', right: 8, top: 8, color: theme.palette.grey[500] }}
             >
               <CloseIcon />
             </IconButton>
@@ -717,28 +715,28 @@ const Eventos: React.FC = () => {
               <Typography
                 variant="subtitle1"
                 gutterBottom
-                sx={{ fontFamily: "Roboto, sans-serif" }}
+                sx={{ fontFamily: 'Roboto, sans-serif' }}
               >
-                <strong>Data:</strong> {dayjs(eventoSelecionado.date).format("DD [de] MMMM")}
+                <strong>Data:</strong> {dayjs(eventoSelecionado.date).format('DD [de] MMMM')}
               </Typography>
               <Typography
                 variant="subtitle1"
                 gutterBottom
-                sx={{ fontFamily: "Roboto, sans-serif" }}
+                sx={{ fontFamily: 'Roboto, sans-serif' }}
               >
                 <strong>Local:</strong> {eventoSelecionado.location}
               </Typography>
-              <Typography variant="subtitle1" sx={{ fontFamily: "Roboto, sans-serif" }}>
+              <Typography variant="subtitle1" sx={{ fontFamily: 'Roboto, sans-serif' }}>
                 <strong>Descrição:</strong> {eventoSelecionado.description}
               </Typography>
             </Box>
           </DialogContent>
-          <DialogActions sx={{ justifyContent: "center", pb: 2 }}>
+          <DialogActions sx={{ justifyContent: 'center', pb: 2 }}>
             <Button
               onClick={() => setEventoSelecionado(null)}
               color="primary"
               variant="text"
-              sx={{ fontFamily: "Roboto, sans-serif" }}
+              sx={{ fontFamily: 'Roboto, sans-serif' }}
             >
               Fechar
             </Button>
@@ -753,18 +751,18 @@ const Eventos: React.FC = () => {
         maxWidth="sm"
         fullWidth
         sx={{
-          "& .MuiDialog-paper": {
+          '& .MuiDialog-paper': {
             borderRadius: 3,
-            boxShadow: "0 8px 16px rgba(0,0,0,0.2)",
+            boxShadow: '0 8px 16px rgba(0,0,0,0.2)',
           },
         }}
       >
-        <DialogTitle sx={{ fontFamily: "Roboto, sans-serif" }}>
-          {dialogAddEditMode === "add" ? "Adicionar Evento" : "Editar Evento"}
+        <DialogTitle sx={{ fontFamily: 'Roboto, sans-serif' }}>
+          {dialogAddEditMode === 'add' ? 'Adicionar Evento' : 'Editar Evento'}
           <IconButton
             aria-label="close"
             onClick={() => setDialogAddEditOpen(false)}
-            sx={{ position: "absolute", right: 8, top: 8, color: theme.palette.grey[500] }}
+            sx={{ position: 'absolute', right: 8, top: 8, color: theme.palette.grey[500] }}
           >
             <CloseIcon />
           </IconButton>
@@ -777,7 +775,7 @@ const Eventos: React.FC = () => {
               onChange={(e) => setFormTitle(e.target.value)}
               fullWidth
               variant="outlined"
-              sx={{ fontFamily: "Roboto, sans-serif" }}
+              sx={{ fontFamily: 'Roboto, sans-serif' }}
             />
             <TextField
               label="Data"
@@ -787,7 +785,7 @@ const Eventos: React.FC = () => {
               fullWidth
               variant="outlined"
               InputLabelProps={{ shrink: true }}
-              sx={{ fontFamily: "Roboto, sans-serif" }}
+              sx={{ fontFamily: 'Roboto, sans-serif' }}
             />
             <TextField
               label="Local"
@@ -795,7 +793,7 @@ const Eventos: React.FC = () => {
               onChange={(e) => setFormLocation(e.target.value)}
               fullWidth
               variant="outlined"
-              sx={{ fontFamily: "Roboto, sans-serif" }}
+              sx={{ fontFamily: 'Roboto, sans-serif' }}
             />
             <TextField
               label="Descrição"
@@ -805,7 +803,7 @@ const Eventos: React.FC = () => {
               rows={3}
               fullWidth
               variant="outlined"
-              sx={{ fontFamily: "Roboto, sans-serif" }}
+              sx={{ fontFamily: 'Roboto, sans-serif' }}
             />
           </Box>
         </DialogContent>
@@ -813,7 +811,7 @@ const Eventos: React.FC = () => {
           <Button
             onClick={() => setDialogAddEditOpen(false)}
             color="inherit"
-            sx={{ fontFamily: "Roboto, sans-serif" }}
+            sx={{ fontFamily: 'Roboto, sans-serif' }}
           >
             Cancelar
           </Button>
@@ -821,9 +819,9 @@ const Eventos: React.FC = () => {
             onClick={handleSubmitAddEdit}
             variant="contained"
             color="primary"
-            sx={{ fontFamily: "Roboto, sans-serif" }}
+            sx={{ fontFamily: 'Roboto, sans-serif' }}
           >
-            {dialogAddEditMode === "add" ? "Adicionar" : "Salvar"}
+            {dialogAddEditMode === 'add' ? 'Adicionar' : 'Salvar'}
           </Button>
         </DialogActions>
       </Dialog>
@@ -835,30 +833,27 @@ const Eventos: React.FC = () => {
         maxWidth="xs"
         fullWidth
         sx={{
-          "& .MuiDialog-paper": {
+          '& .MuiDialog-paper': {
             borderRadius: 3,
-            boxShadow: "0 8px 16px rgba(0,0,0,0.2)",
+            boxShadow: '0 8px 16px rgba(0,0,0,0.2)',
           },
         }}
       >
-        <DialogTitle sx={{ fontFamily: "Roboto, sans-serif" }}>Confirmação</DialogTitle>
+        <DialogTitle sx={{ fontFamily: 'Roboto, sans-serif' }}>Confirmação</DialogTitle>
         <DialogContent>
-          <Typography sx={{ fontFamily: "Roboto, sans-serif" }}>
+          <Typography sx={{ fontFamily: 'Roboto, sans-serif' }}>
             Tem certeza que deseja excluir este evento?
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button
-            onClick={handleCloseDelete}
-            sx={{ fontFamily: "Roboto, sans-serif" }}
-          >
+          <Button onClick={handleCloseDelete} sx={{ fontFamily: 'Roboto, sans-serif' }}>
             Cancelar
           </Button>
           <Button
             onClick={handleConfirmDelete}
             color="error"
             variant="contained"
-            sx={{ fontFamily: "Roboto, sans-serif" }}
+            sx={{ fontFamily: 'Roboto, sans-serif' }}
           >
             Excluir
           </Button>

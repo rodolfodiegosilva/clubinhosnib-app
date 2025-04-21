@@ -1,9 +1,9 @@
-import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import apiAxios from "../../../config/axiosConfig";
+import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
+import apiAxios from '../../../config/axiosConfig';
 
 export enum RoleUser {
-  ADMIN = "admin",
-  USER = "user",
+  ADMIN = 'admin',
+  USER = 'user',
 }
 
 interface User {
@@ -39,44 +39,40 @@ const initialState: AuthState = {
 };
 
 const log = (message: string, ...args: any[]) => {
-  if (process.env.NODE_ENV === "development") {
+  if (process.env.NODE_ENV === 'development') {
     console.log(message, ...args);
   }
 };
 
-export const fetchCurrentUser = createAsyncThunk<
-  User,
-  void,
-  { rejectValue: string }
->(
-  "auth/fetchCurrentUser",
+export const fetchCurrentUser = createAsyncThunk<User, void, { rejectValue: string }>(
+  'auth/fetchCurrentUser',
   async (_, { getState, rejectWithValue }) => {
     const state = getState() as { auth: AuthState };
     const token = state.auth.accessToken;
 
-    if (!token || typeof token !== "string" || token.trim() === "") {
-      log("[Auth] Nenhum token válido encontrado.");
-      return rejectWithValue("No valid access token found");
+    if (!token || typeof token !== 'string' || token.trim() === '') {
+      log('[Auth] Nenhum token válido encontrado.');
+      return rejectWithValue('No valid access token found');
     }
 
     try {
-      const response = await apiAxios.get<User>("/auth/me", {
+      const response = await apiAxios.get<User>('/auth/me', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      log("[Auth] Usuário carregado com sucesso via /auth/me:", response.data);
+      log('[Auth] Usuário carregado com sucesso via /auth/me:', response.data);
       return response.data;
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || "Erro ao buscar usuário";
-      log("[Auth] Erro ao buscar usuário:", errorMessage);
+      const errorMessage = error.response?.data?.message || 'Erro ao buscar usuário';
+      log('[Auth] Erro ao buscar usuário:', errorMessage);
       return rejectWithValue(errorMessage);
     }
   }
 );
 
 const authSlice = createSlice({
-  name: "auth",
+  name: 'auth',
   initialState,
   reducers: {
     login: (
@@ -84,12 +80,12 @@ const authSlice = createSlice({
       action: PayloadAction<{ accessToken: string; refreshToken: string; user?: User }>
     ) => {
       const { accessToken, refreshToken, user } = action.payload;
-      state.accessToken = accessToken.replace(/^"|"$/g, "");
-      state.refreshToken = refreshToken.replace(/^"|"$/g, "");
+      state.accessToken = accessToken.replace(/^"|"$/g, '');
+      state.refreshToken = refreshToken.replace(/^"|"$/g, '');
       state.isAuthenticated = true;
       if (user) state.user = user; // Atualiza o user apenas se fornecido
       state.error = null;
-      log("[AuthSlice] Login realizado com sucesso:", { user });
+      log('[AuthSlice] Login realizado com sucesso:', { user });
     },
     logout: (state) => {
       state.accessToken = null;
@@ -97,7 +93,7 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.user = null;
       state.error = null;
-      log("[AuthSlice] Logout realizado.");
+      log('[AuthSlice] Logout realizado.');
     },
     setError: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
@@ -121,7 +117,7 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
         state.accessToken = null;
         state.refreshToken = null;
-        state.error = action.payload || "Erro desconhecido";
+        state.error = action.payload || 'Erro desconhecido';
       });
   },
 });

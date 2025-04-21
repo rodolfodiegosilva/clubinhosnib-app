@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Box,
   Typography,
@@ -9,13 +9,10 @@ import {
   DialogActions,
   useMediaQuery,
   useTheme,
-} from "@mui/material";
-import {
-  MeditationData,
-  WeekDayLabel,
-} from "../../store/slices/meditation/meditationSlice";
-import { sharedBannerStyles } from "./SharedBannerStyles";
-import { MediaItem, MediaUploadType, MediaPlatform } from "store/slices/types";
+} from '@mui/material';
+import { MeditationData, WeekDayLabel } from '../../store/slices/meditation/meditationSlice';
+import { sharedBannerStyles } from './SharedBannerStyles';
+import { MediaItem, MediaUploadType, MediaPlatform } from 'store/slices/types';
 
 interface TeacherMeditationBannerProps {
   meditation: MeditationData;
@@ -23,16 +20,16 @@ interface TeacherMeditationBannerProps {
 
 export default function TeacherMeditationBanner({ meditation }: TeacherMeditationBannerProps) {
   const today = new Date();
-  const weekdayName = today.toLocaleDateString("en-US", { weekday: "long" });
+  const weekdayName = today.toLocaleDateString('en-US', { weekday: 'long' });
   const todayData = meditation.days.find((d) => d.day === weekdayName);
 
   const [openModal, setOpenModal] = useState(false);
 
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const getPreviewUrl = (media: MediaItem): string => {
-    const originalUrl = media.url || "";
+    const originalUrl = media.url || '';
 
     if (media.uploadType === MediaUploadType.UPLOAD) {
       return originalUrl;
@@ -48,15 +45,15 @@ export default function TeacherMeditationBanner({ meditation }: TeacherMeditatio
       }
 
       case MediaPlatform.ONEDRIVE: {
-        if (originalUrl.includes("onedrive.live.com/embed")) {
+        if (originalUrl.includes('onedrive.live.com/embed')) {
           return originalUrl;
         }
         return originalUrl;
       }
 
       case MediaPlatform.DROPBOX: {
-        return originalUrl.includes("dropbox.com")
-          ? originalUrl.replace("?dl=0", "?raw=1")
+        return originalUrl.includes('dropbox.com')
+          ? originalUrl.replace('?dl=0', '?raw=1')
           : originalUrl;
       }
 
@@ -76,16 +73,16 @@ export default function TeacherMeditationBanner({ meditation }: TeacherMeditatio
       <Box
         sx={{
           ...sharedBannerStyles,
-          background: "linear-gradient(to bottom right, #E60026 0%, #dceeff 100%)",
-          color: "#3e2723",
+          background: 'linear-gradient(to bottom right, #E60026 0%, #dceeff 100%)',
+          color: '#3e2723',
         }}
       >
         <Typography
           variant="h4"
           fontWeight="bold"
           sx={{
-            color: "#fff",
-            textShadow: "2px 2px 6px rgba(0,0,0,0.85)",
+            color: '#fff',
+            textShadow: '2px 2px 6px rgba(0,0,0,0.85)',
             mb: 2,
           }}
         >
@@ -97,14 +94,14 @@ export default function TeacherMeditationBanner({ meditation }: TeacherMeditatio
           fontWeight="medium"
           gutterBottom
           sx={{
-            color: "#fff",
-            textShadow: "2px 2px 6px rgba(0,0,0,0.85)",
+            color: '#fff',
+            textShadow: '2px 2px 6px rgba(0,0,0,0.85)',
           }}
         >
-          Hoje é{" "}
+          Hoje é{' '}
           {todayData
             ? `${WeekDayLabel[todayData.day as keyof typeof WeekDayLabel] || todayData.day}.`
-            : "..."}
+            : '...'}
         </Typography>
 
         {todayData ? (
@@ -112,22 +109,21 @@ export default function TeacherMeditationBanner({ meditation }: TeacherMeditatio
             <Typography
               variant="subtitle1"
               sx={{
-                color: "#fff",
-                textShadow: "2px 2px 6px rgba(0,0,0,0.85)",
+                color: '#fff',
+                textShadow: '2px 2px 6px rgba(0,0,0,0.85)',
                 mt: 1,
                 fontWeight: 500,
               }}
             >
-              O tema de hoje é:{" "}
-              <span style={{ fontWeight: "bold" }}>{todayData.topic}</span>
+              O tema de hoje é: <span style={{ fontWeight: 'bold' }}>{todayData.topic}</span>
             </Typography>
 
             <Typography
               variant="subtitle1"
               fontStyle="italic"
               sx={{
-                color: "#fff",
-                textShadow: "2px 2px 6px rgba(0,0,0,0.85)",
+                color: '#fff',
+                textShadow: '2px 2px 6px rgba(0,0,0,0.85)',
                 mt: 1,
               }}
             >
@@ -138,8 +134,8 @@ export default function TeacherMeditationBanner({ meditation }: TeacherMeditatio
           <Typography
             variant="body1"
             sx={{
-              color: "#fff",
-              textShadow: "2px 2px 6px rgba(0,0,0,0.85)",
+              color: '#fff',
+              textShadow: '2px 2px 6px rgba(0,0,0,0.85)',
             }}
           >
             Ainda não há meditação disponível para hoje.
@@ -149,7 +145,7 @@ export default function TeacherMeditationBanner({ meditation }: TeacherMeditatio
         {meditation.media?.url && (
           <Button
             variant="outlined"
-            sx={{ mt: 3, alignSelf: "center" }}
+            sx={{ mt: 3, alignSelf: 'center' }}
             onClick={handleOpenPreview}
           >
             Visualizar Meditação
@@ -166,17 +162,17 @@ export default function TeacherMeditationBanner({ meditation }: TeacherMeditatio
           sx: {
             m: 0,
             borderRadius: 2,
-            width: isMobile ? "100%" : "90%",
-            height: isMobile ? "100%" : "75%",
+            width: isMobile ? '100%' : '90%',
+            height: isMobile ? '100%' : '75%',
           },
         }}
       >
         <DialogTitle>Visualização da Meditação</DialogTitle>
         <DialogContent dividers sx={{ p: 0 }}>
-          <Box sx={{ width: "100%", height: "100%" }}>
+          <Box sx={{ width: '100%', height: '100%' }}>
             <iframe
               src={getPreviewUrl(meditation.media)}
-              style={{ width: "100%", height: "100%", border: "none" }}
+              style={{ width: '100%', height: '100%', border: 'none' }}
               title="Documento"
             />
           </Box>

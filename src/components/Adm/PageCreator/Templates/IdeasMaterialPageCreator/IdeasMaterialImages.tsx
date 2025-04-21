@@ -1,5 +1,5 @@
 // components/IdeasMaterialImages.tsx
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Box,
   TextField,
@@ -17,10 +17,10 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-} from "@mui/material";
-import { Delete, Edit } from "@mui/icons-material";
-import { validateMediaURL } from "utils/validateMediaURL";
-import { MediaItem, MediaPlatform, MediaType, MediaUploadType } from "store/slices/types";
+} from '@mui/material';
+import { Delete, Edit } from '@mui/icons-material';
+import { validateMediaURL } from 'utils/validateMediaURL';
+import { MediaItem, MediaPlatform, MediaType, MediaUploadType } from 'store/slices/types';
 
 interface ImagesProps {
   images: MediaItem[];
@@ -29,14 +29,14 @@ interface ImagesProps {
 
 export function IdeasMaterialImages({ images, setImages }: ImagesProps) {
   const [tempImg, setTempImg] = useState<MediaItem>({
-    title: "",
-    description: "",
+    title: '',
+    description: '',
     mediaType: MediaType.IMAGE,
     uploadType: MediaUploadType.LINK,
-    url: "",
-    platformType: MediaPlatform.GOOGLE_DRIVE
+    url: '',
+    platformType: MediaPlatform.GOOGLE_DRIVE,
   });
-  const [fileName, setFileName] = useState("");
+  const [fileName, setFileName] = useState('');
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [errors, setErrors] = useState({ title: false, description: false, url: false });
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -52,23 +52,27 @@ export function IdeasMaterialImages({ images, setImages }: ImagesProps) {
 
   const resetForm = () => {
     setTempImg({
-      title: "",
-      description: "",
+      title: '',
+      description: '',
       mediaType: MediaType.IMAGE,
       uploadType: MediaUploadType.LINK,
-      url: "",
-      platformType: MediaPlatform.GOOGLE_DRIVE
+      url: '',
+      platformType: MediaPlatform.GOOGLE_DRIVE,
     });
-    setFileName("");
+    setFileName('');
     setEditingIndex(null);
     setErrors({ title: false, description: false, url: false });
   };
 
   const handleAddOrUpdate = () => {
     const isValid =
-      tempImg.uploadType === MediaUploadType.UPLOAD || validateMediaURL(tempImg.url, tempImg.platformType);
+      tempImg.uploadType === MediaUploadType.UPLOAD ||
+      validateMediaURL(tempImg.url, tempImg.platformType);
     const hasError =
-      !tempImg.title || !tempImg.description || !tempImg.url || (tempImg.uploadType === MediaUploadType.LINK && !isValid);
+      !tempImg.title ||
+      !tempImg.description ||
+      !tempImg.url ||
+      (tempImg.uploadType === MediaUploadType.LINK && !isValid);
 
     setErrors({
       title: !tempImg.title,
@@ -78,9 +82,10 @@ export function IdeasMaterialImages({ images, setImages }: ImagesProps) {
 
     if (hasError) return;
 
-    const updated = editingIndex !== null
-      ? images.map((img, i) => (i === editingIndex ? tempImg : img))
-      : [...images, tempImg];
+    const updated =
+      editingIndex !== null
+        ? images.map((img, i) => (i === editingIndex ? tempImg : img))
+        : [...images, tempImg];
 
     setImages(updated);
     resetForm();
@@ -88,7 +93,7 @@ export function IdeasMaterialImages({ images, setImages }: ImagesProps) {
 
   const handleEdit = (index: number) => {
     setTempImg(images[index]);
-    setFileName(images[index].file?.name || "");
+    setFileName(images[index].file?.name || '');
     setEditingIndex(index);
   };
 
@@ -115,7 +120,7 @@ export function IdeasMaterialImages({ images, setImages }: ImagesProps) {
             value={tempImg.title}
             onChange={(e) => setTempImg({ ...tempImg, title: e.target.value })}
             error={errors.title}
-            helperText={errors.title ? "Campo obrigatório" : ""}
+            helperText={errors.title ? 'Campo obrigatório' : ''}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -125,7 +130,7 @@ export function IdeasMaterialImages({ images, setImages }: ImagesProps) {
             value={tempImg.description}
             onChange={(e) => setTempImg({ ...tempImg, description: e.target.value })}
             error={errors.description}
-            helperText={errors.description ? "Campo obrigatório" : ""}
+            helperText={errors.description ? 'Campo obrigatório' : ''}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -138,8 +143,11 @@ export function IdeasMaterialImages({ images, setImages }: ImagesProps) {
                 setTempImg({
                   ...tempImg,
                   uploadType: e.target.value as MediaUploadType.LINK | MediaUploadType.UPLOAD,
-                  platformType: e.target.value === MediaUploadType.LINK ? MediaPlatform.GOOGLE_DRIVE : undefined,
-                  url: "",
+                  platformType:
+                    e.target.value === MediaUploadType.LINK
+                      ? MediaPlatform.GOOGLE_DRIVE
+                      : undefined,
+                  url: '',
                   file: undefined,
                 })
               }
@@ -149,16 +157,19 @@ export function IdeasMaterialImages({ images, setImages }: ImagesProps) {
             </Select>
           </FormControl>
         </Grid>
-        {tempImg.uploadType === "link" && (
+        {tempImg.uploadType === 'link' && (
           <>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <InputLabel>Plataforma</InputLabel>
                 <Select
-                  value={tempImg.platformType || ""}
+                  value={tempImg.platformType || ''}
                   label="Plataforma"
                   onChange={(e) =>
-                    setTempImg({ ...tempImg, platformType: e.target.value as MediaItem["platformType"] })
+                    setTempImg({
+                      ...tempImg,
+                      platformType: e.target.value as MediaItem['platformType'],
+                    })
                   }
                 >
                   <MenuItem value="googledrive">Google Drive</MenuItem>
@@ -174,7 +185,7 @@ export function IdeasMaterialImages({ images, setImages }: ImagesProps) {
                 value={tempImg.url}
                 onChange={(e) => setTempImg({ ...tempImg, url: e.target.value })}
                 error={errors.url}
-                helperText={errors.url ? "URL inválida ou obrigatória" : ""}
+                helperText={errors.url ? 'URL inválida ou obrigatória' : ''}
               />
             </Grid>
           </>
@@ -193,13 +204,8 @@ export function IdeasMaterialImages({ images, setImages }: ImagesProps) {
           </Grid>
         )}
         <Grid item xs={12}>
-          <Button
-            variant="contained"
-            fullWidth
-            onClick={handleAddOrUpdate}
-            sx={{ mt: 2 }}
-          >
-            {editingIndex !== null ? "Salvar Alterações" : "Adicionar Imagem"}
+          <Button variant="contained" fullWidth onClick={handleAddOrUpdate} sx={{ mt: 2 }}>
+            {editingIndex !== null ? 'Salvar Alterações' : 'Adicionar Imagem'}
           </Button>
         </Grid>
       </Grid>
@@ -207,13 +213,17 @@ export function IdeasMaterialImages({ images, setImages }: ImagesProps) {
       <Grid container spacing={2} sx={{ mt: 3 }}>
         {images.map((img, index) => (
           <Grid item xs={12} sm={6} key={index}>
-            <Box sx={{ p: 2, border: "1px solid #ddd", borderRadius: 2 }}>
+            <Box sx={{ p: 2, border: '1px solid #ddd', borderRadius: 2 }}>
               <Typography fontWeight="bold">{img.title}</Typography>
               <Typography variant="body2">{img.description}</Typography>
               {img.url && (
-                <img src={img.url} alt={img.title} style={{ width: "100%", marginTop: 8, borderRadius: 4 }} />
+                <img
+                  src={img.url}
+                  alt={img.title}
+                  style={{ width: '100%', marginTop: 8, borderRadius: 4 }}
+                />
               )}
-              <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
+              <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
                 <Tooltip title="Editar">
                   <IconButton onClick={() => handleEdit(index)}>
                     <Edit />

@@ -5,7 +5,7 @@ import {
   DialogContentText,
   DialogActions,
   Button,
-} from "@mui/material";
+} from '@mui/material';
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -15,20 +15,9 @@ interface ConfirmDialogProps {
   onCancel: () => void;
 }
 
-export function ConfirmDialog({
-  open,
-  title,
-  message,
-  onConfirm,
-  onCancel,
-}: ConfirmDialogProps) {
+export function ConfirmDialog({ open, title, message, onConfirm, onCancel }: ConfirmDialogProps) {
   return (
-    <Dialog
-      open={open}
-      onClose={onCancel}
-      fullWidth
-      maxWidth="xs"
-    >
+    <Dialog open={open} onClose={onCancel} fullWidth maxWidth="xs">
       <DialogTitle>{title}</DialogTitle>
 
       <DialogContent>
@@ -37,11 +26,7 @@ export function ConfirmDialog({
 
       <DialogActions>
         <Button onClick={onCancel}>Cancelar</Button>
-        <Button
-          onClick={onConfirm}
-          variant="contained"
-          color="error"
-        >
+        <Button onClick={onConfirm} variant="contained" color="error">
           Confirmar
         </Button>
       </DialogActions>

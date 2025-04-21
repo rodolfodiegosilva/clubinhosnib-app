@@ -1,43 +1,43 @@
-import React, { useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { Box, CircularProgress } from "@mui/material";
+import React, { useEffect } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Box, CircularProgress } from '@mui/material';
 
-import Navbar from "./components/NavBar/Navbar";
-import Footer from "./components/Footer/Footer";
-import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
-import PageRenderer from "./components/PageRenderer/PageRenderer";
+import Navbar from './components/NavBar/Navbar';
+import Footer from './components/Footer/Footer';
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+import PageRenderer from './components/PageRenderer/PageRenderer';
 
-import Home from "./pages/Home/Home";
-import About from "./pages/About/About";
-import Contact from "./pages/Contact/Contact";
-import Event from "./pages/Event/Event";
-import Login from "./pages/Login/Login";
-import TeacherArea from "./pages/TeacherArea/TeacherArea";
-import PageGalleryView from "./pages/PageView/ImagePageView/ImagePageView";
+import Home from './pages/Home/Home';
+import About from './pages/About/About';
+import Contact from './pages/Contact/Contact';
+import Event from './pages/Event/Event';
+import Login from './pages/Login/Login';
+import TeacherArea from './pages/TeacherArea/TeacherArea';
+import PageGalleryView from './pages/PageView/ImagePageView/ImagePageView';
 
-import MeditationListPage from "./components/Adm/PageMeditadion/MeditationListPage";
-import MeditationPageCreator from "./components/Adm/PageCreator/Templates/MeditationPageCreator/MeditationPageCreator";
-import ImagePageCreator from "./components/Adm/PageCreator/Templates/ImagePageCreator/ImagePageCreator";
-import VideoPageCreator from "./components/Adm/PageCreator/Templates/VideoPageCreator/VideoPageCreator";
-import WeekMaterialPageCreator from "./components/Adm/PageCreator/Templates/WeekMaterialPageCreator/WeekMaterialPageCreator";
-import SelecPageTemplate from "./components/Adm/PageCreator/SelectPageTemplate/SelecPageTemplate";
+import MeditationListPage from './components/Adm/PageMeditadion/MeditationListPage';
+import MeditationPageCreator from './components/Adm/PageCreator/Templates/MeditationPageCreator/MeditationPageCreator';
+import ImagePageCreator from './components/Adm/PageCreator/Templates/ImagePageCreator/ImagePageCreator';
+import VideoPageCreator from './components/Adm/PageCreator/Templates/VideoPageCreator/VideoPageCreator';
+import WeekMaterialPageCreator from './components/Adm/PageCreator/Templates/WeekMaterialPageCreator/WeekMaterialPageCreator';
+import SelecPageTemplate from './components/Adm/PageCreator/SelectPageTemplate/SelecPageTemplate';
 
-import AdminDashboardPage from "./components/Adm/AdminDashboardPage";
-import AdminLayout from "./components/Adm/AdminLayout/AdminLayout";
+import AdminDashboardPage from './components/Adm/AdminDashboardPage';
+import AdminLayout from './components/Adm/AdminLayout/AdminLayout';
 
-import { fetchRoutes, RouteData as DynamicRouteType } from "./store/slices/route/routeSlice";
-import { fetchCurrentUser } from "./store/slices/auth/authSlice";
-import { RootState as RootStateType, AppDispatch as AppDispatchType } from "./store/slices";
+import { fetchRoutes, RouteData as DynamicRouteType } from './store/slices/route/routeSlice';
+import { fetchCurrentUser } from './store/slices/auth/authSlice';
+import { RootState as RootStateType, AppDispatch as AppDispatchType } from './store/slices';
 
-import "./styles/Global.css";
-import WeekMaterialListPage from "components/Adm/PageWeekMaterial/WeekMaterialListPage";
-import ImagePageListPage from "components/Adm/PageImage/ImagePageListPage";
-import VideoPageListPage from "components/Adm/PageVideos/VideoPageListPage";
-import CommentsListPage from "components/Adm/PageComments/CommentsListPage";
-import DocumentManager from "components/Adm/PageDocuments/DocumentManager";
-import IdeasPageListPage from "components/Adm/PageIdeasMaterial/IdeasPageListPage";
-import { IdeasMaterialPageCreator } from "components/Adm/PageCreator/Templates/IdeasMaterialPageCreator/IdeasMaterialPageCreator";
+import './styles/Global.css';
+import WeekMaterialListPage from 'components/Adm/PageWeekMaterial/WeekMaterialListPage';
+import ImagePageListPage from 'components/Adm/PageImage/ImagePageListPage';
+import VideoPageListPage from 'components/Adm/PageVideos/VideoPageListPage';
+import CommentsListPage from 'components/Adm/PageComments/CommentsListPage';
+import DocumentManager from 'components/Adm/PageDocuments/DocumentManager';
+import IdeasPageListPage from 'components/Adm/PageIdeasMaterial/IdeasPageListPage';
+import { IdeasMaterialPageCreator } from 'components/Adm/PageCreator/Templates/IdeasMaterialPageCreator/IdeasMaterialPageCreator';
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatchType>();
@@ -55,12 +55,12 @@ const App: React.FC = () => {
     return (
       <Box
         sx={{
-          height: "100vh",
-          width: "100vw",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          bgcolor: "#f0f0f0",
+          height: '100vh',
+          width: '100vw',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          bgcolor: '#f0f0f0',
         }}
       >
         <CircularProgress size={48} />
@@ -117,7 +117,6 @@ const App: React.FC = () => {
                 path="editar-pagina-ideias"
                 element={<IdeasMaterialPageCreator fromTemplatePage={false} />}
               />
-
             </Route>
           </Route>
 

@@ -18,9 +18,7 @@ const NavBar: React.FC = () => {
         >
           Clubinhos NIB
         </Typography>
-        <Box>
-          {isMobile ? <MobileNavigation /> : <DesktopNavigation />}
-        </Box>
+        <Box>{isMobile ? <MobileNavigation /> : <DesktopNavigation />}</Box>
       </Toolbar>
     </AppBar>
   );

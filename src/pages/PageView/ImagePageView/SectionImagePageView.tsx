@@ -1,37 +1,29 @@
-import React, { useState } from "react";
-import {
-  Box,
-  Typography,
-  Paper,
-  Grid,
-  Modal,
-  IconButton,
-  Tooltip,
-} from "@mui/material";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper/modules";
-import CloseIcon from "@mui/icons-material/Close";
-import DriveIcon from "@mui/icons-material/Google";
-import CloudIcon from "@mui/icons-material/CloudQueue";
-import FolderIcon from "@mui/icons-material/Folder";
-import { useSelector } from "react-redux";
-import { RootState } from "store/slices";
-import { RoleUser } from "store/slices/auth/authSlice";
-import { MediaPlatform, MediaItem } from "store/slices/types";
-import { getMediaPreviewUrl } from "utils/getMediaPreviewUrl";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import type { SectionData } from "store/slices/image/imageSlice";
-import { motion } from "framer-motion";
+import React, { useState } from 'react';
+import { Box, Typography, Paper, Grid, Modal, IconButton, Tooltip } from '@mui/material';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination } from 'swiper/modules';
+import CloseIcon from '@mui/icons-material/Close';
+import DriveIcon from '@mui/icons-material/Google';
+import CloudIcon from '@mui/icons-material/CloudQueue';
+import FolderIcon from '@mui/icons-material/Folder';
+import { useSelector } from 'react-redux';
+import { RootState } from 'store/slices';
+import { RoleUser } from 'store/slices/auth/authSlice';
+import { MediaPlatform, MediaItem } from 'store/slices/types';
+import { getMediaPreviewUrl } from 'utils/getMediaPreviewUrl';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import type { SectionData } from 'store/slices/image/imageSlice';
+import { motion } from 'framer-motion';
 
-export interface SectionItemProps extends Omit<SectionData, "id"> {}
+export interface SectionItemProps extends Omit<SectionData, 'id'> {}
 
 const formatDateTime = (value: string | Date) => {
   const date = new Date(value);
   return {
-    date: date.toLocaleDateString("pt-BR"),
-    time: date.toLocaleTimeString("pt-BR"),
+    date: date.toLocaleDateString('pt-BR'),
+    time: date.toLocaleTimeString('pt-BR'),
   };
 };
 
@@ -60,7 +52,8 @@ const SectionImagePageView: React.FC<SectionItemProps> = ({
   const [showAll, setShowAll] = useState(false);
 
   const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
-  const isUserLogged = isAuthenticated && (user?.role === RoleUser.ADMIN || user?.role === RoleUser.USER);
+  const isUserLogged =
+    isAuthenticated && (user?.role === RoleUser.ADMIN || user?.role === RoleUser.USER);
 
   if (!isPublic && !isUserLogged) return null;
   if (!mediaItems || mediaItems.length === 0) return null;
@@ -83,9 +76,9 @@ const SectionImagePageView: React.FC<SectionItemProps> = ({
         mt: { xs: 1, sm: 1 },
         mb: { xs: 2, sm: 6 },
         borderRadius: 4,
-        background: "linear-gradient(145deg, #fafafa, #f0f0f0)",
-        transition: "transform 0.2s ease",
-        "&:hover": { transform: "scale(1.01)" },
+        background: 'linear-gradient(145deg, #fafafa, #f0f0f0)',
+        transition: 'transform 0.2s ease',
+        '&:hover': { transform: 'scale(1.01)' },
       }}
     >
       <Box textAlign="center" mb={3}>
@@ -97,9 +90,9 @@ const SectionImagePageView: React.FC<SectionItemProps> = ({
           color="text.secondary"
           sx={{
             maxWidth: 800,
-            mx: "auto",
+            mx: 'auto',
             mb: 2,
-            whiteSpace: "pre-line",
+            whiteSpace: 'pre-line',
           }}
         >
           {description}
@@ -108,8 +101,8 @@ const SectionImagePageView: React.FC<SectionItemProps> = ({
           mt={2}
           display="flex"
           flexDirection="column"
-          alignItems={{ xs: "center", md: "flex-end" }}
-          textAlign={{ xs: "center", md: "right" }}
+          alignItems={{ xs: 'center', md: 'flex-end' }}
+          textAlign={{ xs: 'center', md: 'right' }}
         >
           {created && (
             <Typography variant="body2" color="text.secondary">
@@ -128,18 +121,18 @@ const SectionImagePageView: React.FC<SectionItemProps> = ({
         <Box
           component="img"
           src={getMediaPreviewUrl(mediaItems[0] as MediaItem)}
-          alt={mediaItems[0].title || "Imagem destaque"}
+          alt={mediaItems[0].title || 'Imagem destaque'}
           sx={{
-            width: "100%",
-            height: "auto",
+            width: '100%',
+            height: 'auto',
             maxHeight: { xs: 200, sm: 400, md: 600 },
-            objectFit: "cover",
+            objectFit: 'cover',
             borderRadius: 2,
-            cursor: "pointer",
-            transition: "transform 0.3s ease, box-shadow 0.3s ease",
+            cursor: 'pointer',
+            transition: 'transform 0.3s ease, box-shadow 0.3s ease',
             boxShadow: 1,
-            "&:hover": {
-              transform: "scale(1.02)",
+            '&:hover': {
+              transform: 'scale(1.02)',
               boxShadow: 4,
             },
           }}
@@ -151,15 +144,15 @@ const SectionImagePageView: React.FC<SectionItemProps> = ({
         {thumbnails.map((item, index) => (
           <Grid item xs={4} sm={2} md={2} key={item.id || index}>
             {item.url && (
-              <Tooltip title={item.title ?? "Imagem"} arrow>
+              <Tooltip title={item.title ?? 'Imagem'} arrow>
                 <Box
                   sx={{
-                    position: "relative",
+                    position: 'relative',
                     borderRadius: 1,
-                    overflow: "hidden",
-                    cursor: "pointer",
-                    transition: "transform 0.2s ease",
-                    "&:hover": { transform: "scale(1.05)" },
+                    overflow: 'hidden',
+                    cursor: 'pointer',
+                    transition: 'transform 0.2s ease',
+                    '&:hover': { transform: 'scale(1.05)' },
                   }}
                   onClick={() => handleImageClick(index + 1)}
                 >
@@ -168,20 +161,20 @@ const SectionImagePageView: React.FC<SectionItemProps> = ({
                     src={getMediaPreviewUrl(item as MediaItem)}
                     alt={item.title || `Miniatura ${index + 1}`}
                     sx={{
-                      width: "100%",
+                      width: '100%',
                       height: 80,
-                      objectFit: "cover",
+                      objectFit: 'cover',
                       borderRadius: 1,
                     }}
                   />
                   <Box
                     sx={{
-                      position: "absolute",
+                      position: 'absolute',
                       top: 4,
                       right: 4,
-                      color: "white",
-                      backgroundColor: "rgba(0,0,0,0.5)",
-                      borderRadius: "50%",
+                      color: 'white',
+                      backgroundColor: 'rgba(0,0,0,0.5)',
+                      borderRadius: '50%',
                       p: 0.5,
                     }}
                   >
@@ -205,17 +198,17 @@ const SectionImagePageView: React.FC<SectionItemProps> = ({
               variant="body2"
               onClick={() => setShowAll((prev) => !prev)}
               sx={{
-                cursor: "pointer",
-                fontWeight: "bold",
-                color: "primary.main",
-                "&:hover": {
-                  textDecoration: "underline",
-                  transform: "scale(1.05)",
-                  transition: "transform 0.2s ease",
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                color: 'primary.main',
+                '&:hover': {
+                  textDecoration: 'underline',
+                  transform: 'scale(1.05)',
+                  transition: 'transform 0.2s ease',
                 },
               }}
             >
-              {showAll ? "Mostrar menos" : "Mostrar mais fotos"}
+              {showAll ? 'Mostrar menos' : 'Mostrar mais fotos'}
             </Typography>
           </motion.div>
         </Box>
@@ -224,21 +217,21 @@ const SectionImagePageView: React.FC<SectionItemProps> = ({
       <Modal open={openModal} onClose={() => setOpenModal(false)}>
         <Box
           sx={{
-            position: "fixed",
+            position: 'fixed',
             top: 0,
             left: 0,
-            width: "100vw",
-            height: "100vh",
-            bgcolor: "rgba(0,0,0,0.95)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            width: '100vw',
+            height: '100vh',
+            bgcolor: 'rgba(0,0,0,0.95)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
             zIndex: 1500,
           }}
         >
           <IconButton
             onClick={() => setOpenModal(false)}
-            sx={{ position: "absolute", top: 20, right: 20, color: "#fff" }}
+            sx={{ position: 'absolute', top: 20, right: 20, color: '#fff' }}
           >
             <CloseIcon fontSize="large" />
           </IconButton>
@@ -248,7 +241,7 @@ const SectionImagePageView: React.FC<SectionItemProps> = ({
             navigation
             pagination={{ clickable: true }}
             initialSlide={startIndex}
-            style={{ width: "90%", maxWidth: 900 }}
+            style={{ width: '90%', maxWidth: 900 }}
           >
             {mediaItems.map((media, index) => (
               <SwiperSlide key={media.id || index}>
@@ -257,9 +250,9 @@ const SectionImagePageView: React.FC<SectionItemProps> = ({
                   src={getMediaPreviewUrl(media as MediaItem)}
                   alt={media.title || `Slide ${index + 1}`}
                   sx={{
-                    width: "100%",
-                    maxHeight: "80vh",
-                    objectFit: "contain",
+                    width: '100%',
+                    maxHeight: '80vh',
+                    objectFit: 'contain',
                     borderRadius: 2,
                   }}
                 />

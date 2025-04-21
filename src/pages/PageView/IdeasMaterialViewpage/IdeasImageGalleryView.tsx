@@ -1,8 +1,8 @@
-import { Box, Typography, useTheme } from "@mui/material";
-import { motion } from "framer-motion";
-import { MediaItem, MediaUploadType, MediaPlatform } from "store/slices/types";
-import DownloadButton from "./DownloadButton";
-import { getMediaPreviewUrl } from "utils/getMediaPreviewUrl";
+import { Box, Typography, useTheme } from '@mui/material';
+import { motion } from 'framer-motion';
+import { MediaItem, MediaUploadType, MediaPlatform } from 'store/slices/types';
+import DownloadButton from './DownloadButton';
+import { getMediaPreviewUrl } from 'utils/getMediaPreviewUrl';
 
 interface Props {
   image: MediaItem;
@@ -19,7 +19,7 @@ export default function IdeasImageGalleryView({ image }: Props) {
   const finalUrl = getMediaPreviewUrl(image);
 
   return (
-    <Box sx={{ width: "100%", p: 1 }}>
+    <Box sx={{ width: '100%', p: 1 }}>
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -28,12 +28,12 @@ export default function IdeasImageGalleryView({ image }: Props) {
         {canVisualize && finalUrl ? (
           <img
             src={finalUrl}
-            alt={image.title || "Imagem"}
+            alt={image.title || 'Imagem'}
             style={{
-              width: "100%",
+              width: '100%',
               borderRadius: 12,
               maxHeight: 250,
-              objectFit: "cover",
+              objectFit: 'cover',
               marginBottom: 8,
             }}
           />
@@ -48,10 +48,7 @@ export default function IdeasImageGalleryView({ image }: Props) {
         <Typography variant="body2" color="text.secondary" mb={1}>
           {image.description}
         </Typography>
-        <DownloadButton
-          url={image.url}
-          filename={image.originalName || image.title || "imagem"}
-        />
+        <DownloadButton url={image.url} filename={image.originalName || image.title || 'imagem'} />
       </motion.div>
     </Box>
   );

@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  Box,
-  Typography,
-  Paper,
-  Grid,
-  Card,
-  CardContent,
-  CardMedia,
-} from '@mui/material';
+import { Box, Typography, Paper, Grid, Card, CardContent, CardMedia } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -74,10 +66,7 @@ const TrainingVideosSection: React.FC = () => {
                 >
                   <CardMedia
                     component="img"
-                    image={
-                      video.image ||
-                      'https://via.placeholder.com/300x140?text=Vídeo'
-                    }
+                    image={video.image || 'https://via.placeholder.com/300x140?text=Vídeo'}
                     alt={video.title}
                     sx={{
                       height: { xs: 140, md: 160 },
@@ -86,12 +75,7 @@ const TrainingVideosSection: React.FC = () => {
                   />
 
                   <CardContent>
-                    <Typography
-                      variant="subtitle1"
-                      fontWeight="bold"
-                      color="#424242"
-                      gutterBottom
-                    >
+                    <Typography variant="subtitle1" fontWeight="bold" color="#424242" gutterBottom>
                       {video.title}
                     </Typography>
                     <Typography variant="body2" color="#616161" noWrap>
@@ -104,11 +88,7 @@ const TrainingVideosSection: React.FC = () => {
           ))}
         </Grid>
       ) : (
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          textAlign="center"
-        >
+        <Typography variant="body2" color="text.secondary" textAlign="center">
           Nenhum vídeo disponível no momento.
         </Typography>
       )}

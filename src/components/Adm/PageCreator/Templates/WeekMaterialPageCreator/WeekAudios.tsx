@@ -13,11 +13,11 @@ import {
   DialogTitle,
   DialogActions,
   Tooltip,
-} from "@mui/material";
-import { Delete, Edit } from "@mui/icons-material";
-import { useState } from "react";
-import { validateMediaURL } from "utils/validateMediaURL";
-import { MediaItem, MediaPlatform, MediaType, MediaUploadType } from "store/slices/types";
+} from '@mui/material';
+import { Delete, Edit } from '@mui/icons-material';
+import { useState } from 'react';
+import { validateMediaURL } from 'utils/validateMediaURL';
+import { MediaItem, MediaPlatform, MediaType, MediaUploadType } from 'store/slices/types';
 
 interface Props {
   audios: MediaItem[];
@@ -26,12 +26,12 @@ interface Props {
 
 export default function WeekAudios({ audios, setAudios }: Props) {
   const [newAudio, setNewAudio] = useState<MediaItem>({
-    title: "",
-    description: "",
+    title: '',
+    description: '',
     mediaType: MediaType.AUDIO,
     uploadType: MediaUploadType.LINK,
     platformType: MediaPlatform.GOOGLE_DRIVE,
-    url: "",
+    url: '',
   });
 
   const [editIndex, setEditIndex] = useState<number | null>(null);
@@ -69,12 +69,12 @@ export default function WeekAudios({ audios, setAudios }: Props) {
     }
 
     setNewAudio({
-      title: "",
-      description: "",
+      title: '',
+      description: '',
       mediaType: MediaType.AUDIO,
       uploadType: MediaUploadType.LINK,
       platformType: MediaPlatform.GOOGLE_DRIVE,
-      url: "",
+      url: '',
     });
     setErrors({ title: false, description: false, url: false });
   };
@@ -97,7 +97,7 @@ export default function WeekAudios({ audios, setAudios }: Props) {
   };
 
   return (
-    <Box sx={{ width: { xs: "95%", md: "100%" }, mx: "auto" }}>
+    <Box sx={{ width: { xs: '95%', md: '100%' }, mx: 'auto' }}>
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
           <TextField
@@ -106,7 +106,7 @@ export default function WeekAudios({ audios, setAudios }: Props) {
             value={newAudio.title}
             onChange={(e) => setNewAudio({ ...newAudio, title: e.target.value })}
             error={errors.title}
-            helperText={errors.title ? "Campo obrigatório" : ""}
+            helperText={errors.title ? 'Campo obrigatório' : ''}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -116,7 +116,7 @@ export default function WeekAudios({ audios, setAudios }: Props) {
             value={newAudio.description}
             onChange={(e) => setNewAudio({ ...newAudio, description: e.target.value })}
             error={errors.description}
-            helperText={errors.description ? "Campo obrigatório" : ""}
+            helperText={errors.description ? 'Campo obrigatório' : ''}
           />
         </Grid>
 
@@ -131,8 +131,9 @@ export default function WeekAudios({ audios, setAudios }: Props) {
                 setNewAudio({
                   ...newAudio,
                   uploadType: newType,
-                  platformType: newType === MediaUploadType.LINK ? MediaPlatform.GOOGLE_DRIVE : undefined,
-                  url: "",
+                  platformType:
+                    newType === MediaUploadType.LINK ? MediaPlatform.GOOGLE_DRIVE : undefined,
+                  url: '',
                   file: undefined,
                 });
               }}
@@ -149,7 +150,7 @@ export default function WeekAudios({ audios, setAudios }: Props) {
               <FormControl fullWidth>
                 <InputLabel>Origem</InputLabel>
                 <Select
-                  value={newAudio.platformType || ""}
+                  value={newAudio.platformType || ''}
                   label="Origem"
                   onChange={(e) =>
                     setNewAudio({
@@ -172,7 +173,7 @@ export default function WeekAudios({ audios, setAudios }: Props) {
                 value={newAudio.url}
                 onChange={(e) => setNewAudio({ ...newAudio, url: e.target.value })}
                 error={errors.url}
-                helperText={errors.url ? "URL inválida ou obrigatória" : ""}
+                helperText={errors.url ? 'URL inválida ou obrigatória' : ''}
               />
             </Grid>
           </>
@@ -194,7 +195,7 @@ export default function WeekAudios({ audios, setAudios }: Props) {
 
         <Grid item xs={12}>
           <Button variant="contained" fullWidth onClick={handleAddOrEdit}>
-            {editIndex !== null ? "Atualizar Áudio" : "Adicionar Áudio"}
+            {editIndex !== null ? 'Atualizar Áudio' : 'Adicionar Áudio'}
           </Button>
         </Grid>
       </Grid>
@@ -207,7 +208,7 @@ export default function WeekAudios({ audios, setAudios }: Props) {
               <Typography variant="body2" mb={1}>
                 {audio.description}
               </Typography>
-              <audio controls style={{ width: "100%", marginTop: 8 }}>
+              <audio controls style={{ width: '100%', marginTop: 8 }}>
                 <source src={audio.url} type="audio/mp3" />
                 Seu navegador não suporta áudio.
               </audio>

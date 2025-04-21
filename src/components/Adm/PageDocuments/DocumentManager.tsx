@@ -74,9 +74,7 @@ const DocumentManager: React.FC = () => {
     setIsFiltering(true);
     const timer = setTimeout(() => {
       const term = searchTerm.toLowerCase();
-      const filtered = documents.filter((doc) =>
-        doc.name.toLowerCase().includes(term)
-      );
+      const filtered = documents.filter((doc) => doc.name.toLowerCase().includes(term));
       setFilteredDocuments(filtered);
       setIsFiltering(false);
     }, 300);
@@ -103,9 +101,7 @@ const DocumentManager: React.FC = () => {
     fetchDocuments();
     setSnackbar({
       open: true,
-      message: isEditing
-        ? 'Documento atualizado com sucesso!'
-        : 'Documento criado com sucesso!',
+      message: isEditing ? 'Documento atualizado com sucesso!' : 'Documento criado com sucesso!',
       severity: 'success',
     });
   };
@@ -171,11 +167,7 @@ const DocumentManager: React.FC = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={handleCreate}
-          >
+          <Button variant="contained" startIcon={<AddIcon />} onClick={handleCreate}>
             Documento
           </Button>
         </Stack>
@@ -242,11 +234,7 @@ const DocumentManager: React.FC = () => {
         onConfirm={handleConfirmDelete}
       />
 
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={4000}
-        onClose={handleCloseSnackbar}
-      >
+      <Snackbar open={snackbar.open} autoHideDuration={4000} onClose={handleCloseSnackbar}>
         <Alert severity={snackbar.severity} variant="filled">
           {snackbar.message}
         </Alert>

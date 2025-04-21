@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Stack } from '@mui/material';
 import { RootState } from '../../store/slices';
@@ -12,7 +12,6 @@ interface Props {
 }
 
 const NavLinks: React.FC<Props> = ({ closeMenu, isMobile }) => {
-  const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 

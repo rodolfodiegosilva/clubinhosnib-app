@@ -1,11 +1,10 @@
-// components/IdeasMaterialSection.tsx
-import { useState, useEffect } from "react";
-import { Box, TextField, Typography, Tabs, Tab } from "@mui/material";
-import { IdeasSection } from "store/slices/ideas/ideasSlice";
-import { IdeasMaterialDocuments } from "./IdeasMaterialDocuments";
-import { IdeasMaterialImages } from "./IdeasMaterialImages";
-import { IdeasMaterialVideos } from "./IdeasMaterialVideos";
-import { MediaItem, MediaType } from "store/slices/types";
+import { useState, useEffect } from 'react';
+import { Box, TextField, Typography, Tabs, Tab } from '@mui/material';
+import { IdeasSection } from 'store/slices/ideas/ideasSlice';
+import { IdeasMaterialDocuments } from './IdeasMaterialDocuments';
+import { IdeasMaterialImages } from './IdeasMaterialImages';
+import { IdeasMaterialVideos } from './IdeasMaterialVideos';
+import { MediaItem, MediaType } from 'store/slices/types';
 
 interface IdeasMaterialSectionProps {
   section: IdeasSection;
@@ -13,14 +12,14 @@ interface IdeasMaterialSectionProps {
 }
 
 export function IdeasMaterialSection({ section, onUpdate }: IdeasMaterialSectionProps) {
-  const [title, setTitle] = useState(section.title || "");
-  const [description, setDescription] = useState(section.description || "");
+  const [title, setTitle] = useState(section.title || '');
+  const [description, setDescription] = useState(section.description || '');
   const [medias, setMedias] = useState<MediaItem[]>(section.medias || []);
   const [tabIndex, setTabIndex] = useState(0);
 
   useEffect(() => {
     onUpdate({ ...section, title, description, medias });
-  }, [title, description, medias]);
+  }, [title, description, medias, onUpdate, section]);
 
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);

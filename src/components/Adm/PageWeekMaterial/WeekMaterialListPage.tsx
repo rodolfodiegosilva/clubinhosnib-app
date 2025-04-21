@@ -1,35 +1,30 @@
-import { useEffect, useState } from "react";
-import {
-  Box,
-  Typography,
-  Grid,
-  CircularProgress,
-  Alert,
-  TextField,
-} from "@mui/material";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import api from "../../../config/axiosConfig";
-import { AppDispatch } from "../../../store/slices";
+import { useEffect, useState } from 'react';
+import { Box, Typography, Grid, CircularProgress, Alert, TextField } from '@mui/material';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import api from '../../../config/axiosConfig';
+import { AppDispatch } from '../../../store/slices';
 import {
   setWeekMaterialData,
   WeekMaterialPageData,
-} from "store/slices/week-material/weekMaterialSlice";
-import WeekMaterialDetailsModal from "./WeekMaterialDetailsModal";
-import WeekMaterialCard from "./WeekMaterialCard";
-import DeleteConfirmDialog from "./DeleteConfirmDialog";
-import SetCurrentWeekConfirmDialog from "./SetCurrentWeekConfirmDialog";
+} from 'store/slices/week-material/weekMaterialSlice';
+import WeekMaterialDetailsModal from './WeekMaterialDetailsModal';
+import WeekMaterialCard from './WeekMaterialCard';
+import DeleteConfirmDialog from './DeleteConfirmDialog';
+import SetCurrentWeekConfirmDialog from './SetCurrentWeekConfirmDialog';
 
 export default function WeekMaterialListPage() {
   const [weekMaterials, setWeekMaterials] = useState<WeekMaterialPageData[]>([]);
   const [filteredMaterials, setFilteredMaterials] = useState<WeekMaterialPageData[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [isFiltering, setIsFiltering] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [materialToDelete, setMaterialToDelete] = useState<WeekMaterialPageData | null>(null);
   const [selectedMaterial, setSelectedMaterial] = useState<WeekMaterialPageData | null>(null);
-  const [materialToSetAsCurrent, setMaterialToSetAsCurrent] = useState<WeekMaterialPageData | null>(null);
+  const [materialToSetAsCurrent, setMaterialToSetAsCurrent] = useState<WeekMaterialPageData | null>(
+    null
+  );
 
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -41,11 +36,11 @@ export default function WeekMaterialListPage() {
   const fetchWeekMaterials = async () => {
     setLoading(true);
     try {
-      const response = await api.get("/week-material-pages");
+      const response = await api.get('/week-material-pages');
       setWeekMaterials(response.data);
       setFilteredMaterials(response.data);
     } catch (err) {
-      setError("Erro ao buscar materiais semanais");
+      setError('Erro ao buscar materiais semanais');
     } finally {
       setLoading(false);
     }
@@ -55,9 +50,7 @@ export default function WeekMaterialListPage() {
     setIsFiltering(true);
     const timer = setTimeout(() => {
       const term = searchTerm.toLowerCase();
-      const filtered = weekMaterials.filter((m) =>
-        m.title.toLowerCase().includes(term)
-      );
+      const filtered = weekMaterials.filter((m) => m.title.toLowerCase().includes(term));
       setFilteredMaterials(filtered);
       setIsFiltering(false);
     }, 300);
@@ -66,7 +59,7 @@ export default function WeekMaterialListPage() {
 
   const handleEdit = (material: WeekMaterialPageData) => {
     dispatch(setWeekMaterialData(material));
-    navigate("/adm/editar-pagina-semana");
+    navigate('/adm/editar-pagina-semana');
   };
 
   const handleDelete = async () => {
@@ -77,7 +70,7 @@ export default function WeekMaterialListPage() {
       await api.delete(`/week-material-pages/${materialToDelete.id}`);
       await fetchWeekMaterials();
     } catch {
-      setError("Erro ao deletar material");
+      setError('Erro ao deletar material');
     } finally {
       setLoading(false);
     }
@@ -90,7 +83,7 @@ export default function WeekMaterialListPage() {
       await api.post(`/week-material-pages/current-week/${materialToSetAsCurrent.id}`);
       await fetchWeekMaterials();
     } catch {
-      setError("Erro ao definir como material da semana atual.");
+      setError('Erro ao definir como material da semana atual.');
     } finally {
       setMaterialToSetAsCurrent(null);
       setLoading(false);
@@ -103,15 +96,15 @@ export default function WeekMaterialListPage() {
         px: { xs: 1, md: 3 },
         py: { xs: 1, md: 2 },
         mt: { xs: 0, md: 4 },
-        bgcolor: "#f5f7fa",
-        minHeight: "100vh",
+        bgcolor: '#f5f7fa',
+        minHeight: '100vh',
       }}
     >
       <Typography
         variant="h4"
         fontWeight="bold"
         textAlign="center"
-        sx={{ mb: 4, fontSize: { xs: "1.5rem", md: "2.4rem" } }}
+        sx={{ mb: 4, fontSize: { xs: '1.5rem', md: '2.4rem' } }}
       >
         Materiais Semanais
       </Typography>
@@ -167,7 +160,7 @@ export default function WeekMaterialListPage() {
 
       <SetCurrentWeekConfirmDialog
         open={!!materialToSetAsCurrent}
-        materialTitle={materialToSetAsCurrent?.title || ""}
+        materialTitle={materialToSetAsCurrent?.title || ''}
         onClose={() => setMaterialToSetAsCurrent(null)}
         onConfirm={handleSetAsCurrentWeek}
       />

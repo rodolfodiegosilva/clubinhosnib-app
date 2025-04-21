@@ -33,7 +33,9 @@ const TeacherArea: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
   const meditationData = useSelector((state: RootState) => state.meditation.meditationData);
-  const currentMaterialWeek = useSelector((state: RootState) => state.weekMaterial.weekMaterialSData);
+  const currentMaterialWeek = useSelector(
+    (state: RootState) => state.weekMaterial.weekMaterialSData
+  );
 
   const [loading, setLoading] = useState(true);
 
@@ -66,10 +68,11 @@ const TeacherArea: React.FC = () => {
   }
 
   return (
-    <Container maxWidth={false} sx={{ width: '100%', mt: 10, mb: 8, mx: 0, px: 0, bgcolor: '#f5f7fa' }}>
-      <Box
-        sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3, mb: 6 }}
-      >
+    <Container
+      maxWidth={false}
+      sx={{ width: '100%', mt: 10, mb: 8, mx: 0, px: 0, bgcolor: '#f5f7fa' }}
+    >
+      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3, mb: 6 }}>
         {currentMaterialWeek && currentMaterialWeek.title && currentMaterialWeek.route.path && (
           <Box sx={{ flex: 1 }}>
             <TeacherWeekBanner
@@ -88,7 +91,13 @@ const TeacherArea: React.FC = () => {
 
       <Paper
         elevation={2}
-        sx={{ backgroundColor: '#e3f2fd', p: { xs: 2, md: 3 }, mb: 5, borderLeft: '6px solid #2196f3', borderRadius: 2 }}
+        sx={{
+          backgroundColor: '#e3f2fd',
+          p: { xs: 2, md: 3 },
+          mb: 5,
+          borderLeft: '6px solid #2196f3',
+          borderRadius: 2,
+        }}
       >
         <Box textAlign="center">
           <Typography variant="h6" fontWeight="bold" color="#2196f3" gutterBottom>
@@ -102,7 +111,11 @@ const TeacherArea: React.FC = () => {
 
       <Paper
         elevation={4}
-        sx={{ p: { xs: 1, md: 5 }, borderRadius: 3, background: 'linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%)' }}
+        sx={{
+          p: { xs: 1, md: 5 },
+          borderRadius: 3,
+          background: 'linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%)',
+        }}
       >
         <Typography variant="h4" fontWeight="bold" color="#424242" gutterBottom>
           Área do Professor
@@ -112,12 +125,23 @@ const TeacherArea: React.FC = () => {
         {isAuthenticated ? (
           <Box>
             <Box textAlign="center" mb={4}>
-              <Typography variant="h6" gutterBottom color="#616161" sx={{ fontSize: { xs: '1.1rem', md: '1.4rem' } }}>
+              <Typography
+                variant="h6"
+                gutterBottom
+                color="#616161"
+                sx={{ fontSize: { xs: '1.1rem', md: '1.4rem' } }}
+              >
                 Olá, {user?.name || 'Professor'}!
               </Typography>
               <Box maxWidth="800px" mx="auto">
-                <Typography variant="body1" gutterBottom color="#757575" sx={{ fontSize: { xs: '0.95rem', md: '1.1rem' } }}>
-                  Bem-vindo à sua central de apoio pedagógico. Explore recursos atualizados semanalmente e enriqueça suas aulas!
+                <Typography
+                  variant="body1"
+                  gutterBottom
+                  color="#757575"
+                  sx={{ fontSize: { xs: '0.95rem', md: '1.1rem' } }}
+                >
+                  Bem-vindo à sua central de apoio pedagógico. Explore recursos atualizados
+                  semanalmente e enriqueça suas aulas!
                 </Typography>
               </Box>
             </Box>
@@ -125,7 +149,15 @@ const TeacherArea: React.FC = () => {
             <Grid container spacing={3} sx={{ mt: 4 }}>
               <Grid item xs={12} md={4}>
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                  <Card sx={{ borderLeft: '5px solid #4caf50', height: '100%', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', transition: 'all 0.3s ease', '&:hover': { boxShadow: '0 6px 18px rgba(0,0,0,0.15)' } }}>
+                  <Card
+                    sx={{
+                      borderLeft: '5px solid #4caf50',
+                      height: '100%',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                      transition: 'all 0.3s ease',
+                      '&:hover': { boxShadow: '0 6px 18px rgba(0,0,0,0.15)' },
+                    }}
+                  >
                     <CardContent>
                       <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                         <CheckCircleIcon sx={{ color: '#4caf50', mr: 1 }} />
@@ -134,9 +166,15 @@ const TeacherArea: React.FC = () => {
                         </Typography>
                       </Box>
                       <List dense>
-                        <ListItem><ListItemText primary="Materiais alinhados ao calendário semanal." /></ListItem>
-                        <ListItem><ListItemText primary="Conteúdos por faixa etária e tema." /></ListItem>
-                        <ListItem><ListItemText primary="Apoio didático e sugestões de atividades." /></ListItem>
+                        <ListItem>
+                          <ListItemText primary="Materiais alinhados ao calendário semanal." />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemText primary="Conteúdos por faixa etária e tema." />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemText primary="Apoio didático e sugestões de atividades." />
+                        </ListItem>
                       </List>
                     </CardContent>
                   </Card>
@@ -145,7 +183,15 @@ const TeacherArea: React.FC = () => {
 
               <Grid item xs={12} md={4}>
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                  <Card sx={{ borderLeft: '5px solid #f44336', height: '100%', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', transition: 'all 0.3s ease', '&:hover': { boxShadow: '0 6px 18px rgba(0,0,0,0.15)' } }}>
+                  <Card
+                    sx={{
+                      borderLeft: '5px solid #f44336',
+                      height: '100%',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                      transition: 'all 0.3s ease',
+                      '&:hover': { boxShadow: '0 6px 18px rgba(0,0,0,0.15)' },
+                    }}
+                  >
                     <CardContent>
                       <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                         <InfoIcon sx={{ color: '#f44336', mr: 1 }} />
@@ -154,9 +200,15 @@ const TeacherArea: React.FC = () => {
                         </Typography>
                       </Box>
                       <List dense>
-                        <ListItem><ListItemText primary="Acesse o banner semanal para o tema atual." /></ListItem>
-                        <ListItem><ListItemText primary="Adapte os materiais à sua turma." /></ListItem>
-                        <ListItem><ListItemText primary="Compartilhe ideias com outros professores." /></ListItem>
+                        <ListItem>
+                          <ListItemText primary="Acesse o banner semanal para o tema atual." />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemText primary="Adapte os materiais à sua turma." />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemText primary="Compartilhe ideias com outros professores." />
+                        </ListItem>
                       </List>
                     </CardContent>
                   </Card>
@@ -165,7 +217,15 @@ const TeacherArea: React.FC = () => {
 
               <Grid item xs={12} md={4}>
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                  <Card sx={{ borderLeft: '5px solid #ff9800', height: '100%', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', transition: 'all 0.3s ease', '&:hover': { boxShadow: '0 6px 18px rgba(0,0,0,0.15)' } }}>
+                  <Card
+                    sx={{
+                      borderLeft: '5px solid #ff9800',
+                      height: '100%',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                      transition: 'all 0.3s ease',
+                      '&:hover': { boxShadow: '0 6px 18px rgba(0,0,0,0.15)' },
+                    }}
+                  >
                     <CardContent>
                       <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                         <LightbulbIcon sx={{ color: '#ff9800', mr: 1 }} />
@@ -174,9 +234,15 @@ const TeacherArea: React.FC = () => {
                         </Typography>
                       </Box>
                       <List dense>
-                        <ListItem><ListItemText primary="Prepare a aula com antecedência." /></ListItem>
-                        <ListItem><ListItemText primary="Reforce valores bíblicos de forma criativa." /></ListItem>
-                        <ListItem><ListItemText primary="Crie um ambiente acolhedor." /></ListItem>
+                        <ListItem>
+                          <ListItemText primary="Prepare a aula com antecedência." />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemText primary="Reforce valores bíblicos de forma criativa." />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemText primary="Crie um ambiente acolhedor." />
+                        </ListItem>
                       </List>
                     </CardContent>
                   </Card>

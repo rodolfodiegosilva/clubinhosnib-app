@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -11,8 +11,8 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-} from "@mui/material";
-import { MediaItem, MediaPlatform, MediaUploadType, MediaType } from "store/slices/types";
+} from '@mui/material';
+import { MediaItem, MediaPlatform, MediaUploadType, MediaType } from 'store/slices/types';
 
 interface AddImageModalProps {
   isOpen: boolean;
@@ -23,11 +23,11 @@ interface AddImageModalProps {
 export function AddImageModal({ isOpen, onClose, onSubmit }: AddImageModalProps) {
   const [mode, setMode] = useState<MediaUploadType>(MediaUploadType.UPLOAD);
   const [file, setFile] = useState<File | null>(null);
-  const [tempUrl, setTempUrl] = useState("");
-  const [urlInput, setUrlInput] = useState("");
-  const [platformType , setPlatformType ] = useState<MediaPlatform>(MediaPlatform.ANY);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [tempUrl, setTempUrl] = useState('');
+  const [urlInput, setUrlInput] = useState('');
+  const [platformType, setPlatformType] = useState<MediaPlatform>(MediaPlatform.ANY);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
 
   useEffect(() => {
     if (file) {
@@ -39,11 +39,11 @@ export function AddImageModal({ isOpen, onClose, onSubmit }: AddImageModalProps)
 
   const reset = () => {
     setFile(null);
-    setTempUrl("");
-    setUrlInput("");
-    setTitle("");
-    setDescription("");
-    setPlatformType (MediaPlatform.ANY);
+    setTempUrl('');
+    setUrlInput('');
+    setTitle('');
+    setDescription('');
+    setPlatformType(MediaPlatform.ANY);
     setMode(MediaUploadType.UPLOAD);
   };
 
@@ -60,7 +60,7 @@ export function AddImageModal({ isOpen, onClose, onSubmit }: AddImageModalProps)
       onSubmit({
         ...base,
         file,
-        url: "",
+        url: '',
         originalName: file.name,
         size: file.size,
       } as MediaItem);
@@ -70,7 +70,7 @@ export function AddImageModal({ isOpen, onClose, onSubmit }: AddImageModalProps)
       onSubmit({
         ...base,
         url: urlInput.trim(),
-        platformType: platformType ,
+        platformType: platformType,
         file: undefined,
       } as MediaItem);
     }
@@ -114,12 +114,7 @@ export function AddImageModal({ isOpen, onClose, onSubmit }: AddImageModalProps)
 
         {mode === MediaUploadType.UPLOAD && (
           <>
-            <Button
-              variant="outlined"
-              component="label"
-              fullWidth
-              sx={{ mt: 1 }}
-            >
+            <Button variant="outlined" component="label" fullWidth sx={{ mt: 1 }}>
               Upload da imagem
               <input
                 hidden
@@ -134,11 +129,7 @@ export function AddImageModal({ isOpen, onClose, onSubmit }: AddImageModalProps)
 
             {tempUrl && (
               <Box mt={2} textAlign="center">
-                <img
-                  src={tempUrl}
-                  alt="Preview"
-                  style={{ maxWidth: "100%", borderRadius: 8 }}
-                />
+                <img src={tempUrl} alt="Preview" style={{ maxWidth: '100%', borderRadius: 8 }} />
               </Box>
             )}
           </>
@@ -149,9 +140,9 @@ export function AddImageModal({ isOpen, onClose, onSubmit }: AddImageModalProps)
             <FormControl fullWidth margin="normal">
               <InputLabel>Plataforma</InputLabel>
               <Select
-                value={platformType }
+                value={platformType}
                 label="Plataforma"
-                onChange={(e) => setPlatformType (e.target.value as MediaPlatform)}
+                onChange={(e) => setPlatformType(e.target.value as MediaPlatform)}
               >
                 <MenuItem value={MediaPlatform.ANY}>Outro</MenuItem>
                 <MenuItem value={MediaPlatform.GOOGLE_DRIVE}>Google Drive</MenuItem>

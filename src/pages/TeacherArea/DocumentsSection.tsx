@@ -26,7 +26,7 @@ import {
   setDocumentData,
   clearDocumentData,
 } from 'store/slices/documents/documentSlice';
-import { MediaPlatform, MediaUploadType } from 'store/slices/types';
+import { MediaPlatform } from 'store/slices/types';
 
 const DocumentsSection: React.FC = () => {
   const dispatch = useDispatch();

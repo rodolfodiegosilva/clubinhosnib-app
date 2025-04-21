@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import {
   Box,
   Typography,
@@ -22,13 +22,11 @@ import {
 } from '@mui/material';
 import { Visibility, Delete, Edit, Publish } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import api from '../../../config/axiosConfig';
 import { AppDispatch, RootState } from '../../../store/slices';
-import { CommentData, setComments, clearComments } from 'store/slices/comment/commentsSlice';
+import { CommentData, setComments } from 'store/slices/comment/commentsSlice';
 import CommentDetailsModal from './CommentDetailsModal';
 
-// Implementação manual de debounce com suporte a cancel
 const debounce = <T extends (...args: any[]) => void>(func: T, delay: number) => {
   let timeoutId: NodeJS.Timeout | undefined;
 
@@ -45,7 +43,6 @@ const debounce = <T extends (...args: any[]) => void>(func: T, delay: number) =>
   return debounced as T & { cancel: () => void };
 };
 
-// Componente principal para gerenciamento de comentários
 export default function CommentsListPage() {
   const [filteredComments, setFilteredComments] = useState<CommentData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -70,10 +67,9 @@ export default function CommentsListPage() {
   const [publishFilter, setPublishFilter] = useState('all');
 
   const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
   const comments = useSelector((state: RootState) => state.comments.comments);
 
-  const fetchComments = async () => {
+  const fetchComments = useCallback(async () => {
     setLoading(true);
     try {
       const response = await api.get('/comments');
@@ -85,41 +81,44 @@ export default function CommentsListPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [dispatch]);
 
   useEffect(() => {
     fetchComments();
-  }, [dispatch]);
+  }, [fetchComments]);
 
-  const filterComments = (term: string, status: string) => {
-    let result = comments || [];
+  const filterComments = useCallback(
+    (term: string, status: string) => {
+      let result = comments || [];
 
-    if (term.trim()) {
-      const lowerSearch = term.toLowerCase();
-      result = result.filter(
-        (comment) =>
-          (comment.name || '').toLowerCase().includes(lowerSearch) ||
-          (comment.clubinho || '').toLowerCase().includes(lowerSearch) ||
-          (comment.neighborhood || '').toLowerCase().includes(lowerSearch)
-      );
-    }
+      if (term.trim()) {
+        const lowerSearch = term.toLowerCase();
+        result = result.filter(
+          (comment) =>
+            (comment.name || '').toLowerCase().includes(lowerSearch) ||
+            (comment.clubinho || '').toLowerCase().includes(lowerSearch) ||
+            (comment.neighborhood || '').toLowerCase().includes(lowerSearch)
+        );
+      }
 
-    if (status === 'published') {
-      result = result.filter((comment) => comment.published);
-    } else if (status === 'unpublished') {
-      result = result.filter((comment) => !comment.published);
-    }
+      if (status === 'published') {
+        result = result.filter((comment) => comment.published);
+      } else if (status === 'unpublished') {
+        result = result.filter((comment) => !comment.published);
+      }
 
-    setFilteredComments(result);
-    setIsFiltering(false);
-  };
+      setFilteredComments(result);
+      setIsFiltering(false);
+    },
+    [comments]
+  );
 
   const debouncedFilter = useMemo(
     () =>
       debounce((term: string) => {
         filterComments(term, publishFilter);
       }, 300),
-    [publishFilter, comments]
+    [filterComments, publishFilter]
   );
 
   const handleSearchChange = (term: string) => {
@@ -128,12 +127,10 @@ export default function CommentsListPage() {
     debouncedFilter(term);
   };
 
-  // Atualiza o filtro por status
   useEffect(() => {
     filterComments(searchTerm, publishFilter);
-  }, [publishFilter, comments]);
+  }, [filterComments, searchTerm, publishFilter]);
 
-  // Limpa o debounce ao desmontar
   useEffect(() => {
     return () => {
       debouncedFilter.cancel();
@@ -497,10 +494,7 @@ export default function CommentsListPage() {
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button
-            onClick={() => setCommentToDelete(null)}
-            sx={{ color: '#757575' }}
-          >
+          <Button onClick={() => setCommentToDelete(null)} sx={{ color: '#757575' }}>
             Cancelar
           </Button>
           <Button
@@ -523,15 +517,11 @@ export default function CommentsListPage() {
         <DialogTitle>Confirmar Publicação</DialogTitle>
         <DialogContent>
           <Typography>
-            Deseja publicar o comentário de{' '}
-            <strong>{commentToPublish?.name || 'Sem Nome'}</strong>?
+            Deseja publicar o comentário de <strong>{commentToPublish?.name || 'Sem Nome'}</strong>?
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button
-            onClick={() => setCommentToPublish(null)}
-            sx={{ color: '#757575' }}
-          >
+          <Button onClick={() => setCommentToPublish(null)} sx={{ color: '#757575' }}>
             Cancelar
           </Button>
           <Button
@@ -545,12 +535,7 @@ export default function CommentsListPage() {
         </DialogActions>
       </Dialog>
 
-      <Dialog
-        open={!!commentToEdit}
-        onClose={() => setCommentToEdit(null)}
-        maxWidth="sm"
-        fullWidth
-      >
+      <Dialog open={!!commentToEdit} onClose={() => setCommentToEdit(null)} maxWidth="sm" fullWidth>
         <DialogTitle>Editar Comentário</DialogTitle>
         <DialogContent>
           <Box sx={{ mt: 2 }}>
@@ -566,9 +551,7 @@ export default function CommentsListPage() {
                 multiline={field === 'comment'}
                 rows={field === 'comment' ? 3 : 1}
                 value={editFormData[field as keyof typeof editFormData]}
-                onChange={(e) =>
-                  setEditFormData({ ...editFormData, [field]: e.target.value })
-                }
+                onChange={(e) => setEditFormData({ ...editFormData, [field]: e.target.value })}
                 error={editErrors[field as keyof typeof editErrors]}
                 helperText={
                   editErrors[field as keyof typeof editErrors]
@@ -580,10 +563,7 @@ export default function CommentsListPage() {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button
-            onClick={() => setCommentToEdit(null)}
-            sx={{ color: '#757575' }}
-          >
+          <Button onClick={() => setCommentToEdit(null)} sx={{ color: '#757575' }}>
             Cancelar
           </Button>
           <Button
