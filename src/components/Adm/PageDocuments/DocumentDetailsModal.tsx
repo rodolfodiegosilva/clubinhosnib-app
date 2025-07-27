@@ -78,12 +78,7 @@ const DocumentDetailsModal: React.FC<DocumentDetailsModalProps> = ({ open, onClo
 
       <DialogContent dividers sx={{ px: 4, py: 3 }}>
         {/* Detalhes do Documento */}
-        <Typography
-          variant="h6"
-          gutterBottom
-          color="primary.main"
-          sx={{ textAlign: 'center' }}
-        >
+        <Typography variant="h6" gutterBottom color="primary.main" sx={{ textAlign: 'center' }}>
           Detalhes do Documento
         </Typography>
 
@@ -99,12 +94,7 @@ const DocumentDetailsModal: React.FC<DocumentDetailsModalProps> = ({ open, onClo
         <Divider sx={{ my: 4 }} />
 
         {/* Mídia Vinculada */}
-        <Typography
-          variant="h6"
-          gutterBottom
-          color="primary.main"
-          sx={{ textAlign: 'center' }}
-        >
+        <Typography variant="h6" gutterBottom color="primary.main" sx={{ textAlign: 'center' }}>
           Mídia Vinculada
         </Typography>
 

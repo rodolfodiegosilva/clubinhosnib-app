@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -12,14 +12,10 @@ import {
   Divider,
   Paper,
   Grid,
-} from "@mui/material";
-import { ContentCopy, Close } from "@mui/icons-material";
-import { VideoPageData } from "store/slices/video/videoSlice";
-import {
-  MediaItem,
-  MediaPlatform,
-  MediaUploadType,
-} from "store/slices/types";
+} from '@mui/material';
+import { ContentCopy, Close } from '@mui/icons-material';
+import { VideoPageData } from 'store/slices/video/videoSlice';
+import { MediaItem, MediaUploadType } from 'store/slices/types';
 
 interface VideoPageDetailsModalProps {
   page: VideoPageData | null;
@@ -27,11 +23,7 @@ interface VideoPageDetailsModalProps {
   onClose: () => void;
 }
 
-export default function VideoPageDetailsModal({
-  page,
-  open,
-  onClose,
-}: VideoPageDetailsModalProps) {
+export default function VideoPageDetailsModal({ page, open, onClose }: VideoPageDetailsModalProps) {
   const navigate = useNavigate();
 
   const handleCopyUrl = (url: string) => {
@@ -39,8 +31,8 @@ export default function VideoPageDetailsModal({
   };
 
   const formatDate = (date?: string) => {
-    if (!date) return "Não disponível";
-    return new Date(date).toLocaleString("pt-BR");
+    if (!date) return 'Não disponível';
+    return new Date(date).toLocaleString('pt-BR');
   };
 
   return (
@@ -51,21 +43,21 @@ export default function VideoPageDetailsModal({
       maxWidth="lg"
       PaperProps={{
         sx: {
-          width: "100%",
-          margin: "10px auto",
-          padding: "10px",
+          width: '100%',
+          margin: '10px auto',
+          padding: '10px',
           borderRadius: 3,
-          bgcolor: "#fafafa",
+          bgcolor: '#fafafa',
         },
       }}
     >
-      <Box sx={{ position: "relative" }}>
+      <Box sx={{ position: 'relative' }}>
         <DialogTitle
           sx={{
-            textAlign: "center",
-            fontWeight: "bold",
-            fontSize: "1.5rem",
-            color: "#333",
+            textAlign: 'center',
+            fontWeight: 'bold',
+            fontSize: '1.5rem',
+            color: '#333',
             p: 2,
           }}
         >
@@ -74,7 +66,7 @@ export default function VideoPageDetailsModal({
         <IconButton
           onClick={onClose}
           size="small"
-          sx={{ position: "absolute", top: 12, right: 12 }}
+          sx={{ position: 'absolute', top: 12, right: 12 }}
           title="Fechar"
         >
           <Close />
@@ -83,43 +75,34 @@ export default function VideoPageDetailsModal({
 
       <DialogContent sx={{ px: 2, py: 1 }}>
         {page && (
-          <Stack spacing={4} sx={{ mx: "auto", maxWidth: "100%" }}>
-            <Paper elevation={2} sx={{ p: 3, borderRadius: 2, bgcolor: "#fff" }}>
-              <Typography
-                variant="h6"
-                fontWeight="bold"
-                color="primary"
-                textAlign="center"
-                mb={3}
-              >
+          <Stack spacing={4} sx={{ mx: 'auto', maxWidth: '100%' }}>
+            <Paper elevation={2} sx={{ p: 3, borderRadius: 2, bgcolor: '#fff' }}>
+              <Typography variant="h6" fontWeight="bold" color="primary" textAlign="center" mb={3}>
                 Informações Gerais
               </Typography>
               <Grid container spacing={2}>
                 <Grid item xs={12} md={6}>
-                  <Typography variant="body1" sx={{ color: "#333" }}>
-                    <strong>Título:</strong> {page.title || "Sem Título"}
+                  <Typography variant="body1" sx={{ color: '#333' }}>
+                    <strong>Título:</strong> {page.title || 'Sem Título'}
                   </Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography
-                    variant="body1"
-                    sx={{ color: "#333", whiteSpace: "pre-wrap" }}
-                  >
-                    <strong>Descrição:</strong> {page.description || "Sem Descrição"}
+                  <Typography variant="body1" sx={{ color: '#333', whiteSpace: 'pre-wrap' }}>
+                    <strong>Descrição:</strong> {page.description || 'Sem Descrição'}
                   </Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography variant="body1" sx={{ color: "#333" }}>
-                    <strong>Visibilidade:</strong> {page.public ? "Pública" : "Privada"}
+                  <Typography variant="body1" sx={{ color: '#333' }}>
+                    <strong>Visibilidade:</strong> {page.public ? 'Pública' : 'Privada'}
                   </Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography variant="body1" sx={{ color: "#333" }}>
+                  <Typography variant="body1" sx={{ color: '#333' }}>
                     <strong>Criado em:</strong> {formatDate(page.createdAt)}
                   </Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography variant="body1" sx={{ color: "#333" }}>
+                  <Typography variant="body1" sx={{ color: '#333' }}>
                     <strong>Atualizado em:</strong> {formatDate(page.updatedAt)}
                   </Typography>
                 </Grid>
@@ -129,7 +112,7 @@ export default function VideoPageDetailsModal({
             {page.videos.length > 0 && (
               <>
                 <Divider sx={{ my: 2 }} />
-                <Paper elevation={2} sx={{ p: 3, borderRadius: 2, bgcolor: "#fff" }}>
+                <Paper elevation={2} sx={{ p: 3, borderRadius: 2, bgcolor: '#fff' }}>
                   <Typography
                     variant="h6"
                     fontWeight="bold"
@@ -146,26 +129,27 @@ export default function VideoPageDetailsModal({
                         <Box
                           sx={{
                             p: 2,
-                            border: "1px solid #e0e0e0",
+                            border: '1px solid #e0e0e0',
                             borderRadius: 2,
-                            bgcolor: "#f9f9f9",
-                            height: "100%",
+                            bgcolor: '#f9f9f9',
+                            height: '100%',
                           }}
                         >
-                          <Typography variant="body1" sx={{ color: "#333" }}>
-                            <strong>Título:</strong> {video.title || "Sem Título"}
+                          <Typography variant="body1" sx={{ color: '#333' }}>
+                            <strong>Título:</strong> {video.title || 'Sem Título'}
                           </Typography>
 
-                          <Typography variant="body2" sx={{ color: "#555", mt: 0.5 }}>
-                            <strong>Descrição:</strong> {video.description || "Sem Descrição"}
+                          <Typography variant="body2" sx={{ color: '#555', mt: 0.5 }}>
+                            <strong>Descrição:</strong> {video.description || 'Sem Descrição'}
                           </Typography>
 
-                          <Typography variant="body2" sx={{ color: "#555", mt: 0.5 }}>
-                            <strong>Tipo:</strong> {video.uploadType === MediaUploadType.UPLOAD ? "Upload" : "Link"}
+                          <Typography variant="body2" sx={{ color: '#555', mt: 0.5 }}>
+                            <strong>Tipo:</strong>{' '}
+                            {video.uploadType === MediaUploadType.UPLOAD ? 'Upload' : 'Link'}
                           </Typography>
 
                           {video.platformType && (
-                            <Typography variant="body2" sx={{ color: "#555", mt: 0.5 }}>
+                            <Typography variant="body2" sx={{ color: '#555', mt: 0.5 }}>
                               <strong>Plataforma:</strong> {video.platformType}
                             </Typography>
                           )}
@@ -173,21 +157,21 @@ export default function VideoPageDetailsModal({
                           {video.url && (
                             <Box
                               sx={{
-                                display: "flex",
-                                alignItems: "center",
+                                display: 'flex',
+                                alignItems: 'center',
                                 mt: 1,
                                 gap: 1,
-                                flexWrap: "wrap",
+                                flexWrap: 'wrap',
                               }}
                             >
-                              <Typography variant="body2" sx={{ color: "#555" }}>
+                              <Typography variant="body2" sx={{ color: '#555' }}>
                                 <strong>URL:</strong> {video.url}
                               </Typography>
                               <IconButton
                                 size="small"
                                 onClick={() => handleCopyUrl(video.url)}
                                 title="Copiar URL"
-                                sx={{ color: "#1976d2" }}
+                                sx={{ color: '#1976d2' }}
                               >
                                 <ContentCopy fontSize="small" />
                               </IconButton>
@@ -195,13 +179,13 @@ export default function VideoPageDetailsModal({
                           )}
 
                           {video.isLocalFile && video.originalName && (
-                            <Typography variant="body2" sx={{ color: "#555", mt: 0.5 }}>
+                            <Typography variant="body2" sx={{ color: '#555', mt: 0.5 }}>
                               <strong>Nome Original:</strong> {video.originalName}
                             </Typography>
                           )}
 
                           {video.size && (
-                            <Typography variant="body2" sx={{ color: "#555", mt: 0.5 }}>
+                            <Typography variant="body2" sx={{ color: '#555', mt: 0.5 }}>
                               <strong>Tamanho:</strong> {(video.size / 1024 / 1024).toFixed(2)} MB
                             </Typography>
                           )}
@@ -216,7 +200,7 @@ export default function VideoPageDetailsModal({
         )}
       </DialogContent>
 
-      <DialogActions sx={{ justifyContent: "center", padding: "8px" }}>
+      <DialogActions sx={{ justifyContent: 'center', padding: '8px' }}>
         <Button variant="outlined" onClick={onClose} sx={{ minWidth: 120 }}>
           Fechar
         </Button>

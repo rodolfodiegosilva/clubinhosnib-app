@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Typography,
@@ -6,55 +6,45 @@ import {
   Grid,
   Card,
   CardContent,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   Button,
-  IconButton,
 } from '@mui/material';
 import { motion } from 'framer-motion';
 import DescriptionIcon from '@mui/icons-material/Description';
-import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import api from '../../config/axiosConfig';
+import api from '@/config/axiosConfig';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../store/slices';
+import { RootState } from '@/store/slices';
 import {
-  DocumentData,
   setDocumentData,
   clearDocumentData,
 } from 'store/slices/documents/documentSlice';
-import { MediaPlatform, MediaUploadType } from 'store/slices/types';
+import MediaDocumentPreviewModal from 'utils/MediaDocumentPreviewModal';
+import { RouteData } from 'store/slices/route/routeSlice';
 
 const DocumentsSection: React.FC = () => {
   const dispatch = useDispatch();
-  const documentData = useSelector((state: RootState) => state.document.documentData);
-  const [documents, setDocuments] = useState<DocumentData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const documentData = useSelector(
+    (state: RootState) => state.document.documentData
+  );
+  const routes = useSelector((state: RootState) => state.routes.routes);
   const [openModal, setOpenModal] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchDocuments = async () => {
-      try {
-        const response = await api.get('/documents');
-        setDocuments(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Erro ao buscar documentos:', error);
-        setError('Não foi possível carregar os documentos.');
-        setLoading(false);
-      }
-    };
-    fetchDocuments();
-  }, []);
+  const documentRoutes = routes.filter(
+    (route) => route.entityType === 'Document'
+  );
 
-  const handleOpenModal = (document: DocumentData) => {
-    dispatch(setDocumentData(document));
-    setOpenModal(true);
+  const handleOpenModal = async (route: RouteData) => {
+    try {
+      const response = await api.get(`/documents/${route.idToFetch}`);
+      dispatch(setDocumentData(response.data));
+      setOpenModal(true);
+    } catch (error) {
+      console.error('Erro ao buscar documento:', error);
+      setError('Não foi possível carregar o documento.');
+    }
   };
 
   const handleCloseModal = () => {
@@ -66,27 +56,19 @@ const DocumentsSection: React.FC = () => {
     setIsExpanded(!isExpanded);
   };
 
-  const truncateDescription = (description: string | undefined, maxLength: number) => {
+  const truncateDescription = (
+    description: string | undefined,
+    maxLength: number
+  ) => {
     if (!description) return 'Sem descrição';
     return description.length > maxLength
       ? `${description.substring(0, maxLength)}...`
       : description;
   };
 
-  const displayedDocuments = isExpanded ? documents : documents.slice(0, 4);
-
-  const renderIframeSrc = () => {
-    const media = documentData?.media;
-    if (!media?.url) return '';
-    switch (media.platformType) {
-      case MediaPlatform.GOOGLE_DRIVE:
-        return media.url.replace('/view?usp=', '/preview?usp=');
-      case MediaPlatform.YOUTUBE:
-        return media.url.replace('watch?v=', 'embed/');
-      default:
-        return media.url;
-    }
-  };
+  const displayedRoutes = isExpanded
+    ? documentRoutes
+    : documentRoutes.slice(0, 4);
 
   return (
     <Paper
@@ -101,24 +83,25 @@ const DocumentsSection: React.FC = () => {
     >
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
         <DescriptionIcon sx={{ color: '#0288d1', mr: 1 }} />
-        <Typography variant="h6" fontWeight="bold" color="#424242">
+        <Typography
+          variant="h6"
+          fontWeight="bold"
+          color="#424242"
+          sx={{ fontSize: { xs: '1rem', md: '1.1rem' } }}
+        >
           Documentos Importantes
         </Typography>
       </Box>
 
-      {loading ? (
-        <Typography variant="body2" color="text.secondary" textAlign="center">
-          Carregando documentos...
-        </Typography>
-      ) : error ? (
+      {error ? (
         <Typography variant="body2" color="error" textAlign="center">
           {error}
         </Typography>
-      ) : documents.length > 0 ? (
+      ) : documentRoutes.length > 0 ? (
         <>
           <Grid container spacing={3}>
-            {displayedDocuments.map((doc) => (
-              <Grid item xs={12} sm={6} md={3} key={doc.id}>
+            {displayedRoutes.map((route) => (
+              <Grid item xs={12} sm={6} md={3} key={route.id}>
                 <motion.div
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -135,7 +118,7 @@ const DocumentsSection: React.FC = () => {
                         boxShadow: '0 6px 18px rgba(0,0,0,0.15)',
                       },
                     }}
-                    onClick={() => handleOpenModal(doc)}
+                    onClick={() => handleOpenModal(route)}
                   >
                     <CardContent sx={{ py: 1 }}>
                       <Typography
@@ -144,10 +127,10 @@ const DocumentsSection: React.FC = () => {
                         color="#424242"
                         gutterBottom
                       >
-                        {doc.name}
+                        {route.title}
                       </Typography>
                       <Typography variant="body2" color="#616161">
-                        {truncateDescription(doc.description, 70)}
+                        {truncateDescription(route.description, 70)}
                       </Typography>
                     </CardContent>
                   </Card>
@@ -156,12 +139,14 @@ const DocumentsSection: React.FC = () => {
             ))}
           </Grid>
 
-          {documents.length > 4 && (
+          {documentRoutes.length > 4 && (
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
               <Button
                 variant="outlined"
                 color="primary"
-                endIcon={isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                endIcon={
+                  isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />
+                }
                 onClick={handleToggleExpand}
               >
                 {isExpanded ? 'Ver menos' : 'Ver mais documentos'}
@@ -170,51 +155,21 @@ const DocumentsSection: React.FC = () => {
           )}
         </>
       ) : (
-        <Typography variant="body2" color="text.secondary" textAlign="center">
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          textAlign="center"
+        >
           Nenhum documento disponível no momento.
         </Typography>
       )}
 
-      <Dialog
+      <MediaDocumentPreviewModal
         open={openModal}
         onClose={handleCloseModal}
-        maxWidth={false}
-        sx={{
-          '& .MuiDialog-paper': {
-            width: '95%',
-            maxWidth: '95%',
-            m: 2,
-            borderRadius: 2,
-          },
-        }}
-      >
-        <DialogTitle
-          sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-        >
-          {documentData?.name || 'Visualizar Documento'}
-          <IconButton onClick={handleCloseModal} size="small">
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent dividers>
-          {documentData?.media?.url ? (
-            <iframe
-              src={renderIframeSrc()}
-              style={{ width: '100%', height: '80vh', border: 'none' }}
-              title={documentData.name}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          ) : (
-            <Typography>Não há documento disponível para visualização.</Typography>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseModal} color="primary">
-            Fechar
-          </Button>
-        </DialogActions>
-      </Dialog>
+        media={documentData?.media || null}
+        title={documentData?.name}
+      />
     </Paper>
   );
 };

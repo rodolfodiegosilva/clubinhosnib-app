@@ -1,15 +1,6 @@
-import {
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-  IconButton,
-  Button,
-  Box,
-  Chip,
-} from "@mui/material";
-import { Visibility, Delete } from "@mui/icons-material";
-import { IdeasPageData } from "store/slices/ideas/ideasSlice";
+import { Grid, Card, CardContent, Typography, IconButton, Button, Box, Chip } from '@mui/material';
+import { Visibility, Delete } from '@mui/icons-material';
+import { IdeasPageData } from 'store/slices/ideas/ideasSlice';
 
 interface Props {
   page: IdeasPageData;
@@ -20,16 +11,16 @@ interface Props {
 export default function IdeasPageCard({ page, onView, onDelete }: Props) {
   return (
     <Grid item xs={12} sm={6} md={4}>
-      <Card sx={{ borderRadius: 3, position: "relative", p: 2, height: "100%" }}>
+      <Card sx={{ borderRadius: 3, position: 'relative', p: 2, height: '100%' }}>
         <IconButton
           onClick={onDelete}
-          sx={{ position: "absolute", top: 8, right: 8, color: "#d32f2f" }}
+          sx={{ position: 'absolute', top: 8, right: 8, color: '#d32f2f' }}
           aria-label={`Excluir página ${page.title}`}
         >
           <Delete />
         </IconButton>
 
-        <CardContent sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
+        <CardContent sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
           <Typography variant="h6" textAlign="center" fontWeight="bold">
             {page.title}
           </Typography>
@@ -45,7 +36,7 @@ export default function IdeasPageCard({ page, onView, onDelete }: Props) {
             sx={{ mt: 1, mb: 2, flexGrow: 1 }}
           >
             {page.description.length > 100
-              ? page.description.slice(0, 100) + "..."
+              ? page.description.slice(0, 100) + '...'
               : page.description}
           </Typography>
 
@@ -62,12 +53,7 @@ export default function IdeasPageCard({ page, onView, onDelete }: Props) {
 
           {page.public && (
             <Box mt={2} textAlign="center">
-              <Chip
-                label="Pública"
-                color="success"
-                size="small"
-                aria-label="Página pública"
-              />
+              <Chip label="Pública" color="success" size="small" aria-label="Página pública" />
             </Box>
           )}
         </CardContent>

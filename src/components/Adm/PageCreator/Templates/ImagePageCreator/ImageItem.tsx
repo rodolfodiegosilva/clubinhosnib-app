@@ -1,15 +1,11 @@
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
-import { Box, IconButton, Alert } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import {
-  MediaItem,
-  MediaPlatform,
-  MediaUploadType,
-} from "store/slices/types";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import { Box, IconButton, Alert } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import { MediaItem, MediaPlatform, MediaUploadType } from 'store/slices/types';
 
 interface ImageItemProps {
   mediaItems: MediaItem[];
@@ -35,14 +31,10 @@ const getPreviewUrl = (media: MediaItem): string => {
       return getGoogleDriveThumbnailUrl(url) || url;
 
     case MediaPlatform.DROPBOX:
-      return url
-        .replace("www.dropbox.com", "dl.dropboxusercontent.com")
-        .replace("?dl=0", "?raw=1");
+      return url.replace('www.dropbox.com', 'dl.dropboxusercontent.com').replace('?dl=0', '?raw=1');
 
     case MediaPlatform.ONEDRIVE:
-      return url.includes("&download=1")
-        ? url.replace("&download=1", "&raw=1")
-        : `${url}&raw=1`;
+      return url.includes('&download=1') ? url.replace('&download=1', '&raw=1') : `${url}&raw=1`;
 
     default:
       return url;
@@ -65,23 +57,23 @@ export default function ImageItem({ mediaItems, onRemoveMedia }: ImageItemProps)
       pagination={{ clickable: true }}
       autoplay={{ delay: 3000 }}
       loop
-      style={{ borderRadius: 8, overflow: "hidden" }}
+      style={{ borderRadius: 8, overflow: 'hidden' }}
     >
       {mediaItems.map((media, index) => (
         <SwiperSlide key={index}>
-          <Box sx={{ position: "relative" }}>
+          <Box sx={{ position: 'relative' }}>
             <img
               src={getPreviewUrl(media)}
               alt={media.title || `Mídia ${index + 1}`}
-              style={{ width: "100%", height: 300, objectFit: "cover" }}
+              style={{ width: '100%', height: 300, objectFit: 'cover' }}
             />
             <IconButton
               onClick={() => onRemoveMedia(index)}
               sx={{
-                position: "absolute",
+                position: 'absolute',
                 top: 8,
                 right: 8,
-                backgroundColor: "rgba(255,255,255,0.7)",
+                backgroundColor: 'rgba(255,255,255,0.7)',
               }}
             >
               <CloseIcon color="error" />

@@ -13,20 +13,22 @@ import {
   Alert,
   CircularProgress,
   Grid,
+  useTheme,
 } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../store/slices';
+import { RootState } from '@/store/slices';
 import { motion } from 'framer-motion';
 import Slider from 'react-slick';
 import CommentIcon from '@mui/icons-material/Comment';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import api from '../../config/axiosConfig';
+import api from '@/config/axiosConfig';
 import { setComments } from 'store/slices/comment/commentsSlice';
 
 const CommentsSection: React.FC = () => {
   const dispatch = useDispatch();
+  const theme = useTheme();
   const rawComments = useSelector((state: RootState) => state.comments.comments);
   const comments = useMemo(() => rawComments?.filter((c) => c.published) || [], [rawComments]);
 
@@ -73,13 +75,7 @@ const CommentsSection: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      await api.post('/comments', {
-        name: formData.name,
-        comment: formData.comment,
-        clubinho: formData.clubinho,
-        neighborhood: formData.neighborhood,
-      });
-
+      await api.post('/comments', formData);
       setFormData({ name: '', comment: '', clubinho: '', neighborhood: '' });
       setErrors({ name: false, comment: false, clubinho: false, neighborhood: false });
       setFormOpen(false);
@@ -110,6 +106,12 @@ const CommentsSection: React.FC = () => {
         { breakpoint: 960, settings: { slidesToShow: 2 } },
         { breakpoint: 600, settings: { slidesToShow: 1 } },
       ],
+      arrows: true,
+      appendDots: (dots: React.ReactNode) => (
+        <Box sx={{ mt: 2 }}>
+          <ul style={{ margin: 0, padding: 0 }}>{dots}</ul>
+        </Box>
+      ),
     }),
     []
   );
@@ -132,30 +134,28 @@ const CommentsSection: React.FC = () => {
     <Paper
       elevation={2}
       sx={{
-        p: { xs: 0, md: 3 },
+        p: { xs: 2, md: 3 },
         mt: 5,
         borderLeft: '5px solid #0288d1',
         backgroundColor: '#e1f5fe',
         borderRadius: 2,
       }}
     >
-      <Box sx={{ display: 'flex', alignItems: 'center', px: { xs: 0, md: 3 }, }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', px: { xs: 0, md: 3 } }}>
         <CommentIcon sx={{ color: '#0288d1', mr: 1 }} />
         <Typography
           variant="h6"
           fontWeight="bold"
           color="#424242"
-
           sx={{
             mt: { xs: 2, md: 3 },
+            mb: { xs: 2, md: 3 },
 
-            fontSize: { xs: '1.2rem', md: '1.5rem' },
+            fontSize: { xs: '1rem', md: '1.5rem' },
           }}
         >
           Comentários dos Professores
         </Typography>
-
-
       </Box>
 
       <Box sx={{ mb: 4 }}>
@@ -234,61 +234,119 @@ const CommentsSection: React.FC = () => {
       </Box>
 
       {comments.length > 0 ? (
-        <Slider {...sliderSettings}>
-          {comments.map((comment) => (
-            <Box key={comment.id} sx={{ p: 2 }}>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3 }}
+        <Box sx={{ position: 'relative', px: 1, '& .slick-prev:before, & .slick-next:before': { color: '#0288d1', fontSize: '28px', }, }}>
+          <Slider {...sliderSettings}>
+            {comments.map((comment) => (
+              <Box
+                key={comment.id}
+                sx={{
+                  p: 2,
+                  display: 'flex',
+                  justifyContent: 'center',
+                }}
               >
-                <Card
-                  sx={{
-                    height: '100%',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                    borderRadius: 2,
-                    backgroundColor: '#fff',
-                    transition: 'all 0.3s ease',
-                    '&:hover': {
-                      boxShadow: '0 6px 18px rgba(0,0,0,0.15)',
-                      transform: 'translateY(-4px)',
-                    },
-                  }}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3 }}
                 >
-                  <CardContent>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      <Avatar sx={{ bgcolor: '#0288d1', mr: 2 }}>
-                        {comment.name.charAt(0)}
-                      </Avatar>
-                      <Box>
+                  <Card
+                    sx={{
+                      width: { xs: '100%', sm: '96%', md: '90%' },
+                      maxWidth: 1000,
+                      minHeight: { xs: 250, md: 200 },
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                      borderRadius: 2,
+                      backgroundColor: '#fff',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        boxShadow: '0 6px 18px rgba(0,0,0,0.15)',
+                        transform: 'translateY(-4px)',
+                      },
+                    }}
+                  >
+                    <CardContent
+                      sx={{
+                        flexGrow: 1,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        px: { xs: 0.3, md: 1 }
+                      }}
+                    >
+                      <Box sx={{ mb: 2, }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                          <Avatar sx={{ bgcolor: '#0288d1', mr: 2 }}>
+                            {comment.name.charAt(0)}
+                          </Avatar>
+                          <Box>
+                            <Typography
+                              variant="subtitle1"
+                              fontWeight="bold"
+                              color="#424242"
+                              sx={{
+                                fontSize: { xs: '.8rem', md: '1.25rem' },
+                                mb: { xs: 1, md: 2 },
+                                textAlign: { xs: 'left', md: 'left' },
+                              }}
+                            >
+                              {comment.name}
+                            </Typography>
+
+                            <Typography variant="caption" color="text.secondary">
+                              {new Date(comment.createdAt).toLocaleDateString()}
+                            </Typography>
+                          </Box>
+                        </Box>
                         <Typography
-                          variant="subtitle1"
-                          fontWeight="bold"
-                          color="#424242"
+                          variant="body1"
+                          color="text.primary"
+                          sx={{
+                            fontWeight: 500,
+                            fontSize: { xs: '1rem', md: '1.05rem' },
+                            mb: { xs: 0, md: 2 },
+                            lineHeight: 1.6,
+                            backgroundColor: '#f9f9f9',
+                            padding: { xs: 0, md: 1.5 },
+                            borderRadius: 1,
+                            borderLeft: '4px solid #0288d1',
+                          }}
                         >
-                          {comment.name}
+                          {comment.comment}
                         </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {new Date(comment.createdAt).toLocaleDateString()}
-                        </Typography>
+
                       </Box>
-                    </Box>
-                    <Typography variant="body2" color="#616161" sx={{ mb: 2 }}>
-                      {comment.comment}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {comment.clubinho} • {comment.neighborhood}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </Box>
-          ))}
-        </Slider>
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          display: 'inline-block',
+                          mt: 1,
+                          px: 1.5,
+                          py: 0.5,
+                          backgroundColor: '#e3f2fd',
+                          color: '#0288d1',
+                          fontWeight: 500,
+                          borderRadius: 2,
+                          fontSize: '0.75rem',
+                        }}
+                      >
+                        {comment.clubinho} • {comment.neighborhood}
+                      </Typography>
+
+                    </CardContent>
+                  </Card>
+
+                </motion.div>
+              </Box>
+            ))}
+          </Slider>
+        </Box>
       ) : (
         <Typography variant="body2" color="text.secondary" textAlign="center">
-          Nenhum comentário publicado ainda. Envie o seu e ele aparecerá após
-          avaliação.
+          Nenhum comentário publicado ainda. Envie o seu e ele aparecerá após avaliação.
         </Typography>
       )}
 
@@ -298,13 +356,8 @@ const CommentsSection: React.FC = () => {
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity="success"
-          sx={{ width: '100%' }}
-        >
-          Comentário enviado com sucesso! Ele será avaliado antes de ser
-          publicado.
+        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+          Comentário enviado com sucesso! Ele será avaliado antes de ser publicado.
         </Alert>
       </Snackbar>
     </Paper>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Box,
   TextField,
@@ -16,10 +16,10 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-} from "@mui/material";
-import { Delete, Edit } from "@mui/icons-material";
-import { validateMediaURL } from "utils/validateMediaURL";
-import { MediaItem, MediaPlatform, MediaType, MediaUploadType } from "store/slices/types";
+} from '@mui/material';
+import { Delete, Edit } from '@mui/icons-material';
+import { validateMediaURL } from 'utils/validateMediaURL';
+import { MediaItem, MediaPlatform, MediaType, MediaUploadType } from 'store/slices/types';
 
 interface VideosProps {
   videos: MediaItem[];
@@ -28,14 +28,14 @@ interface VideosProps {
 
 export function IdeasMaterialVideos({ videos, setVideos }: VideosProps) {
   const [tempVideo, setTempVideo] = useState<MediaItem>({
-    title: "",
-    description: "",
+    title: '',
+    description: '',
     mediaType: MediaType.VIDEO,
     uploadType: MediaUploadType.LINK,
-    url: "",
+    url: '',
     platformType: MediaPlatform.YOUTUBE,
   });
-  const [fileName, setFileName] = useState("");
+  const [fileName, setFileName] = useState('');
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [errors, setErrors] = useState({ title: false, description: false, url: false });
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -51,35 +51,40 @@ export function IdeasMaterialVideos({ videos, setVideos }: VideosProps) {
 
   const resetForm = () => {
     setTempVideo({
-      title: "",
-      description: "",
+      title: '',
+      description: '',
       mediaType: MediaType.VIDEO,
       uploadType: MediaUploadType.LINK,
-      url: "",
+      url: '',
       platformType: MediaPlatform.YOUTUBE,
     });
-    setFileName("");
+    setFileName('');
     setEditingIndex(null);
     setErrors({ title: false, description: false, url: false });
   };
 
   const handleAddOrUpdate = () => {
     const isValid =
-      tempVideo.uploadType === MediaUploadType.UPLOAD || validateMediaURL(tempVideo.url, tempVideo.platformType);
+      tempVideo.uploadType === MediaUploadType.UPLOAD ||
+      validateMediaURL(tempVideo.url, tempVideo.platformType);
     const hasError =
-      !tempVideo.title || !tempVideo.description || !tempVideo.url || (tempVideo.uploadType === MediaUploadType.LINK && !isValid);
+      !tempVideo.title ||
+      !tempVideo.description ||
+      !tempVideo.url ||
+      (tempVideo.uploadType === MediaUploadType.LINK && !isValid);
 
     setErrors({
       title: !tempVideo.title,
       description: !tempVideo.description,
-      url: !tempVideo.url || (tempVideo.uploadType === "link" && !isValid),
+      url: !tempVideo.url || (tempVideo.uploadType === MediaUploadType.LINK && !isValid),
     });
 
     if (hasError) return;
 
-    const updated = editingIndex !== null
-      ? videos.map((vid, i) => (i === editingIndex ? tempVideo : vid))
-      : [...videos, tempVideo];
+    const updated =
+      editingIndex !== null
+        ? videos.map((vid, i) => (i === editingIndex ? tempVideo : vid))
+        : [...videos, tempVideo];
 
     setVideos(updated);
     resetForm();
@@ -87,7 +92,7 @@ export function IdeasMaterialVideos({ videos, setVideos }: VideosProps) {
 
   const handleEdit = (index: number) => {
     setTempVideo(videos[index]);
-    setFileName(videos[index].file?.name || "");
+    setFileName(videos[index].file?.name || '');
     setEditingIndex(index);
   };
 
@@ -114,7 +119,7 @@ export function IdeasMaterialVideos({ videos, setVideos }: VideosProps) {
             value={tempVideo.title}
             onChange={(e) => setTempVideo({ ...tempVideo, title: e.target.value })}
             error={errors.title}
-            helperText={errors.title ? "Campo obrigatório" : ""}
+            helperText={errors.title ? 'Campo obrigatório' : ''}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -124,7 +129,7 @@ export function IdeasMaterialVideos({ videos, setVideos }: VideosProps) {
             value={tempVideo.description}
             onChange={(e) => setTempVideo({ ...tempVideo, description: e.target.value })}
             error={errors.description}
-            helperText={errors.description ? "Campo obrigatório" : ""}
+            helperText={errors.description ? 'Campo obrigatório' : ''}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -136,9 +141,10 @@ export function IdeasMaterialVideos({ videos, setVideos }: VideosProps) {
               onChange={(e) =>
                 setTempVideo({
                   ...tempVideo,
-                  uploadType: e.target.value as MediaUploadType.LINK |MediaUploadType.UPLOAD,
-                  platformType: e.target.value === MediaUploadType.LINK? MediaPlatform.YOUTUBE : undefined,
-                  url: "",
+                  uploadType: e.target.value as MediaUploadType.LINK | MediaUploadType.UPLOAD,
+                  platformType:
+                    e.target.value === MediaUploadType.LINK ? MediaPlatform.YOUTUBE : undefined,
+                  url: '',
                   file: undefined,
                 })
               }
@@ -148,16 +154,19 @@ export function IdeasMaterialVideos({ videos, setVideos }: VideosProps) {
             </Select>
           </FormControl>
         </Grid>
-        {tempVideo.uploadType === "link" && (
+        {tempVideo.uploadType === MediaUploadType.LINK && (
           <>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <InputLabel>Plataforma</InputLabel>
                 <Select
-                  value={tempVideo.platformType || ""}
+                  value={tempVideo.platformType || ''}
                   label="Plataforma"
                   onChange={(e) =>
-                    setTempVideo({ ...tempVideo, platformType: e.target.value as MediaItem["platformType"] })
+                    setTempVideo({
+                      ...tempVideo,
+                      platformType: e.target.value as MediaItem['platformType'],
+                    })
                   }
                 >
                   <MenuItem value="youtube">YouTube</MenuItem>
@@ -174,7 +183,7 @@ export function IdeasMaterialVideos({ videos, setVideos }: VideosProps) {
                 value={tempVideo.url}
                 onChange={(e) => setTempVideo({ ...tempVideo, url: e.target.value })}
                 error={errors.url}
-                helperText={errors.url ? "URL inválida ou obrigatória" : ""}
+                helperText={errors.url ? 'URL inválida ou obrigatória' : ''}
               />
             </Grid>
           </>
@@ -193,13 +202,8 @@ export function IdeasMaterialVideos({ videos, setVideos }: VideosProps) {
           </Grid>
         )}
         <Grid item xs={12}>
-          <Button
-            variant="contained"
-            fullWidth
-            onClick={handleAddOrUpdate}
-            sx={{ mt: 2 }}
-          >
-            {editingIndex !== null ? "Salvar Alterações" : "Adicionar Vídeo"}
+          <Button variant="contained" fullWidth onClick={handleAddOrUpdate} sx={{ mt: 2 }}>
+            {editingIndex !== null ? 'Salvar Alterações' : 'Adicionar Vídeo'}
           </Button>
         </Grid>
       </Grid>
@@ -207,24 +211,24 @@ export function IdeasMaterialVideos({ videos, setVideos }: VideosProps) {
       <Grid container spacing={2} sx={{ mt: 3 }}>
         {videos.map((video, index) => (
           <Grid item xs={12} sm={6} key={index}>
-            <Box sx={{ p: 2, border: "1px solid #ddd", borderRadius: 2 }}>
+            <Box sx={{ p: 2, border: '1px solid #ddd', borderRadius: 2 }}>
               <Typography fontWeight="bold">{video.title}</Typography>
               <Typography variant="body2">{video.description}</Typography>
               {video.uploadType === MediaUploadType.LINK ? (
-                <Box sx={{ aspectRatio: "16/9", mt: 1 }}>
+                <Box sx={{ aspectRatio: '16/9', mt: 1 }}>
                   <iframe
                     src={video.url}
                     title={video.title}
                     allowFullScreen
-                    style={{ width: "100%", height: "100%", border: 0 }}
+                    style={{ width: '100%', height: '100%', border: 0 }}
                   />
                 </Box>
               ) : (
-                <video controls style={{ width: "100%", marginTop: 8 }}>
+                <video controls style={{ width: '100%', marginTop: 8 }}>
                   <source src={video.url} />
                 </video>
               )}
-              <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
+              <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
                 <Tooltip title="Editar">
                   <IconButton onClick={() => handleEdit(index)}>
                     <Edit />

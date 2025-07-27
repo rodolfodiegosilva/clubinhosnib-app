@@ -14,16 +14,11 @@ import {
   DialogContent,
   DialogActions,
   Tooltip,
-} from "@mui/material";
-import { Delete, Edit, Visibility } from "@mui/icons-material";
-import { useState } from "react";
-import { validateMediaURL } from "utils/validateMediaURL";
-import {
-  MediaItem,
-  MediaType,
-  MediaUploadType,
-  MediaPlatform,
-} from "store/slices/types";
+} from '@mui/material';
+import { Delete, Edit, Visibility } from '@mui/icons-material';
+import { useState } from 'react';
+import { validateMediaURL } from 'utils/validateMediaURL';
+import { MediaItem, MediaType, MediaUploadType, MediaPlatform } from 'store/slices/types';
 
 interface Props {
   documents: MediaItem[];
@@ -32,15 +27,15 @@ interface Props {
 
 export default function WeekDocuments({ documents, setDocuments }: Props) {
   const [newDoc, setNewDoc] = useState<MediaItem>({
-    title: "",
-    description: "",
+    title: '',
+    description: '',
     mediaType: MediaType.DOCUMENT,
     uploadType: MediaUploadType.LINK,
     platformType: MediaPlatform.GOOGLE_DRIVE,
-    url: "",
+    url: '',
   });
 
-  const [fileName, setFileName] = useState("");
+  const [fileName, setFileName] = useState('');
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [previewDoc, setPreviewDoc] = useState<string | null>(null);
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
@@ -64,7 +59,10 @@ export default function WeekDocuments({ documents, setDocuments }: Props) {
       newDoc.uploadType === MediaUploadType.UPLOAD ||
       validateMediaURL(newDoc.url, newDoc.platformType);
     const hasError =
-      !newDoc.title || !newDoc.description || !newDoc.url || (newDoc.uploadType === MediaUploadType.LINK && !isValid);
+      !newDoc.title ||
+      !newDoc.description ||
+      !newDoc.url ||
+      (newDoc.uploadType === MediaUploadType.LINK && !isValid);
 
     setErrors({
       title: !newDoc.title,
@@ -84,20 +82,20 @@ export default function WeekDocuments({ documents, setDocuments }: Props) {
 
     setDocuments(updated);
     setNewDoc({
-      title: "",
-      description: "",
+      title: '',
+      description: '',
       mediaType: MediaType.DOCUMENT,
       uploadType: MediaUploadType.LINK,
       platformType: MediaPlatform.GOOGLE_DRIVE,
-      url: "",
+      url: '',
     });
-    setFileName("");
+    setFileName('');
   };
 
   const handleEdit = (index: number) => {
     setNewDoc(documents[index]);
     setEditingIndex(index);
-    setFileName(documents[index].file?.name || "");
+    setFileName(documents[index].file?.name || '');
   };
 
   const confirmRemove = () => {
@@ -108,7 +106,7 @@ export default function WeekDocuments({ documents, setDocuments }: Props) {
   };
 
   return (
-    <Box sx={{ width: { xs: "95%", md: "100%" }, mx: "auto" }}>
+    <Box sx={{ width: { xs: '95%', md: '100%' }, mx: 'auto' }}>
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
           <TextField
@@ -117,7 +115,7 @@ export default function WeekDocuments({ documents, setDocuments }: Props) {
             value={newDoc.title}
             onChange={(e) => setNewDoc((prev) => ({ ...prev, title: e.target.value }))}
             error={errors.title}
-            helperText={errors.title ? "Campo obrigatório" : ""}
+            helperText={errors.title ? 'Campo obrigatório' : ''}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -127,7 +125,7 @@ export default function WeekDocuments({ documents, setDocuments }: Props) {
             value={newDoc.description}
             onChange={(e) => setNewDoc((prev) => ({ ...prev, description: e.target.value }))}
             error={errors.description}
-            helperText={errors.description ? "Campo obrigatório" : ""}
+            helperText={errors.description ? 'Campo obrigatório' : ''}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -140,7 +138,7 @@ export default function WeekDocuments({ documents, setDocuments }: Props) {
                 setNewDoc((prev) => ({
                   ...prev,
                   uploadType: e.target.value as MediaUploadType,
-                  url: "",
+                  url: '',
                   file: undefined,
                   platformType: MediaPlatform.GOOGLE_DRIVE,
                 }))
@@ -158,7 +156,7 @@ export default function WeekDocuments({ documents, setDocuments }: Props) {
               <FormControl fullWidth>
                 <InputLabel>Plataforma</InputLabel>
                 <Select
-                  value={newDoc.platformType || ""}
+                  value={newDoc.platformType || ''}
                   label="Plataforma"
                   onChange={(e) =>
                     setNewDoc((prev) => ({
@@ -181,7 +179,7 @@ export default function WeekDocuments({ documents, setDocuments }: Props) {
                 value={newDoc.url}
                 onChange={(e) => setNewDoc((prev) => ({ ...prev, url: e.target.value }))}
                 error={errors.url}
-                helperText={errors.url ? "URL inválida ou obrigatória" : ""}
+                helperText={errors.url ? 'URL inválida ou obrigatória' : ''}
               />
             </Grid>
           </>
@@ -203,7 +201,7 @@ export default function WeekDocuments({ documents, setDocuments }: Props) {
 
         <Grid item xs={12}>
           <Button variant="contained" fullWidth onClick={handleAddOrUpdate}>
-            {editingIndex !== null ? "Salvar Alterações" : "Adicionar Documento"}
+            {editingIndex !== null ? 'Salvar Alterações' : 'Adicionar Documento'}
           </Button>
         </Grid>
       </Grid>
@@ -243,15 +241,16 @@ export default function WeekDocuments({ documents, setDocuments }: Props) {
       <Dialog open={!!previewDoc} onClose={() => setPreviewDoc(null)} maxWidth="md" fullWidth>
         <DialogTitle>Visualizar Documento</DialogTitle>
         <DialogContent>
-          {previewDoc?.startsWith("data:") || previewDoc?.startsWith("blob:") ? (
+          {previewDoc?.startsWith('data:') || previewDoc?.startsWith('blob:') ? (
             <iframe
               src={previewDoc}
               title="Documento"
-              style={{ width: "100%", height: "80vh", border: 0 }}
+              style={{ width: '100%', height: '80vh', border: 0 }}
             />
           ) : (
             <Typography>
-              Visualização disponível apenas para arquivos enviados. Links devem ser abertos externamente.
+              Visualização disponível apenas para arquivos enviados. Links devem ser abertos
+              externamente.
             </Typography>
           )}
         </DialogContent>

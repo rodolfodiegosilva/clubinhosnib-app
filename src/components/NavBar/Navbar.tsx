@@ -16,11 +16,9 @@ const NavBar: React.FC = () => {
           href="/"
           sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold' }}
         >
-          Clubinhos NIB
+          Clubinho NIB
         </Typography>
-        <Box>
-          {isMobile ? <MobileNavigation /> : <DesktopNavigation />}
-        </Box>
+        <Box>{isMobile ? <MobileNavigation /> : <DesktopNavigation />}</Box>
       </Toolbar>
     </AppBar>
   );

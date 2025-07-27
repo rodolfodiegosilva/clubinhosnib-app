@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Card as MuiCard,
   CardMedia,
@@ -10,8 +10,8 @@ import {
   DialogTitle,
   IconButton,
   Box,
-} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
 interface CardProps {
   title: string;
@@ -25,7 +25,7 @@ const Card: React.FC<CardProps> = ({ title, description, image, link, type }) =>
   const [isOpen, setIsOpen] = useState(false);
 
   const handleClick = () => {
-    if (type === "page" && link) {
+    if (type === 'page' && link) {
       window.location.href = link;
     } else {
       setIsOpen(true);
@@ -33,7 +33,7 @@ const Card: React.FC<CardProps> = ({ title, description, image, link, type }) =>
   };
 
   const getGoogleDriveUrl = (url: string) => {
-    if (!url) return "";
+    if (!url) return '';
     const match = url.match(/d\/(.*?)(\/|$)/);
     return match ? `https://drive.google.com/uc?export=view&id=${match[1]}` : url;
   };
@@ -44,22 +44,22 @@ const Card: React.FC<CardProps> = ({ title, description, image, link, type }) =>
         onClick={handleClick}
         sx={{
           width: 280,
-          cursor: "pointer",
-          transition: "transform 0.3s",
+          cursor: 'pointer',
+          transition: 'transform 0.3s',
           boxShadow: 3,
           borderRadius: 2,
-          "&:hover": { transform: "scale(1.05)" },
+          '&:hover': { transform: 'scale(1.05)' },
         }}
       >
         <CardMedia component="img" height="160" image={image} alt={title} />
-        <CardContent sx={{ textAlign: "center" }}>
+        <CardContent sx={{ textAlign: 'center' }}>
           <Typography variant="h6" color="primary" gutterBottom>
             {title}
           </Typography>
           <Typography variant="body2" color="text.secondary">
             {description}
           </Typography>
-          {type === "page" && link && (
+          {type === 'page' && link && (
             <Button
               variant="contained"
               color="primary"
@@ -80,7 +80,7 @@ const Card: React.FC<CardProps> = ({ title, description, image, link, type }) =>
             aria-label="close"
             onClick={() => setIsOpen(false)}
             sx={{
-              position: "absolute",
+              position: 'absolute',
               right: 8,
               top: 8,
               color: (theme) => theme.palette.grey[500],
@@ -90,21 +90,21 @@ const Card: React.FC<CardProps> = ({ title, description, image, link, type }) =>
           </IconButton>
         </DialogTitle>
 
-        <DialogContent dividers sx={{ minHeight: "400px" }}>
-          {type === "image" && (
+        <DialogContent dividers sx={{ minHeight: '400px' }}>
+          {type === 'image' && (
             <Box
               component="img"
-              src={getGoogleDriveUrl(link || "")}
+              src={getGoogleDriveUrl(link || '')}
               alt={title}
-              sx={{ width: "100%", borderRadius: 2 }}
+              sx={{ width: '100%', borderRadius: 2 }}
             />
           )}
-          {type === "doc" && (
+          {type === 'doc' && (
             <iframe
-              src={`https://drive.google.com/file/d/${link?.split("/d/")[1]?.split("/")[0]}/preview`}
+              src={`https://drive.google.com/file/d/${link?.split('/d/')[1]?.split('/')[0]}/preview`}
               width="100%"
               height="600px"
-              style={{ border: "none" }}
+              style={{ border: 'none' }}
               title={title}
             />
           )}

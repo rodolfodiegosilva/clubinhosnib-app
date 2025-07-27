@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface CommentData {
   id?: string;
@@ -8,7 +8,7 @@ export interface CommentData {
   comment: string;
   clubinho: string;
   neighborhood: string;
-  published?: boolean
+  published?: boolean;
 }
 
 interface CommentsState {
@@ -20,7 +20,7 @@ const initialState: CommentsState = {
 };
 
 const commentsSlice = createSlice({
-  name: "comments",
+  name: 'comments',
   initialState,
   reducers: {
     setComments: (state, action: PayloadAction<CommentData[]>) => {

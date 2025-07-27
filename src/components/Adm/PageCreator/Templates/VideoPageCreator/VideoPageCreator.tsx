@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Box,
   Button,
@@ -17,20 +17,15 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-} from "@mui/material";
-import api from "../../../../../config/axiosConfig";
-import { AppDispatch, RootState } from "../../../../../store/slices";
-import { fetchRoutes } from "../../../../../store/slices/route/routeSlice";
-import { clearVideoData } from "../../../../../store/slices/video/videoSlice";
-import { validateMediaURL } from "../../../../../utils/validateMediaURL";
-import VideoForm from "./VideoForm";
-import VideoList from "./VideoList";
-import {
-  MediaItem,
-  MediaType,
-  MediaUploadType,
-  MediaPlatform,
-} from "store/slices/types";
+} from '@mui/material';
+import api from '@/config/axiosConfig';
+import { AppDispatch, RootState } from '@/store/slices';
+import { fetchRoutes } from '@/store/slices/route/routeSlice';
+import { clearVideoData } from '@/store/slices/video/videoSlice';
+import { validateMediaURL } from '@/utils/validateMediaURL';
+import VideoForm from './VideoForm';
+import VideoList from './VideoList';
+import { MediaItem, MediaType, MediaUploadType, MediaPlatform } from 'store/slices/types';
 
 interface VideoProps {
   fromTemplatePage?: boolean;
@@ -45,16 +40,16 @@ export default function VideoPageCreator({ fromTemplatePage = false }: VideoProp
   const dispatch = useDispatch<AppDispatch>();
   const videoData = useSelector((state: RootState) => state.video.videoData);
 
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [isPublic, setIsPublic] = useState(true);
   const [videos, setVideos] = useState<MediaItem[]>([]);
   const [newVideo, setNewVideo] = useState<MediaItem>({
-    title: "",
-    description: "",
+    title: '',
+    description: '',
     uploadType: MediaUploadType.LINK,
     platformType: MediaPlatform.YOUTUBE,
-    url: "",
+    url: '',
     isLocalFile: false,
     mediaType: MediaType.VIDEO,
   });
@@ -69,27 +64,27 @@ export default function VideoPageCreator({ fromTemplatePage = false }: VideoProp
   });
   const [loading, setLoading] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [videoToDeleteIndex, setVideoToDeleteIndex] = useState<number | null>(null);
   const [uploadProgress, setUploadProgress] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     if (!videoData && !fromTemplatePage) {
-      navigate("/feed-clubinho");
+      navigate('/feed-clubinho');
       return;
     }
 
     if (fromTemplatePage) {
       dispatch(clearVideoData());
-      setTitle("");
-      setDescription("");
+      setTitle('');
+      setDescription('');
       setVideos([]);
       setIsPublic(true);
     } else if (videoData) {
-      setTitle(videoData.title ?? "");
-      setDescription(videoData.description ?? "");
+      setTitle(videoData.title ?? '');
+      setDescription(videoData.description ?? '');
       setIsPublic(videoData.public ?? true);
       setVideos(videoData.videos.map(videoToEditable));
     }
@@ -98,18 +93,21 @@ export default function VideoPageCreator({ fromTemplatePage = false }: VideoProp
   const areUploadsComplete = () => Object.values(uploadProgress).every((v) => v !== false);
 
   const validate = (): boolean => {
-    if (!title.trim()) return showError("O título da galeria é obrigatório.", "pageTitle");
-    if (!description.trim()) return showError("A descrição da galeria é obrigatória.", "pageDescription");
-    if (videos.length === 0) return showError("Adicione pelo menos um vídeo.");
-    if (!fromTemplatePage && !videoData?.id) return showError("ID da página é obrigatório no modo de edição.");
-    if (!areUploadsComplete()) return showError("Aguarde o upload de todos os vídeos antes de salvar.");
+    if (!title.trim()) return showError('O título da galeria é obrigatório.', 'pageTitle');
+    if (!description.trim())
+      return showError('A descrição da galeria é obrigatória.', 'pageDescription');
+    if (videos.length === 0) return showError('Adicione pelo menos um vídeo.');
+    if (!fromTemplatePage && !videoData?.id)
+      return showError('ID da página é obrigatório no modo de edição.');
+    if (!areUploadsComplete())
+      return showError('Aguarde o upload de todos os vídeos antes de salvar.');
     return true;
   };
 
   const showError = (msg: string, field?: keyof typeof errors) => {
     if (field) setErrors((prev) => ({ ...prev, [field]: true }));
     setSnackbarMessage(msg);
-    setSnackbarSeverity("error");
+    setSnackbarSeverity('error');
     setSnackbarOpen(true);
     return false;
   };
@@ -134,7 +132,8 @@ export default function VideoPageCreator({ fromTemplatePage = false }: VideoProp
           uploadType: video.uploadType,
           isLocalFile: video.uploadType === MediaUploadType.UPLOAD,
           url:
-            video.uploadType === MediaUploadType.LINK || (video.uploadType === MediaUploadType.UPLOAD && video.id)
+            video.uploadType === MediaUploadType.LINK ||
+            (video.uploadType === MediaUploadType.UPLOAD && video.id)
               ? video.url
               : undefined,
           platformType: video.uploadType === MediaUploadType.LINK ? video.platformType : undefined,
@@ -152,20 +151,26 @@ export default function VideoPageCreator({ fromTemplatePage = false }: VideoProp
         videos: videosPayload,
       };
 
-      formData.append("videosPageData", JSON.stringify(payload));
+      formData.append('videosPageData', JSON.stringify(payload));
 
       const response = fromTemplatePage
-        ? await api.post("/video-pages", formData, { headers: { "Content-Type": "multipart/form-data" } })
-        : await api.patch(`/video-pages/${videoData!.id}`, formData, { headers: { "Content-Type": "multipart/form-data" } });
+        ? await api.post('/video-pages', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+          })
+        : await api.patch(`/video-pages/${videoData!.id}`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+          });
 
       await dispatch(fetchRoutes());
       navigate(`/${response.data.route.path}`);
-      setSnackbarMessage(fromTemplatePage ? "Página criada com sucesso!" : "Página atualizada com sucesso!");
-      setSnackbarSeverity("success");
+      setSnackbarMessage(
+        fromTemplatePage ? 'Página criada com sucesso!' : 'Página atualizada com sucesso!'
+      );
+      setSnackbarSeverity('success');
       setSnackbarOpen(true);
     } catch (error) {
-      console.error("Erro ao salvar página", error);
-      showError("Erro ao salvar a página. Tente novamente.");
+      console.error('Erro ao salvar página', error);
+      showError('Erro ao salvar a página. Tente novamente.');
     } finally {
       setLoading(false);
     }
@@ -173,7 +178,8 @@ export default function VideoPageCreator({ fromTemplatePage = false }: VideoProp
 
   const handleAddVideo = () => {
     const hasError =
-      !newVideo.title || !newVideo.description ||
+      !newVideo.title ||
+      !newVideo.description ||
       (newVideo.uploadType === MediaUploadType.LINK && !newVideo.url) ||
       (newVideo.uploadType === MediaUploadType.UPLOAD && !newVideo.file && editingIndex === null);
 
@@ -186,12 +192,15 @@ export default function VideoPageCreator({ fromTemplatePage = false }: VideoProp
       ...prev,
       newVideoTitle: !newVideo.title,
       newVideoDescription: !newVideo.description,
-      newVideoSrc: newVideo.uploadType === MediaUploadType.LINK ? !newVideo.url : !newVideo.file && editingIndex === null,
+      newVideoSrc:
+        newVideo.uploadType === MediaUploadType.LINK
+          ? !newVideo.url
+          : !newVideo.file && editingIndex === null,
       newVideoURL: newVideo.uploadType === MediaUploadType.LINK && !isValidURL,
     }));
 
     if (hasError || !isValidURL) {
-      if (!isValidURL) showError("URL inválida para a plataforma selecionada.");
+      if (!isValidURL) showError('URL inválida para a plataforma selecionada.');
       return;
     }
 
@@ -214,11 +223,11 @@ export default function VideoPageCreator({ fromTemplatePage = false }: VideoProp
     }
 
     setNewVideo({
-      title: "",
-      description: "",
+      title: '',
+      description: '',
       uploadType: MediaUploadType.LINK,
       platformType: MediaPlatform.YOUTUBE,
-      url: "",
+      url: '',
       isLocalFile: false,
       mediaType: MediaType.VIDEO,
     });
@@ -235,17 +244,17 @@ export default function VideoPageCreator({ fromTemplatePage = false }: VideoProp
       if (editingIndex === videoToDeleteIndex) {
         setEditingIndex(null);
         setNewVideo({
-          title: "",
-          description: "",
+          title: '',
+          description: '',
           uploadType: MediaUploadType.LINK,
           platformType: MediaPlatform.YOUTUBE,
-          url: "",
+          url: '',
           isLocalFile: false,
           mediaType: MediaType.VIDEO,
         });
       }
-      setSnackbarMessage("Vídeo removido com sucesso!");
-      setSnackbarSeverity("success");
+      setSnackbarMessage('Vídeo removido com sucesso!');
+      setSnackbarSeverity('success');
       setSnackbarOpen(true);
     }
     setDeleteDialogOpen(false);
@@ -286,9 +295,9 @@ export default function VideoPageCreator({ fromTemplatePage = false }: VideoProp
         fontWeight="bold"
         mb={{ xs: 2, md: 3 }}
         textAlign="center"
-        sx={{ fontSize: { xs: "1.5rem", md: "2.125rem" } }}
+        sx={{ fontSize: { xs: '1.5rem', md: '2.125rem' } }}
       >
-        {fromTemplatePage ? "Criar Galeria de Vídeos" : "Editar Galeria de Vídeos"}
+        {fromTemplatePage ? 'Criar Galeria de Vídeos' : 'Editar Galeria de Vídeos'}
       </Typography>
 
       <Box mb={2}>
@@ -299,7 +308,7 @@ export default function VideoPageCreator({ fromTemplatePage = false }: VideoProp
           onChange={(e) => setTitle(e.target.value)}
           margin="normal"
           error={errors.pageTitle}
-          helperText={errors.pageTitle ? "Campo obrigatório" : ""}
+          helperText={errors.pageTitle ? 'Campo obrigatório' : ''}
         />
         <TextField
           fullWidth
@@ -309,7 +318,7 @@ export default function VideoPageCreator({ fromTemplatePage = false }: VideoProp
           multiline
           rows={3}
           error={errors.pageDescription}
-          helperText={errors.pageDescription ? "Campo obrigatório" : ""}
+          helperText={errors.pageDescription ? 'Campo obrigatório' : ''}
         />
         <FormControlLabel
           control={<Switch checked={isPublic} onChange={(e) => setIsPublic(e.target.checked)} />}
@@ -342,7 +351,7 @@ export default function VideoPageCreator({ fromTemplatePage = false }: VideoProp
           disabled={loading || !areUploadsComplete()}
           startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
         >
-          {loading ? "Salvando..." : "Salvar Página"}
+          {loading ? 'Salvando...' : 'Salvar Página'}
         </Button>
       </Box>
 
@@ -363,11 +372,7 @@ export default function VideoPageCreator({ fromTemplatePage = false }: VideoProp
         </DialogActions>
       </Dialog>
 
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={() => setSnackbarOpen(false)}
-      >
+      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={() => setSnackbarOpen(false)}>
         <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity}>
           {snackbarMessage}
         </Alert>

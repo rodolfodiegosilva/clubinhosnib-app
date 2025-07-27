@@ -14,16 +14,11 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-} from "@mui/material";
-import { Delete, Edit } from "@mui/icons-material";
-import { useState } from "react";
-import { validateMediaURL } from "utils/validateMediaURL";
-import {
-  MediaItem,
-  MediaType,
-  MediaUploadType,
-  MediaPlatform,
-} from "store/slices/types";
+} from '@mui/material';
+import { Delete, Edit } from '@mui/icons-material';
+import { useState } from 'react';
+import { validateMediaURL } from 'utils/validateMediaURL';
+import { MediaItem, MediaType, MediaUploadType, MediaPlatform } from 'store/slices/types';
 
 interface Props {
   videos: MediaItem[];
@@ -32,15 +27,15 @@ interface Props {
 
 export default function WeekVideos({ videos, setVideos }: Props) {
   const [newVideo, setNewVideo] = useState<MediaItem>({
-    title: "",
-    description: "",
+    title: '',
+    description: '',
     mediaType: MediaType.VIDEO,
     uploadType: MediaUploadType.LINK,
-    url: "",
+    url: '',
     platformType: MediaPlatform.YOUTUBE,
   });
 
-  const [fileName, setFileName] = useState<string>("");
+  const [fileName, setFileName] = useState<string>('');
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
 
@@ -63,7 +58,9 @@ export default function WeekVideos({ videos, setVideos }: Props) {
       newVideo.uploadType === MediaUploadType.UPLOAD ||
       validateMediaURL(newVideo.url, newVideo.platformType);
     const hasError =
-      !newVideo.title || !newVideo.description || !newVideo.url ||
+      !newVideo.title ||
+      !newVideo.description ||
+      !newVideo.url ||
       (newVideo.uploadType === MediaUploadType.LINK && !isValid);
 
     setErrors({
@@ -84,19 +81,19 @@ export default function WeekVideos({ videos, setVideos }: Props) {
 
     setVideos(updatedList);
     setNewVideo({
-      title: "",
-      description: "",
+      title: '',
+      description: '',
       mediaType: MediaType.VIDEO,
       uploadType: MediaUploadType.LINK,
-      url: "",
+      url: '',
       platformType: MediaPlatform.YOUTUBE,
     });
-    setFileName("");
+    setFileName('');
   };
 
   const handleEdit = (index: number) => {
     setNewVideo(videos[index]);
-    setFileName(videos[index].file?.name || "");
+    setFileName(videos[index].file?.name || '');
     setEditingIndex(index);
   };
 
@@ -108,7 +105,7 @@ export default function WeekVideos({ videos, setVideos }: Props) {
   };
 
   return (
-    <Box sx={{ width: { xs: "95%", md: "100%" }, mx: "auto" }}>
+    <Box sx={{ width: { xs: '95%', md: '100%' }, mx: 'auto' }}>
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
           <TextField
@@ -117,7 +114,7 @@ export default function WeekVideos({ videos, setVideos }: Props) {
             value={newVideo.title}
             onChange={(e) => setNewVideo((prev) => ({ ...prev, title: e.target.value }))}
             error={errors.title}
-            helperText={errors.title ? "Campo obrigatório" : ""}
+            helperText={errors.title ? 'Campo obrigatório' : ''}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -127,7 +124,7 @@ export default function WeekVideos({ videos, setVideos }: Props) {
             value={newVideo.description}
             onChange={(e) => setNewVideo((prev) => ({ ...prev, description: e.target.value }))}
             error={errors.description}
-            helperText={errors.description ? "Campo obrigatório" : ""}
+            helperText={errors.description ? 'Campo obrigatório' : ''}
           />
         </Grid>
 
@@ -142,8 +139,9 @@ export default function WeekVideos({ videos, setVideos }: Props) {
                 setNewVideo({
                   ...newVideo,
                   uploadType,
-                  platformType: uploadType === MediaUploadType.LINK ? MediaPlatform.YOUTUBE : undefined,
-                  url: "",
+                  platformType:
+                    uploadType === MediaUploadType.LINK ? MediaPlatform.YOUTUBE : undefined,
+                  url: '',
                   file: undefined,
                 });
               }}
@@ -161,7 +159,7 @@ export default function WeekVideos({ videos, setVideos }: Props) {
                 <InputLabel>Plataforma</InputLabel>
                 <Select
                   label="Plataforma"
-                  value={newVideo.platformType || ""}
+                  value={newVideo.platformType || ''}
                   onChange={(e) =>
                     setNewVideo((prev) => ({
                       ...prev,
@@ -184,7 +182,7 @@ export default function WeekVideos({ videos, setVideos }: Props) {
                 value={newVideo.url}
                 onChange={(e) => setNewVideo((prev) => ({ ...prev, url: e.target.value }))}
                 error={errors.url}
-                helperText={errors.url ? "URL inválida ou obrigatória" : ""}
+                helperText={errors.url ? 'URL inválida ou obrigatória' : ''}
               />
             </Grid>
           </>
@@ -206,7 +204,7 @@ export default function WeekVideos({ videos, setVideos }: Props) {
 
         <Grid item xs={12}>
           <Button variant="contained" fullWidth onClick={handleAddOrUpdate}>
-            {editingIndex !== null ? "Salvar Alterações" : "Adicionar Vídeo"}
+            {editingIndex !== null ? 'Salvar Alterações' : 'Adicionar Vídeo'}
           </Button>
         </Grid>
       </Grid>
@@ -216,7 +214,9 @@ export default function WeekVideos({ videos, setVideos }: Props) {
           <Grid item xs={12} sm={6} md={4} key={index}>
             <Box border={1} borderRadius={2} p={2} position="relative">
               <Typography fontWeight="bold">{video.title}</Typography>
-              <Typography variant="body2" mb={1}>{video.description}</Typography>
+              <Typography variant="body2" mb={1}>
+                {video.description}
+              </Typography>
               {video.uploadType === MediaUploadType.LINK ? (
                 <Box sx={{ aspectRatio: '16/9' }}>
                   <iframe
@@ -255,7 +255,9 @@ export default function WeekVideos({ videos, setVideos }: Props) {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDeleteIndex(null)}>Cancelar</Button>
-          <Button color="error" onClick={confirmRemove}>Remover</Button>
+          <Button color="error" onClick={confirmRemove}>
+            Remover
+          </Button>
         </DialogActions>
       </Dialog>
     </Box>

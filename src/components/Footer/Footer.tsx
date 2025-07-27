@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  Box,
-  Typography,
-  IconButton,
-  Link,
-  Stack,
-  useTheme,
-  useMediaQuery,
-} from '@mui/material';
+import { Box, Typography, IconButton, Link, Stack, useTheme, useMediaQuery } from '@mui/material';
 import {
   FaFacebook as FacebookIcon,
   FaInstagram as InstagramIcon,
@@ -41,12 +33,7 @@ const Footer: React.FC = () => {
         textAlign="center"
       >
         {/* Navegação */}
-        <Stack
-          direction="row"
-          spacing={3}
-          justifyContent="center"
-          flexWrap="wrap"
-        >
+        <Stack direction="row" spacing={3} justifyContent="center" flexWrap="wrap">
           <Link href="/" underline="hover" color="inherit" fontWeight="medium">
             Início
           </Link>
@@ -94,16 +81,10 @@ const Footer: React.FC = () => {
 
         {/* Direitos + Créditos */}
         <Stack spacing={0.5} alignItems="center">
-          <Typography
-            variant="body2"
-            sx={{ fontSize: '0.85rem', textAlign: 'center' }}
-          >
+          <Typography variant="body2" sx={{ fontSize: '0.85rem', textAlign: 'center' }}>
             © 2025 NIB - Nova Igreja Batista. Todos os direitos reservados.
           </Typography>
-          <Typography
-            variant="body2"
-            sx={{ fontSize: '0.85rem', textAlign: 'center' }}
-          >
+          <Typography variant="body2" sx={{ fontSize: '0.85rem', textAlign: 'center' }}>
             Desenvolvido por{' '}
             <Link
               href="https://rodolfo-silva.com"

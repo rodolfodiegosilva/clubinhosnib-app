@@ -1,10 +1,10 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RouteData } from "../route/routeSlice";
-import { MediaItem } from "../types";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RouteData } from '@/store/slices/route/routeSlice';
+import { MediaItem } from '@/store/slices/types';
 
 export interface SectionData {
   id?: string;
-  public:boolean
+  public: boolean;
   caption: string;
   description: string;
   mediaItems: MediaItem[];
@@ -14,8 +14,8 @@ export interface SectionData {
 
 export interface ImagePageData {
   id?: string;
-  public:boolean
-  title?: string |"";
+  public: boolean;
+  title?: string | '';
   description: string;
   createdAt?: string;
   updatedAt?: string;
@@ -32,7 +32,7 @@ const initialState: ImageState = {
 };
 
 const imageSlice = createSlice({
-  name: "image",
+  name: 'image',
   initialState,
   reducers: {
     setImageData: (state, action: PayloadAction<ImagePageData>) => {

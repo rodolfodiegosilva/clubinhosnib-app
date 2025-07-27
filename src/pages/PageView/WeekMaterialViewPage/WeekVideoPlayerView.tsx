@@ -1,11 +1,7 @@
-import { Box, Typography, useTheme } from "@mui/material";
-import { motion } from "framer-motion";
-import DownloadButton from "./DownloadButton";
-import {
-  MediaItem,
-  MediaUploadType,
-  MediaPlatform,
-} from "store/slices/types";
+import { Box, Typography, useTheme } from '@mui/material';
+import { motion } from 'framer-motion';
+import DownloadButton from './DownloadButton';
+import { MediaItem, MediaUploadType, MediaPlatform } from 'store/slices/types';
 
 interface Props {
   video: MediaItem;
@@ -15,12 +11,12 @@ export default function WeekVideoPlayer({ video }: Props) {
   const theme = useTheme();
 
   const getYouTubeEmbedUrl = (url: string): string | null => {
-    if (url.includes("youtube.com")) {
-      const id = url.split("v=")[1]?.split("&")[0];
+    if (url.includes('youtube.com')) {
+      const id = url.split('v=')[1]?.split('&')[0];
       return id ? `https://www.youtube.com/embed/${id}` : null;
     }
-    if (url.includes("youtu.be")) {
-      const id = url.split("youtu.be/")[1]?.split("?")[0];
+    if (url.includes('youtu.be')) {
+      const id = url.split('youtu.be/')[1]?.split('?')[0];
       return id ? `https://www.youtube.com/embed/${id}` : null;
     }
     return null;
@@ -32,15 +28,16 @@ export default function WeekVideoPlayer({ video }: Props) {
   };
 
   const getDropboxRawUrl = (url: string): string => {
-    const cleanUrl = url.split("?")[0];
-    return cleanUrl.replace("www.dropbox.com", "dl.dropboxusercontent.com") + "?raw=1";
+    const cleanUrl = url.split('?')[0];
+    return cleanUrl.replace('www.dropbox.com', 'dl.dropboxusercontent.com') + '?raw=1';
   };
 
   const shouldRenderVideo = (): boolean => {
     if (video.isLocalFile || video.uploadType === MediaUploadType.UPLOAD) return true;
     if (
       video.uploadType === MediaUploadType.LINK &&
-      (video.platformType === MediaPlatform.YOUTUBE || video.platformType === MediaPlatform.GOOGLE_DRIVE)
+      (video.platformType === MediaPlatform.YOUTUBE ||
+        video.platformType === MediaPlatform.GOOGLE_DRIVE)
     )
       return true;
     return false;
@@ -64,7 +61,7 @@ export default function WeekVideoPlayer({ video }: Props) {
 
     if (video.isLocalFile || video.uploadType === MediaUploadType.UPLOAD) {
       return (
-        <video controls style={{ width: "100%", borderRadius: 12 }}>
+        <video controls style={{ width: '100%', borderRadius: 12 }}>
           <source src={video.url} />
           Seu navegador não suporta vídeo embutido.
         </video>
@@ -80,7 +77,7 @@ export default function WeekVideoPlayer({ video }: Props) {
               src={embedUrl}
               title={video.title}
               allowFullScreen
-              style={{ width: "100%", aspectRatio: "16/9", border: "none", borderRadius: 12 }}
+              style={{ width: '100%', aspectRatio: '16/9', border: 'none', borderRadius: 12 }}
             />
           ) : (
             <Typography color="error">URL do YouTube inválida.</Typography>
@@ -94,7 +91,7 @@ export default function WeekVideoPlayer({ video }: Props) {
               src={embedUrl}
               title={video.title}
               allowFullScreen
-              style={{ width: "100%", aspectRatio: "16/9", border: "none", borderRadius: 12 }}
+              style={{ width: '100%', aspectRatio: '16/9', border: 'none', borderRadius: 12 }}
             />
           ) : (
             <Typography color="error">URL do Google Drive inválida.</Typography>
@@ -102,7 +99,11 @@ export default function WeekVideoPlayer({ video }: Props) {
         }
 
         default:
-          return <Typography color="error">Plataforma de vídeo não suportada para visualização.</Typography>;
+          return (
+            <Typography color="error">
+              Plataforma de vídeo não suportada para visualização.
+            </Typography>
+          );
       }
     }
 
@@ -110,7 +111,7 @@ export default function WeekVideoPlayer({ video }: Props) {
   };
 
   return (
-    <Box sx={{ width: "100%", p: 1 }}>
+    <Box sx={{ width: '100%', p: 1 }}>
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -125,8 +126,10 @@ export default function WeekVideoPlayer({ video }: Props) {
         </Typography>
         {shouldAllowDownload() && (
           <DownloadButton
-            url={video.platformType === MediaPlatform.DROPBOX ? getDropboxRawUrl(video.url) : video.url}
-            filename={video.originalName || video.title || "video"}
+            url={
+              video.platformType === MediaPlatform.DROPBOX ? getDropboxRawUrl(video.url) : video.url
+            }
+            filename={video.originalName || video.title || 'video'}
           />
         )}
       </motion.div>

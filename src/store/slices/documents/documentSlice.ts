@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { MediaItem } from '../types';
+import { MediaItem } from '@/store/slices/types';
 
 export interface DocumentData {
   id?: string;
@@ -40,11 +40,6 @@ const documentSlice = createSlice({
   },
 });
 
-export const {
-  setDocumentData,
-  clearDocumentData,
-  setMedia,
-  clearMedia,
-} = documentSlice.actions;
+export const { setDocumentData, clearDocumentData, setMedia, clearMedia } = documentSlice.actions;
 
 export default documentSlice.reducer;

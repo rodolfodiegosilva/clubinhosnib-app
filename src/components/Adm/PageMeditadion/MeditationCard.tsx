@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Box,
   Button,
@@ -8,20 +8,20 @@ import {
   Paper,
   Stack,
   Typography,
-} from "@mui/material";
-import { Delete, PictureAsPdf, Visibility } from "@mui/icons-material";
+} from '@mui/material';
+import { Delete, PictureAsPdf, Visibility } from '@mui/icons-material';
 import {
   MeditationData,
   DayItem,
   WeekDay,
   WeekDayLabel,
   setMeditationData,
-} from "../../../store/slices/meditation/meditationSlice";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../store/slices";
-import { getMediaPreviewUrl } from "utils/getMediaPreviewUrl";
-import MediaDocumentPreviewModal from "utils/MediaDocumentPreviewModal";
+} from '@/store/slices/meditation/meditationSlice';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/store/slices';
+import { getMediaPreviewUrl } from 'utils/getMediaPreviewUrl';
+import MediaDocumentPreviewModal from 'utils/MediaDocumentPreviewModal';
 
 interface Props {
   meditation: MeditationData;
@@ -31,10 +31,10 @@ interface Props {
 
 const formatDate = (dateStr: string): string => {
   const date = new Date(dateStr);
-  return date.toLocaleDateString("pt-BR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
+  return date.toLocaleDateString('pt-BR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
   });
 };
 
@@ -47,7 +47,7 @@ export default function MeditationCard({ meditation, onDelete, onDayClick }: Pro
 
   const handleEdit = () => {
     dispatch(setMeditationData(meditation));
-    navigate("/adm/editar-meditacao");
+    navigate('/adm/editar-meditacao');
   };
 
   return (
@@ -58,15 +58,15 @@ export default function MeditationCard({ meditation, onDelete, onDayClick }: Pro
           borderRadius: 3,
           boxShadow: 3,
           p: 2,
-          bgcolor: "#fff",
-          border: "1px solid #e0e0e0",
-          position: "relative",
+          bgcolor: '#fff',
+          border: '1px solid #e0e0e0',
+          position: 'relative',
         }}
       >
         <IconButton
           size="small"
           onClick={() => onDelete(meditation)}
-          sx={{ position: "absolute", top: 8, right: 8, color: "#d32f2f" }}
+          sx={{ position: 'absolute', top: 8, right: 8, color: '#d32f2f' }}
           title="Excluir Meditação"
         >
           <Delete fontSize="small" />
@@ -78,7 +78,11 @@ export default function MeditationCard({ meditation, onDelete, onDayClick }: Pro
             fontWeight="bold"
             textAlign="center"
             gutterBottom
-            sx={{ mt: { xs: 0, md: 2 }, mb: { xs: 1, md: 2 }, fontSize: { xs: "1rem", md: "1.5rem" } }}
+            sx={{
+              mt: { xs: 0, md: 2 },
+              mb: { xs: 1, md: 2 },
+              fontSize: { xs: '1rem', md: '1.5rem' },
+            }}
           >
             {meditation.topic}
           </Typography>
@@ -86,7 +90,7 @@ export default function MeditationCard({ meditation, onDelete, onDayClick }: Pro
             variant="body2"
             color="text.secondary"
             textAlign="center"
-            sx={{ fontSize: { xs: ".8rem", md: "1rem" } }}
+            sx={{ fontSize: { xs: '.8rem', md: '1rem' } }}
           >
             {formatDate(meditation.startDate)} - {formatDate(meditation.endDate)}
           </Typography>
@@ -100,24 +104,18 @@ export default function MeditationCard({ meditation, onDelete, onDayClick }: Pro
                 key={day.id}
                 elevation={0}
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
                   p: 1.2,
                   px: 2,
-                  border: "1px solid #dcdcdc",
+                  border: '1px solid #dcdcdc',
                   borderRadius: 2,
-                  bgcolor: "#fafafa",
+                  bgcolor: '#fafafa',
                 }}
               >
-                <Typography fontWeight="medium">
-                  {WeekDayLabel[day.day as WeekDay]}
-                </Typography>
-                <IconButton
-                  size="small"
-                  onClick={() => onDayClick(day)}
-                  sx={{ color: "#616161" }}
-                >
+                <Typography fontWeight="medium">{WeekDayLabel[day.day as WeekDay]}</Typography>
+                <IconButton size="small" onClick={() => onDayClick(day)} sx={{ color: '#616161' }}>
                   <Visibility fontSize="small" />
                 </IconButton>
               </Paper>

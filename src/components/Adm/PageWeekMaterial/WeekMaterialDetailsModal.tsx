@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -12,9 +12,9 @@ import {
   Divider,
   Paper,
   Grid,
-} from "@mui/material";
-import { ContentCopy, Close } from "@mui/icons-material";
-import { WeekMaterialPageData } from "store/slices/week-material/weekMaterialSlice";
+} from '@mui/material';
+import { ContentCopy, Close } from '@mui/icons-material';
+import { WeekMaterialPageData } from 'store/slices/week-material/weekMaterialSlice';
 
 interface WeekMaterialDetailsModalProps {
   material: WeekMaterialPageData | null;
@@ -34,8 +34,8 @@ export default function WeekMaterialDetailsModal({
   };
 
   const formatDate = (date?: string) => {
-    if (!date) return "Não disponível";
-    return new Date(date).toLocaleString("pt-BR");
+    if (!date) return 'Não disponível';
+    return new Date(date).toLocaleString('pt-BR');
   };
 
   return (
@@ -46,12 +46,12 @@ export default function WeekMaterialDetailsModal({
       maxWidth="lg"
       PaperProps={{
         sx: {
-          width: "100%",
-          margin: "10px auto",
+          width: '100%',
+          margin: '10px auto',
           padding: 2,
           borderRadius: 3,
-          bgcolor: "#fafafa",
-          position: "relative",
+          bgcolor: '#fafafa',
+          position: 'relative',
         },
       }}
     >
@@ -59,10 +59,10 @@ export default function WeekMaterialDetailsModal({
       <IconButton
         onClick={onClose}
         sx={{
-          position: "absolute",
+          position: 'absolute',
           top: 8,
           right: 8,
-          color: "#555",
+          color: '#555',
         }}
       >
         <Close />
@@ -70,10 +70,10 @@ export default function WeekMaterialDetailsModal({
 
       <DialogTitle
         sx={{
-          textAlign: "center",
-          fontWeight: "bold",
-          fontSize: "1.5rem",
-          color: "#333",
+          textAlign: 'center',
+          fontWeight: 'bold',
+          fontSize: '1.5rem',
+          color: '#333',
           p: 2,
         }}
       >
@@ -84,33 +84,33 @@ export default function WeekMaterialDetailsModal({
         {material && (
           <Stack spacing={4}>
             {/* Informações Gerais */}
-            <Paper elevation={2} sx={{ p: 3, borderRadius: 2, bgcolor: "#fff" }}>
+            <Paper elevation={2} sx={{ p: 3, borderRadius: 2, bgcolor: '#fff' }}>
               <Typography variant="h6" fontWeight="bold" color="primary" textAlign="center" mb={3}>
                 Informações Gerais
               </Typography>
               <Grid container spacing={2}>
                 <Grid item xs={12} md={6}>
-                  <Typography variant="body1" sx={{ color: "#333" }}>
-                    <strong>Título:</strong> {material.title || "Sem Título"}
+                  <Typography variant="body1" sx={{ color: '#333' }}>
+                    <strong>Título:</strong> {material.title || 'Sem Título'}
                   </Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography variant="body1" sx={{ color: "#333" }}>
-                    <strong>Subtítulo:</strong> {material.subtitle || "Sem Subtítulo"}
+                  <Typography variant="body1" sx={{ color: '#333' }}>
+                    <strong>Subtítulo:</strong> {material.subtitle || 'Sem Subtítulo'}
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>
-                  <Typography variant="body1" sx={{ color: "#333", whiteSpace: "pre-wrap" }}>
-                    <strong>Descrição:</strong> {material.description || "Sem Descrição"}
+                  <Typography variant="body1" sx={{ color: '#333', whiteSpace: 'pre-wrap' }}>
+                    <strong>Descrição:</strong> {material.description || 'Sem Descrição'}
                   </Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography variant="body1" sx={{ color: "#333" }}>
+                  <Typography variant="body1" sx={{ color: '#333' }}>
                     <strong>Criado em:</strong> {formatDate(material.createdAt)}
                   </Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography variant="body1" sx={{ color: "#333" }}>
+                  <Typography variant="body1" sx={{ color: '#333' }}>
                     <strong>Atualizado em:</strong> {formatDate(material.updatedAt)}
                   </Typography>
                 </Grid>
@@ -121,14 +121,24 @@ export default function WeekMaterialDetailsModal({
 
             {/* Seções de mídia */}
             {[
-              { label: "Vídeos", items: material.videos },
-              { label: "Documentos", items: material.documents },
-              { label: "Imagens", items: material.images },
-              { label: "Áudios", items: material.audios },
+              { label: 'Vídeos', items: material.videos },
+              { label: 'Documentos', items: material.documents },
+              { label: 'Imagens', items: material.images },
+              { label: 'Áudios', items: material.audios },
             ].map((section) =>
               section.items.length > 0 ? (
-                <Paper key={section.label} elevation={2} sx={{ p: 3, borderRadius: 2, bgcolor: "#fff" }}>
-                  <Typography variant="h6" fontWeight="bold" color="primary" textAlign="center" mb={3}>
+                <Paper
+                  key={section.label}
+                  elevation={2}
+                  sx={{ p: 3, borderRadius: 2, bgcolor: '#fff' }}
+                >
+                  <Typography
+                    variant="h6"
+                    fontWeight="bold"
+                    color="primary"
+                    textAlign="center"
+                    mb={3}
+                  >
                     {section.label}
                   </Typography>
 
@@ -138,36 +148,39 @@ export default function WeekMaterialDetailsModal({
                         <Box
                           sx={{
                             p: 2,
-                            border: "1px solid #e0e0e0",
+                            border: '1px solid #e0e0e0',
                             borderRadius: 2,
-                            bgcolor: "#f9f9f9",
-                            height: "100%",
+                            bgcolor: '#f9f9f9',
+                            height: '100%',
                           }}
                         >
-                          <Typography variant="body1" sx={{ color: "#333" }}>
-                            <strong>Título:</strong> {item.title || "Sem Título"}
+                          <Typography variant="body1" sx={{ color: '#333' }}>
+                            <strong>Título:</strong> {item.title || 'Sem Título'}
                           </Typography>
-                          <Typography variant="body2" sx={{ color: "#555", mt: 0.5 }}>
-                            <strong>Descrição:</strong> {item.description || "Sem Descrição"}
+                          <Typography variant="body2" sx={{ color: '#555', mt: 0.5 }}>
+                            <strong>Descrição:</strong> {item.description || 'Sem Descrição'}
                           </Typography>
 
                           <Box
                             sx={{
-                              display: "flex",
-                              alignItems: "center",
+                              display: 'flex',
+                              alignItems: 'center',
                               mt: 1,
                               gap: 1,
-                              flexWrap: "wrap",
+                              flexWrap: 'wrap',
                             }}
                           >
-                            <Typography variant="body2" sx={{ color: "#555", wordBreak: "break-word" }}>
+                            <Typography
+                              variant="body2"
+                              sx={{ color: '#555', wordBreak: 'break-word' }}
+                            >
                               <strong>URL:</strong> {item.url}
                             </Typography>
                             <IconButton
                               size="small"
                               onClick={() => handleCopyUrl(item.url)}
                               title="Copiar URL"
-                              sx={{ color: "#1976d2" }}
+                              sx={{ color: '#1976d2' }}
                             >
                               <ContentCopy fontSize="small" />
                             </IconButton>
@@ -183,7 +196,7 @@ export default function WeekMaterialDetailsModal({
         )}
       </DialogContent>
 
-      <DialogActions sx={{ justifyContent: "center", padding: 2 }}>
+      <DialogActions sx={{ justifyContent: 'center', padding: 2 }}>
         <Button variant="outlined" onClick={onClose} sx={{ minWidth: 120 }}>
           Fechar
         </Button>

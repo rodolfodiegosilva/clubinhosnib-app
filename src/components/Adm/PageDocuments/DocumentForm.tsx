@@ -1,29 +1,16 @@
-import React, { useState, useEffect } from "react";
-import {
-  Box,
-  TextField,
-  Button,
-  Grid,
-  CircularProgress,
-  Snackbar,
-  Alert,
-} from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState, useEffect } from 'react';
+import { Box, TextField, Button, Grid, CircularProgress, Snackbar, Alert } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   setDocumentData,
   setMedia,
   clearDocumentData,
   clearMedia,
-} from "store/slices/documents/documentSlice";
-import { RootState } from "store/slices";
-import api from "../../../config/axiosConfig";
-import {
-  MediaItem,
-  MediaType,
-  MediaUploadType,
-  MediaPlatform,
-} from "store/slices/types";
-import DocumentMediaForm from "./DocumentMediaForm";
+} from 'store/slices/documents/documentSlice';
+import { RootState } from 'store/slices';
+import api from '@/config/axiosConfig';
+import { MediaItem, MediaType, MediaUploadType, MediaPlatform } from 'store/slices/types';
+import DocumentMediaForm from './DocumentMediaForm';
 
 interface DocumentFormProps {
   isEditing: boolean;
@@ -35,12 +22,12 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ isEditing, onSuccess }) => 
   const documentData = useSelector((state: RootState) => state.document.documentData);
   const mediaData = useSelector((state: RootState) => state.document.media);
 
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [mediaTitle, setMediaTitle] = useState("");
-  const [mediaDescription, setMediaDescription] = useState("");
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [mediaTitle, setMediaTitle] = useState('');
+  const [mediaDescription, setMediaDescription] = useState('');
   const [uploadType, setUploadType] = useState<MediaUploadType>(MediaUploadType.LINK);
-  const [url, setUrl] = useState("");
+  const [url, setUrl] = useState('');
   const [platformType, setPlatformType] = useState<MediaPlatform>(MediaPlatform.ANY);
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
@@ -48,19 +35,19 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ isEditing, onSuccess }) => 
 
   const [snackbar, setSnackbar] = useState({
     open: false,
-    message: "",
-    severity: "success" as "success" | "error",
+    message: '',
+    severity: 'success' as 'success' | 'error',
   });
 
   useEffect(() => {
     if (isEditing && documentData) {
       setName(documentData.name);
-      setDescription(documentData.description || "");
+      setDescription(documentData.description || '');
       if (mediaData) {
         setMediaTitle(mediaData.title);
-        setMediaDescription(mediaData.description || "");
+        setMediaDescription(mediaData.description || '');
         setUploadType(mediaData.uploadType);
-        setUrl(mediaData.url || "");
+        setUrl(mediaData.url || '');
         setPlatformType(mediaData.platformType ?? MediaPlatform.ANY);
       }
     } else {
@@ -71,22 +58,22 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ isEditing, onSuccess }) => 
   }, [isEditing, documentData, mediaData, dispatch]);
 
   const resetForm = () => {
-    setName("");
-    setDescription("");
-    setMediaTitle("");
-    setMediaDescription("");
+    setName('');
+    setDescription('');
+    setMediaTitle('');
+    setMediaDescription('');
     setUploadType(MediaUploadType.LINK);
-    setUrl("");
+    setUrl('');
     setPlatformType(MediaPlatform.ANY);
     setFile(null);
     setShowMediaForm(false);
   };
 
   const clearMediaFields = () => {
-    setMediaTitle("");
-    setMediaDescription("");
+    setMediaTitle('');
+    setMediaDescription('');
     setUploadType(MediaUploadType.LINK);
-    setUrl("");
+    setUrl('');
     setPlatformType(MediaPlatform.ANY);
     setFile(null);
     dispatch(clearMedia());
@@ -94,31 +81,31 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ isEditing, onSuccess }) => 
 
   const handleSubmit = async () => {
     if (!name.trim()) {
-      setSnackbar({ open: true, message: "O nome do documento é obrigatório.", severity: "error" });
+      setSnackbar({ open: true, message: 'O nome do documento é obrigatório.', severity: 'error' });
       return;
     }
     if (!description.trim()) {
-      setSnackbar({ open: true, message: "A descrição do documento é obrigatória.", severity: "error" });
+      setSnackbar({
+        open: true,
+        message: 'A descrição do documento é obrigatória.',
+        severity: 'error',
+      });
       return;
     }
     if (!mediaTitle.trim()) {
-      setSnackbar({ open: true, message: "O título da mídia é obrigatório.", severity: "error" });
+      setSnackbar({ open: true, message: 'O título da mídia é obrigatório.', severity: 'error' });
       return;
     }
     if (!uploadType) {
-      setSnackbar({ open: true, message: "O tipo de upload é obrigatório.", severity: "error" });
+      setSnackbar({ open: true, message: 'O tipo de upload é obrigatório.', severity: 'error' });
       return;
     }
     if (uploadType === MediaUploadType.LINK && !url.trim()) {
-      setSnackbar({ open: true, message: "A URL da mídia é obrigatória.", severity: "error" });
+      setSnackbar({ open: true, message: 'A URL da mídia é obrigatória.', severity: 'error' });
       return;
     }
-    if (
-      uploadType === MediaUploadType.UPLOAD &&
-      !file &&
-      (!isEditing || !mediaData?.isLocalFile)
-    ) {
-      setSnackbar({ open: true, message: "O arquivo da mídia é obrigatório.", severity: "error" });
+    if (uploadType === MediaUploadType.UPLOAD && !file && (!isEditing || !mediaData?.isLocalFile)) {
+      setSnackbar({ open: true, message: 'O arquivo da mídia é obrigatório.', severity: 'error' });
       return;
     }
 
@@ -130,15 +117,15 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ isEditing, onSuccess }) => 
       const mediaDto: MediaItem = {
         id: isEditing && mediaData?.id ? mediaData.id : undefined,
         title: mediaTitle,
-        description: mediaDescription || "",
+        description: mediaDescription || '',
         uploadType,
         mediaType: MediaType.DOCUMENT,
         isLocalFile: uploadType === MediaUploadType.UPLOAD,
-        url: uploadType === MediaUploadType.LINK ? url : "",
+        url: uploadType === MediaUploadType.LINK ? url : '',
         platformType: uploadType === MediaUploadType.LINK ? platformType : undefined,
         originalName: uploadType === MediaUploadType.UPLOAD && file ? file.name : undefined,
         size: uploadType === MediaUploadType.UPLOAD && file ? file.size : undefined,
-        fileField: uploadType === MediaUploadType.UPLOAD ? "file" : undefined,
+        fileField: uploadType === MediaUploadType.UPLOAD ? 'file' : undefined,
       };
 
       const documentDto = {
@@ -149,18 +136,18 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ isEditing, onSuccess }) => 
       };
 
       if (uploadType === MediaUploadType.UPLOAD && file) {
-        formData.append("file", file);
+        formData.append('file', file);
       }
 
-      formData.append("documentData", JSON.stringify(documentDto));
+      formData.append('documentData', JSON.stringify(documentDto));
 
       if (isEditing && documentData?.id) {
         await api.patch(`/documents/${documentData.id}`, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
+          headers: { 'Content-Type': 'multipart/form-data' },
         });
       } else {
-        await api.post("/documents", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
+        await api.post('/documents', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
         });
       }
 
@@ -170,8 +157,8 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ isEditing, onSuccess }) => 
 
       if (!isEditing) resetForm();
     } catch (error) {
-      console.error("Erro ao salvar documento:", error);
-      setSnackbar({ open: true, message: "Erro ao salvar documento.", severity: "error" });
+      console.error('Erro ao salvar documento:', error);
+      setSnackbar({ open: true, message: 'Erro ao salvar documento.', severity: 'error' });
     } finally {
       setLoading(false);
     }
@@ -215,11 +202,7 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ isEditing, onSuccess }) => 
               <Box component="h3" fontSize="1.25rem" fontWeight="bold">
                 Mídia do Documento
               </Box>
-              <Button
-                variant="text"
-                color="error"
-                onClick={clearMediaFields}
-              >
+              <Button variant="text" color="error" onClick={clearMediaFields}>
                 Remover
               </Button>
             </Grid>
@@ -248,7 +231,7 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ isEditing, onSuccess }) => 
             disabled={loading}
             startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
           >
-            {loading ? "Salvando..." : isEditing ? "Atualizar" : "Criar"}
+            {loading ? 'Salvando...' : isEditing ? 'Atualizar' : 'Criar'}
           </Button>
         </Grid>
       </Grid>

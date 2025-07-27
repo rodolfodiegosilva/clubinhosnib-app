@@ -14,16 +14,11 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-} from "@mui/material";
-import { Delete, Edit } from "@mui/icons-material";
-import { useState } from "react";
-import { validateMediaURL } from "utils/validateMediaURL";
-import {
-  MediaItem,
-  MediaType,
-  MediaUploadType,
-  MediaPlatform,
-} from "store/slices/types";
+} from '@mui/material';
+import { Delete, Edit } from '@mui/icons-material';
+import { useState } from 'react';
+import { validateMediaURL } from 'utils/validateMediaURL';
+import { MediaItem, MediaType, MediaUploadType, MediaPlatform } from 'store/slices/types';
 
 interface Props {
   images: MediaItem[];
@@ -32,15 +27,15 @@ interface Props {
 
 export default function WeekImages({ images, setImages }: Props) {
   const [newImg, setNewImg] = useState<MediaItem>({
-    title: "",
-    description: "",
+    title: '',
+    description: '',
     mediaType: MediaType.IMAGE,
     uploadType: MediaUploadType.LINK,
-    url: "",
+    url: '',
     platformType: MediaPlatform.GOOGLE_DRIVE,
   });
 
-  const [fileName, setFileName] = useState("");
+  const [fileName, setFileName] = useState('');
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
 
@@ -64,7 +59,9 @@ export default function WeekImages({ images, setImages }: Props) {
       validateMediaURL(newImg.url, newImg.platformType);
 
     const hasError =
-      !newImg.title || !newImg.description || !newImg.url ||
+      !newImg.title ||
+      !newImg.description ||
+      !newImg.url ||
       (newImg.uploadType === MediaUploadType.LINK && !isValid);
 
     setErrors({
@@ -85,20 +82,20 @@ export default function WeekImages({ images, setImages }: Props) {
 
     setImages(updated);
     setNewImg({
-      title: "",
-      description: "",
+      title: '',
+      description: '',
       mediaType: MediaType.IMAGE,
       uploadType: MediaUploadType.LINK,
-      url: "",
+      url: '',
       platformType: MediaPlatform.GOOGLE_DRIVE,
     });
-    setFileName("");
+    setFileName('');
   };
 
   const handleEdit = (index: number) => {
     setNewImg(images[index]);
     setEditingIndex(index);
-    setFileName(images[index].file?.name || "");
+    setFileName(images[index].file?.name || '');
   };
 
   const confirmRemove = () => {
@@ -109,7 +106,7 @@ export default function WeekImages({ images, setImages }: Props) {
   };
 
   return (
-    <Box sx={{ width: { xs: "95%", md: "100%" }, mx: "auto" }}>
+    <Box sx={{ width: { xs: '95%', md: '100%' }, mx: 'auto' }}>
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
           <TextField
@@ -118,7 +115,7 @@ export default function WeekImages({ images, setImages }: Props) {
             value={newImg.title}
             onChange={(e) => setNewImg((prev) => ({ ...prev, title: e.target.value }))}
             error={errors.title}
-            helperText={errors.title ? "Campo obrigatório" : ""}
+            helperText={errors.title ? 'Campo obrigatório' : ''}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -128,7 +125,7 @@ export default function WeekImages({ images, setImages }: Props) {
             value={newImg.description}
             onChange={(e) => setNewImg((prev) => ({ ...prev, description: e.target.value }))}
             error={errors.description}
-            helperText={errors.description ? "Campo obrigatório" : ""}
+            helperText={errors.description ? 'Campo obrigatório' : ''}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -141,7 +138,7 @@ export default function WeekImages({ images, setImages }: Props) {
                 setNewImg((prev) => ({
                   ...prev,
                   uploadType: e.target.value as MediaUploadType,
-                  url: "",
+                  url: '',
                   file: undefined,
                   platformType: MediaPlatform.GOOGLE_DRIVE,
                 }))
@@ -160,7 +157,7 @@ export default function WeekImages({ images, setImages }: Props) {
                 <InputLabel>Plataforma</InputLabel>
                 <Select
                   label="Plataforma"
-                  value={newImg.platformType || ""}
+                  value={newImg.platformType || ''}
                   onChange={(e) =>
                     setNewImg((prev) => ({
                       ...prev,
@@ -182,7 +179,7 @@ export default function WeekImages({ images, setImages }: Props) {
                 value={newImg.url}
                 onChange={(e) => setNewImg((prev) => ({ ...prev, url: e.target.value }))}
                 error={errors.url}
-                helperText={errors.url ? "URL inválida ou obrigatória" : ""}
+                helperText={errors.url ? 'URL inválida ou obrigatória' : ''}
               />
             </Grid>
           </>
@@ -204,7 +201,7 @@ export default function WeekImages({ images, setImages }: Props) {
 
         <Grid item xs={12}>
           <Button variant="contained" fullWidth onClick={handleAddOrUpdate}>
-            {editingIndex !== null ? "Salvar Alterações" : "Adicionar Imagem"}
+            {editingIndex !== null ? 'Salvar Alterações' : 'Adicionar Imagem'}
           </Button>
         </Grid>
       </Grid>
@@ -220,7 +217,7 @@ export default function WeekImages({ images, setImages }: Props) {
               <img
                 src={img.url}
                 alt={img.title}
-                style={{ width: "100%", borderRadius: 8, marginTop: 8 }}
+                style={{ width: '100%', borderRadius: 8, marginTop: 8 }}
               />
               <Box position="absolute" top={8} right={8} display="flex" gap={1}>
                 <Tooltip title="Editar">

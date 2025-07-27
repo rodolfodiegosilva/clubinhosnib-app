@@ -1,25 +1,58 @@
-import React from "react";
-import { Box, Typography, Button } from "@mui/material";
-import { Link } from "react-router-dom";
-import { sharedBannerStyles } from "./SharedBannerStyles";
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store/slices';
+import { Box, Typography, Button } from '@mui/material';
+import { Link } from 'react-router-dom';
+import { MediaTargetType } from 'store/slices/types';
 
-interface TeacherWeekBannerProps {
-  title: string;
-  subtitle?: string;
-  linkTo: string;
-}
+const TeacherWeekBanner: React.FC = () => {
+  const routes = useSelector((state: RootState) => state.routes.routes);
+  const currentWeekRoute = routes.find(
+    (route) => route.entityType === MediaTargetType.WeekMaterialsPage && route.current === true
+  );
 
-const TeacherWeekBanner: React.FC<TeacherWeekBannerProps> = ({
-  title,
-  subtitle,
-  linkTo,
-}) => {
+  if (!currentWeekRoute) {
+    return (
+      <Box
+        sx={{
+          width: '100%',
+          minHeight: { xs: '50vh', sm: '55vh', md: '30vh' },
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          textAlign: 'center',
+          px: 0,
+          py: { xs: 0, md: 0 },
+          boxShadow: 'inset 0 0 80px rgba(0,0,0,0.1)',
+          borderRadius: 2,
+          background: 'linear-gradient(to bottom right, #0073E6 0%, #dceeff 100%)',
+          color: '#fff',
+        }}
+      >
+        <Typography variant="h6" sx={{ textAlign: 'center' }}>
+          Nenhum material semanal atual encontrado.
+        </Typography>
+      </Box>
+    );
+  }
+
   return (
     <Box
       sx={{
-        ...sharedBannerStyles,
-        background: "linear-gradient(to bottom right, #0073E6 0%, #dceeff 100%)",
-        color: "#fff",
+        width: '100%',
+        minHeight: { xs: '50vh', sm: '55vh', md: '30vh' },
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center',
+        px: 0,
+        py: { xs: 0, md: 0 },
+        boxShadow: 'inset 0 0 80px rgba(0,0,0,0.1)',
+        borderRadius: 2,
+        background: 'linear-gradient(to bottom right, #0073E6 0%, #dceeff 100%)',
+        color: '#fff',
       }}
     >
       <Box sx={{ maxWidth: 800 }}>
@@ -27,8 +60,8 @@ const TeacherWeekBanner: React.FC<TeacherWeekBannerProps> = ({
           variant="h5"
           gutterBottom
           sx={{
-            textShadow: "3px 3px 6px rgba(0, 0, 0, 0.7)",
-            fontSize: { xs: "1.2rem", md: "1.5rem" },
+            textShadow: '3px 3px 6px rgba(0, 0, 0, 0.7)',
+            fontSize: { xs: '1.2rem', md: '1.5rem' },
           }}
         >
           Olá Professor, estamos na:
@@ -39,24 +72,23 @@ const TeacherWeekBanner: React.FC<TeacherWeekBannerProps> = ({
           fontWeight="bold"
           gutterBottom
           sx={{
-            color: "#fff", // <- Aqui define a cor da fonte
-            textShadow: "4px 4px 12px rgba(0, 0, 0, 0.85)",
-            fontSize: { xs: "2rem", md: "3rem" },
+            color: '#fff',
+            textShadow: '4px 4px 12px rgba(0, 0, 0, 0.85)',
+            fontSize: { xs: '2rem', md: '3rem' },
             my: 2,
           }}
         >
-          {title}
+          {currentWeekRoute.title}
         </Typography>
 
-
-        {subtitle && (
+        {currentWeekRoute.subtitle && (
           <>
             <Typography
               variant="h6"
               gutterBottom
               sx={{
-                fontSize: { xs: "1rem", md: "1.2rem" },
-                textShadow: "2px 2px 6px rgba(0, 0, 0, 0.7)",
+                fontSize: { xs: '1rem', md: '1.2rem' },
+                textShadow: '2px 2px 6px rgba(0, 0, 0, 0.7)',
               }}
             >
               Com o tema:
@@ -65,11 +97,11 @@ const TeacherWeekBanner: React.FC<TeacherWeekBannerProps> = ({
               variant="h6"
               sx={{
                 fontWeight: 500,
-                fontSize: { xs: "1rem", md: "1.25rem" },
-                textShadow: "2px 2px 6px rgba(0, 0, 0, 0.7)",
+                fontSize: { xs: '1rem', md: '1.25rem' },
+                textShadow: '2px 2px 6px rgba(0, 0, 0, 0.7)',
               }}
             >
-              {subtitle}
+              {currentWeekRoute.subtitle}
             </Typography>
           </>
         )}
@@ -79,14 +111,14 @@ const TeacherWeekBanner: React.FC<TeacherWeekBannerProps> = ({
           color="secondary"
           size="large"
           component={Link}
-          to={linkTo}
+          to={`/${currentWeekRoute.path}`}
           sx={{
             mt: 5,
-            fontWeight: "bold",
+            fontWeight: 'bold',
             px: 4,
             py: 1.5,
-            fontSize: { xs: "0.9rem", md: "1rem" },
-            boxShadow: "0px 4px 12px rgba(0,0,0,0.3)",
+            fontSize: { xs: '0.9rem', md: '1rem' },
+            boxShadow: '0px 4px 12px rgba(0,0,0,0.3)',
           }}
         >
           Saber mais
