@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -10,20 +10,19 @@ import {
   Snackbar,
   Alert,
   CircularProgress,
-} from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../../../store/slices";
-import { fetchRoutes } from "../../../../../store/slices/route/routeSlice";
-import {
-  clearWeekMaterialData,
-} from "../../../../../store/slices/week-material/weekMaterialSlice";
-import WeekVideos from "./WeekVideos";
-import WeekDocuments from "./WeekDocuments";
-import WeekAudios from "./WeekAudios";
-import WeekImages from "./WeekImages";
-import api from "../../../../../config/axiosConfig";
-import { MediaItem, MediaType, MediaUploadType, MediaPlatform } from "store/slices/types";
+} from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/store/slices';
+import { fetchRoutes } from '@/store/slices/route/routeSlice';
+import { clearWeekMaterialData } from '@/store/slices/week-material/weekMaterialSlice';
+import WeekVideos from './WeekVideos';
+import WeekDocuments from './WeekDocuments';
+import WeekAudios from './WeekAudios';
+import WeekImages from './WeekImages';
+import api from '@/config/axiosConfig';
+import { MediaItem, MediaType, MediaUploadType } from 'store/slices/types';
+import { current } from '@reduxjs/toolkit';
 
 interface WeekMaterialPageCreatorProps {
   fromTemplatePage?: boolean;
@@ -43,7 +42,7 @@ function buildFileItem<T extends FileItem>(
   formData: FormData
 ): T & { fileField?: string } {
   if (item.uploadType === MediaUploadType.UPLOAD && item.file instanceof File) {
-    const extension = item.file.name.split(".").pop() || "bin";
+    const extension = item.file.name.split('.').pop() || 'bin';
     const filename = `${prefix}_${index}.${extension}`;
     formData.append(filename, item.file, filename);
 
@@ -65,11 +64,13 @@ export default function WeekMaterialPageCreator({
 }: WeekMaterialPageCreatorProps) {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const studyData = useSelector((state: RootState) => state.weekMaterial.weekMaterialSData);
+  const weekMaterialSData = useSelector((state: RootState) => state.weekMaterial.weekMaterialSData);
 
-  const [pageTitle, setPageTitle] = useState("");
-  const [pageSubtitle, setPageSubtitle] = useState("");
-  const [pageDescription, setPageDescription] = useState("");
+  const [pageTitle, setPageTitle] = useState('');
+  const [pageSubtitle, setPageSubtitle] = useState('');
+  const [pageDescription, setPageDescription] = useState('');
+
+  const [pageCurrentWeek, setPageCurrentWeek] = useState(false);
   const [tab, setTab] = useState(0);
 
   const [videos, setVideos] = useState<MediaItem[]>([]);
@@ -86,16 +87,16 @@ export default function WeekMaterialPageCreator({
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
-    message: "",
-    severity: "success" as "success" | "error",
+    message: '',
+    severity: 'success' as 'success' | 'error',
   });
 
   useEffect(() => {
     if (fromTemplatePage) {
       dispatch(clearWeekMaterialData());
-      setPageTitle("");
-      setPageSubtitle("");
-      setPageDescription("");
+      setPageTitle('');
+      setPageSubtitle('');
+      setPageDescription('');
       setVideos([]);
       setDocuments([]);
       setImages([]);
@@ -104,16 +105,17 @@ export default function WeekMaterialPageCreator({
   }, [fromTemplatePage, dispatch]);
 
   useEffect(() => {
-    if (!fromTemplatePage && studyData) {
-      setPageTitle(studyData.title);
-      setPageSubtitle(studyData.subtitle);
-      setPageDescription(studyData.description);
-      setVideos(studyData.videos);
-      setDocuments(studyData.documents);
-      setImages(studyData.images);
-      setAudios(studyData.audios);
+    if (!fromTemplatePage && weekMaterialSData) {
+      setPageTitle(weekMaterialSData.title);
+      setPageSubtitle(weekMaterialSData.subtitle);
+      setPageDescription(weekMaterialSData.description);
+      setPageCurrentWeek(weekMaterialSData.currentWeek);
+      setVideos(weekMaterialSData.videos);
+      setDocuments(weekMaterialSData.documents);
+      setImages(weekMaterialSData.images);
+      setAudios(weekMaterialSData.audios);
     }
-  }, [fromTemplatePage, studyData]);
+  }, [fromTemplatePage, weekMaterialSData]);
 
   const handleSavePage = async () => {
     const hasError = !pageTitle || !pageSubtitle || !pageDescription;
@@ -127,8 +129,8 @@ export default function WeekMaterialPageCreator({
     if (hasError) {
       setSnackbar({
         open: true,
-        message: "Preencha todos os campos obrigatórios.",
-        severity: "error",
+        message: 'Preencha todos os campos obrigatórios.',
+        severity: 'error',
       });
       return;
     }
@@ -138,10 +140,10 @@ export default function WeekMaterialPageCreator({
     try {
       const formData = new FormData();
 
-      const processedVideos = videos.map((v, i) => buildFileItem(v, i, "video", formData));
-      const processedDocs = documents.map((d, i) => buildFileItem(d, i, "document", formData));
-      const processedImgs = images.map((i, n) => buildFileItem(i, n, "image", formData));
-      const processedAudios = audios.map((a, x) => buildFileItem(a, x, "audio", formData));
+      const processedVideos = videos.map((v, i) => buildFileItem(v, i, 'video', formData));
+      const processedDocs = documents.map((d, i) => buildFileItem(d, i, 'document', formData));
+      const processedImgs = images.map((i, n) => buildFileItem(i, n, 'image', formData));
+      const processedAudios = audios.map((a, x) => buildFileItem(a, x, 'audio', formData));
 
       const mapItem = (item: MediaItem & { fileField?: string }, type: MediaType) => ({
         ...(item.id && { id: item.id }),
@@ -150,57 +152,59 @@ export default function WeekMaterialPageCreator({
         mediaType: type,
         uploadType: item.uploadType,
         isLocalFile: item.uploadType === MediaUploadType.UPLOAD,
+        url: item.url,
         platformType:
-          item.uploadType === MediaUploadType.UPLOAD ? null : item.platformType ?? null,
+          item.uploadType === MediaUploadType.UPLOAD ? null : (item.platformType ?? null),
         ...(item.uploadType === MediaUploadType.LINK && item.url && { url: item.url }),
-        ...(item.uploadType === MediaUploadType.UPLOAD && item.fileField && {
+        ...(item.uploadType === MediaUploadType.UPLOAD &&
+          item.fileField && {
           fieldKey: item.fileField,
         }),
-        ...(item.uploadType === MediaUploadType.UPLOAD && item.size && {
+        ...(item.uploadType === MediaUploadType.UPLOAD &&
+          item.size && {
           size: item.size,
         }),
       });
-      
-      
 
       const payload = {
-        ...(fromTemplatePage ? {} : { id: studyData?.id }),
+        ...(fromTemplatePage ? {} : { id: weekMaterialSData?.id }),
         pageTitle,
         pageSubtitle,
         pageDescription,
+        currentWeek: pageCurrentWeek,
         videos: processedVideos.map((v) => mapItem(v, MediaType.VIDEO)),
         documents: processedDocs.map((d) => mapItem(d, MediaType.DOCUMENT)),
         images: processedImgs.map((i) => mapItem(i, MediaType.IMAGE)),
         audios: processedAudios.map((a) => mapItem(a, MediaType.AUDIO)),
       };
 
-      formData.append("weekMaterialsPageData", JSON.stringify(payload));
+      formData.append('weekMaterialsPageData', JSON.stringify(payload));
 
       const res = fromTemplatePage
-        ? await api.post("/week-material-pages", formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-          })
-        : await api.patch(`/week-material-pages/${studyData?.id}`, formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-          });
+        ? await api.post('/week-material-pages', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        })
+        : await api.patch(`/week-material-pages/${weekMaterialSData?.id}`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
 
-      if (!res?.data) throw new Error("Erro ao salvar");
+      if (!res?.data) throw new Error('Erro ao salvar');
 
       await dispatch(fetchRoutes());
 
       setSnackbar({
         open: true,
-        message: "Página salva com sucesso!",
-        severity: "success",
+        message: 'Página salva com sucesso!',
+        severity: 'success',
       });
 
       navigate(`/${res.data.route.path}`);
     } catch (err) {
-      console.error("Erro ao salvar:", err);
+      console.error('Erro ao salvar:', err);
       setSnackbar({
         open: true,
-        message: "Erro ao salvar a página.",
-        severity: "error",
+        message: 'Erro ao salvar a página.',
+        severity: 'error',
       });
     } finally {
       setLoading(false);
@@ -208,19 +212,35 @@ export default function WeekMaterialPageCreator({
   };
 
   return (
-    <Box sx={{ p: 0, m: 0, mt: fromTemplatePage ? 0 : 10, width: "98%", maxWidth: 1000, mx: "auto" }}>
-      <Typography variant="h3" mb={3} fontWeight="bold" textAlign="center" sx={{ mt: { xs: 0, md: 0 }, mb: { xs: 1, md: 3 }, fontSize: { xs: "1.5rem", md: "2rem" } }}>
-        {fromTemplatePage ? "Adicionar Semana" : "Editar Semana"}
+    <Box
+      sx={{
+        px: { xs: 0, md: 4 },
+        py: { xs: 0, md: 5 },
+        mt: { xs: 0, md: 5 },
+        mb: { xs: 0, md: 0 },
+        width: '98%',
+        mx: 'auto',
+      }}
+    >
+
+      <Typography
+        variant="h3"
+        mb={3}
+        fontWeight="bold"
+        textAlign="center"
+        sx={{ mt: { xs: 0, md: 0 }, mb: { xs: 1, md: 3 }, fontSize: { xs: '1.5rem', md: '2rem' } }}
+      >
+        {fromTemplatePage ? 'Adicionar Semana' : 'Editar Semana'}
       </Typography>
 
-      <Box sx={{ maxWidth: 800, mx: "auto", mb: 4 }}>
+      <Box sx={{ mb: 4 }}>
         <TextField
           label="Semana"
           fullWidth
           value={pageTitle}
           onChange={(e) => setPageTitle(e.target.value)}
           error={errors.title}
-          helperText={errors.title ? "Campo obrigatório" : ""}
+          helperText={errors.title ? 'Campo obrigatório' : ''}
           sx={{ mb: 2 }}
         />
         <TextField
@@ -229,7 +249,7 @@ export default function WeekMaterialPageCreator({
           value={pageSubtitle}
           onChange={(e) => setPageSubtitle(e.target.value)}
           error={errors.subtitle}
-          helperText={errors.subtitle ? "Campo obrigatório" : ""}
+          helperText={errors.subtitle ? 'Campo obrigatório' : ''}
           sx={{ mb: 2 }}
         />
         <TextField
@@ -240,19 +260,35 @@ export default function WeekMaterialPageCreator({
           value={pageDescription}
           onChange={(e) => setPageDescription(e.target.value)}
           error={errors.description}
-          helperText={errors.description ? "Campo obrigatório" : ""}
+          helperText={errors.description ? 'Campo obrigatório' : ''}
         />
       </Box>
       <Typography variant="h5" mb={3} fontWeight="bold" textAlign="center">
-        {fromTemplatePage ? "Materiais da Semana" : "Materiais da Semana"}
+        {fromTemplatePage ? 'Materiais da Semana' : 'Materiais da Semana'}
       </Typography>
 
-      <Tabs value={tab} onChange={(_, val) => setTab(val)} centered>
+      <Tabs
+        value={tab}
+        onChange={(_, val) => setTab(val)}
+        centered
+        sx={{
+          minHeight: { xs: 32, md: 48 },
+          mb: { xs: 1, md: 2 },
+          px: { xs: 0, md: 2 },
+          '& .MuiTab-root': {
+            minHeight: { xs: 32, md: 60 },
+            minWidth: { xs: 60, md: 200 },
+            px: { xs: 1, md: 2 },
+            fontSize: { xs: '0.7rem', md: '0.875rem' },
+          },
+        }}
+      >
         <Tab label="Vídeos" />
         <Tab label="Doc" />
         <Tab label="Img" />
         <Tab label="Áudio" />
       </Tabs>
+
       <Divider sx={{ my: 3 }} />
 
       {tab === 0 && <WeekVideos videos={videos} setVideos={setVideos} />}
@@ -268,7 +304,7 @@ export default function WeekMaterialPageCreator({
           disabled={loading}
           startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
         >
-          {loading ? "Salvando..." : "Salvar Página"}
+          {loading ? 'Salvando...' : 'Salvar Página'}
         </Button>
       </Box>
 
@@ -276,7 +312,7 @@ export default function WeekMaterialPageCreator({
         open={snackbar.open}
         autoHideDuration={4000}
         onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
         <Alert severity={snackbar.severity} variant="filled">
           {snackbar.message}

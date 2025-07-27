@@ -1,28 +1,21 @@
-import { useEffect, useState } from "react";
-import {
-  Box,
-  Typography,
-  Grid,
-  CircularProgress,
-  Alert,
-  TextField,
-} from "@mui/material";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import api from "../../../config/axiosConfig";
-import { AppDispatch } from "../../../store/slices";
-import { setVideoData, VideoPageData } from "store/slices/video/videoSlice";
-import VideoPageDetailsModal from "./VideoPageDetailsModal";
-import DeleteConfirmDialog from "./DeleteConfirmDialog";
-import VideoPageCard from "./VideoPageCard";
+import { useEffect, useState } from 'react';
+import { Box, Typography, Grid, CircularProgress, Alert, TextField } from '@mui/material';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import api from '@/config/axiosConfig';
+import { AppDispatch } from '@/store/slices';
+import { setVideoData, VideoPageData } from 'store/slices/video/videoSlice';
+import VideoPageDetailsModal from './VideoPageDetailsModal';
+import DeleteConfirmDialog from './DeleteConfirmDialog';
+import VideoPageCard from './VideoPageCard';
 
 export default function VideoPageListPage() {
   const [videoPages, setVideoPages] = useState<VideoPageData[]>([]);
   const [filteredPages, setFilteredPages] = useState<VideoPageData[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [isFiltering, setIsFiltering] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [selectedPage, setSelectedPage] = useState<VideoPageData | null>(null);
   const [pageToDelete, setPageToDelete] = useState<VideoPageData | null>(null);
 
@@ -36,11 +29,11 @@ export default function VideoPageListPage() {
   const fetchPages = async () => {
     setLoading(true);
     try {
-      const response = await api.get("/video-pages");
+      const response = await api.get('/video-pages');
       setVideoPages(response.data);
       setFilteredPages(response.data);
     } catch {
-      setError("Erro ao buscar páginas de vídeos");
+      setError('Erro ao buscar páginas de vídeos');
     } finally {
       setLoading(false);
     }
@@ -50,9 +43,7 @@ export default function VideoPageListPage() {
     setIsFiltering(true);
     const timer = setTimeout(() => {
       const term = searchTerm.toLowerCase();
-      const filtered = videoPages.filter((page) =>
-        page.title?.toLowerCase().includes(term)
-      );
+      const filtered = videoPages.filter((page) => page.title?.toLowerCase().includes(term));
       setFilteredPages(filtered);
       setIsFiltering(false);
     }, 300);
@@ -61,7 +52,7 @@ export default function VideoPageListPage() {
 
   const handleEdit = (page: VideoPageData) => {
     dispatch(setVideoData(page));
-    navigate("/adm/editar-pagina-videos");
+    navigate('/adm/editar-pagina-videos');
   };
 
   const handleDelete = async () => {
@@ -72,14 +63,14 @@ export default function VideoPageListPage() {
       await api.delete(`/video-pages/${pageToDelete.id}`);
       await fetchPages();
     } catch {
-      setError("Erro ao deletar página");
+      setError('Erro ao deletar página');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Box sx={{ px: { xs: 1, md: 3 }, py: 2, mt: 4, bgcolor: "#f5f7fa", minHeight: "100vh" }}>
+    <Box sx={{ px: { xs: 1, md: 3 }, py: 2, mt: 4, bgcolor: '#f5f7fa', minHeight: '100vh' }}>
       <Typography variant="h4" fontWeight="bold" textAlign="center" mb={4}>
         Páginas de Vídeos
       </Typography>
@@ -94,11 +85,17 @@ export default function VideoPageListPage() {
       </Box>
 
       {loading || isFiltering ? (
-        <Box textAlign="center" mt={10}><CircularProgress /></Box>
+        <Box textAlign="center" mt={10}>
+          <CircularProgress />
+        </Box>
       ) : error ? (
-        <Box textAlign="center" mt={10}><Alert severity="error">{error}</Alert></Box>
+        <Box textAlign="center" mt={10}>
+          <Alert severity="error">{error}</Alert>
+        </Box>
       ) : filteredPages.length === 0 ? (
-        <Box textAlign="center" mt={10}><Alert severity="info">Nenhuma página encontrada.</Alert></Box>
+        <Box textAlign="center" mt={10}>
+          <Alert severity="info">Nenhuma página encontrada.</Alert>
+        </Box>
       ) : (
         <Grid container spacing={4} justifyContent="center">
           {filteredPages.map((page) => (

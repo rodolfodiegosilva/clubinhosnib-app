@@ -1,5 +1,5 @@
-import { Button } from "@mui/material";
-import DownloadIcon from "@mui/icons-material/Download";
+import { Button } from '@mui/material';
+import DownloadIcon from '@mui/icons-material/Download';
 
 interface DownloadButtonProps {
   url: string;
@@ -22,9 +22,9 @@ export default function DownloadButton({ url, filename, disabled }: DownloadButt
       sx={{
         mt: 1,
         borderRadius: 2,
-        textTransform: "none",
-        "&:hover": {
-          bgcolor: "primary.dark",
+        textTransform: 'none',
+        '&:hover': {
+          bgcolor: 'primary.dark',
         },
       }}
     >

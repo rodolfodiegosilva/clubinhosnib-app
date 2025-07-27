@@ -18,32 +18,32 @@ import {
   InputLabel,
   Select,
   SelectChangeEvent,
-} from "@mui/material";
-import { useEffect, useState } from "react";
+} from '@mui/material';
+import { useEffect, useState } from 'react';
 import {
   DayItem,
   WeekDay,
   WeekDayLabel,
-} from "../../../../../store/slices/meditation/meditationSlice";
-import { Eye, Pencil, Trash2 } from "lucide-react";
+} from '@/store/slices/meditation/meditationSlice';
+import { Eye, Pencil, Trash2 } from 'lucide-react';
 
 interface Props {
   days: DayItem[];
   onDaysChange: (value: DayItem[]) => void;
 }
 
-const weekDays: WeekDay[] = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+const weekDays: WeekDay[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
 function isValidWeekDay(day: string): day is WeekDay {
   return weekDays.includes(day as WeekDay);
 }
 
 export default function MeditationForm({ days, onDaysChange }: Props) {
-  const [selectedDay, setSelectedDay] = useState<WeekDay>("Monday");
-  const [verse, setVerse] = useState("");
-  const [topic, setTopic] = useState("");
+  const [selectedDay, setSelectedDay] = useState<WeekDay>('Monday');
+  const [verse, setVerse] = useState('');
+  const [topic, setTopic] = useState('');
   const [editIndex, setEditIndex] = useState<number | null>(null);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [previewDay, setPreviewDay] = useState<DayItem | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
 
@@ -64,7 +64,7 @@ export default function MeditationForm({ days, onDaysChange }: Props) {
 
   const handleSaveDay = () => {
     if (!verse.trim() || !topic.trim()) {
-      setError("Preencha todos os campos do dia.");
+      setError('Preencha todos os campos do dia.');
       return;
     }
 
@@ -81,17 +81,17 @@ export default function MeditationForm({ days, onDaysChange }: Props) {
       onDaysChange(updated);
     } else {
       if (days.find((d) => d.day === selectedDay)) {
-        setError("Esse dia da semana já foi adicionado.");
+        setError('Esse dia da semana já foi adicionado.');
         return;
       }
       onDaysChange([...days, newDay]);
     }
 
-    setSelectedDay("Monday");
-    setVerse("");
-    setTopic("");
+    setSelectedDay('Monday');
+    setVerse('');
+    setTopic('');
     setEditIndex(null);
-    setError("");
+    setError('');
   };
 
   return (
@@ -132,16 +132,20 @@ export default function MeditationForm({ days, onDaysChange }: Props) {
 
           <Box display="flex" gap={1}>
             <Button variant="contained" onClick={handleSaveDay}>
-              {editIndex !== null ? "Atualizar Dia" : "Adicionar Dia"}
+              {editIndex !== null ? 'Atualizar Dia' : 'Adicionar Dia'}
             </Button>
             {editIndex !== null && (
-              <Button variant="outlined" color="secondary" onClick={() => {
-                setEditIndex(null);
-                setVerse("");
-                setTopic("");
-                setSelectedDay("Monday");
-                setError("");
-              }}>
+              <Button
+                variant="outlined"
+                color="secondary"
+                onClick={() => {
+                  setEditIndex(null);
+                  setVerse('');
+                  setTopic('');
+                  setSelectedDay('Monday');
+                  setError('');
+                }}
+              >
                 Cancelar Edição
               </Button>
             )}
@@ -158,13 +162,13 @@ export default function MeditationForm({ days, onDaysChange }: Props) {
           <Grid item xs={12} sm={6} md={4} key={index}>
             <Box
               sx={{
-                border: "1px solid #ccc",
+                border: '1px solid #ccc',
                 borderRadius: 2,
                 p: 2,
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
               }}
             >
               <Box>
@@ -201,7 +205,11 @@ export default function MeditationForm({ days, onDaysChange }: Props) {
       {/* Modal Preview */}
       <Dialog open={!!previewDay} onClose={() => setPreviewDay(null)} fullWidth maxWidth="sm">
         <DialogTitle>
-          {previewDay ? (isValidWeekDay(previewDay.day) ? WeekDayLabel[previewDay.day] : previewDay.day) : ""}
+          {previewDay
+            ? isValidWeekDay(previewDay.day)
+              ? WeekDayLabel[previewDay.day]
+              : previewDay.day
+            : ''}
         </DialogTitle>
         <DialogContent dividers>
           <Typography variant="subtitle1" gutterBottom>
@@ -217,17 +225,22 @@ export default function MeditationForm({ days, onDaysChange }: Props) {
       </Dialog>
 
       {/* Modal Delete */}
-      <Dialog open={deleteConfirm !== null} onClose={() => setDeleteConfirm(null)} fullWidth maxWidth="xs">
+      <Dialog
+        open={deleteConfirm !== null}
+        onClose={() => setDeleteConfirm(null)}
+        fullWidth
+        maxWidth="xs"
+      >
         <DialogTitle>Confirmar Remoção</DialogTitle>
         <DialogContent dividers>
           <Typography>
-            Deseja remover o dia{" "}
+            Deseja remover o dia{' '}
             <strong>
               {deleteConfirm !== null
                 ? isValidWeekDay(days[deleteConfirm].day)
                   ? WeekDayLabel[days[deleteConfirm].day as WeekDay]
                   : days[deleteConfirm].day
-                : ""}
+                : ''}
             </strong>
             ?
           </Typography>

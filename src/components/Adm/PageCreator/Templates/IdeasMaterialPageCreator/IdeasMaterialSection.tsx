@@ -1,11 +1,10 @@
-// components/IdeasMaterialSection.tsx
-import { useState, useEffect } from "react";
-import { Box, TextField, Typography, Tabs, Tab } from "@mui/material";
-import { IdeasSection } from "store/slices/ideas/ideasSlice";
-import { IdeasMaterialDocuments } from "./IdeasMaterialDocuments";
-import { IdeasMaterialImages } from "./IdeasMaterialImages";
-import { IdeasMaterialVideos } from "./IdeasMaterialVideos";
-import { MediaItem, MediaType } from "store/slices/types";
+import { useState } from 'react';
+import { Box, TextField, Typography, Tabs, Tab } from '@mui/material';
+import { IdeasSection } from 'store/slices/ideas/ideasSlice';
+import { IdeasMaterialDocuments } from './IdeasMaterialDocuments';
+import { IdeasMaterialImages } from './IdeasMaterialImages';
+import { IdeasMaterialVideos } from './IdeasMaterialVideos';
+import { MediaItem, MediaType } from 'store/slices/types';
 
 interface IdeasMaterialSectionProps {
   section: IdeasSection;
@@ -13,14 +12,27 @@ interface IdeasMaterialSectionProps {
 }
 
 export function IdeasMaterialSection({ section, onUpdate }: IdeasMaterialSectionProps) {
-  const [title, setTitle] = useState(section.title || "");
-  const [description, setDescription] = useState(section.description || "");
+  const [title, setTitle] = useState(section.title || '');
+  const [description, setDescription] = useState(section.description || '');
   const [medias, setMedias] = useState<MediaItem[]>(section.medias || []);
   const [tabIndex, setTabIndex] = useState(0);
 
-  useEffect(() => {
-    onUpdate({ ...section, title, description, medias });
-  }, [title, description, medias]);
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newTitle = e.target.value;
+    setTitle(newTitle);
+    onUpdate({ ...section, title: newTitle, description, medias });
+  };
+
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newDescription = e.target.value;
+    setDescription(newDescription);
+    onUpdate({ ...section, title, description: newDescription, medias });
+  };
+
+  const handleMediasChange = (newMedias: MediaItem[]) => {
+    setMedias(newMedias);
+    onUpdate({ ...section, title, description, medias: newMedias });
+  };
 
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);
@@ -36,7 +48,7 @@ export function IdeasMaterialSection({ section, onUpdate }: IdeasMaterialSection
         label="Título da Seção"
         fullWidth
         value={title}
-        onChange={(e) => setTitle(e.target.value)}
+        onChange={handleTitleChange}
         sx={{ mb: 2 }}
       />
       <TextField
@@ -45,7 +57,7 @@ export function IdeasMaterialSection({ section, onUpdate }: IdeasMaterialSection
         multiline
         rows={3}
         value={description}
-        onChange={(e) => setDescription(e.target.value)}
+        onChange={handleDescriptionChange}
         sx={{ mb: 3 }}
       />
 
@@ -64,7 +76,7 @@ export function IdeasMaterialSection({ section, onUpdate }: IdeasMaterialSection
           documents={documents}
           setDocuments={(docs) => {
             const otherMedias = medias.filter((i) => i.mediaType !== MediaType.DOCUMENT);
-            setMedias([...otherMedias, ...docs]);
+            handleMediasChange([...otherMedias, ...docs]);
           }}
         />
       )}
@@ -73,7 +85,7 @@ export function IdeasMaterialSection({ section, onUpdate }: IdeasMaterialSection
           images={images}
           setImages={(imgs) => {
             const otherMedias = medias.filter((i) => i.mediaType !== MediaType.IMAGE);
-            setMedias([...otherMedias, ...imgs]);
+            handleMediasChange([...otherMedias, ...imgs]);
           }}
         />
       )}
@@ -82,7 +94,7 @@ export function IdeasMaterialSection({ section, onUpdate }: IdeasMaterialSection
           videos={videos}
           setVideos={(vids) => {
             const otherMedias = medias.filter((i) => i.mediaType !== MediaType.VIDEO);
-            setMedias([...otherMedias, ...vids]);
+            handleMediasChange([...otherMedias, ...vids]);
           }}
         />
       )}

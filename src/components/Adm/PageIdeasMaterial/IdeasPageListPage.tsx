@@ -1,23 +1,15 @@
-import { useEffect, useState } from "react";
-import {
-  Box,
-  Typography,
-  Grid,
-  CircularProgress,
-  Alert,
-  TextField,
-  Button,
-} from "@mui/material";
-import api from "../../../config/axiosConfig";
-import { IdeasPageData } from "store/slices/ideas/ideasSlice";
-import IdeasPageCard from "./IdeasPageCard";
-import IdeasPageDetailsModal from "./IdeasPageDetailsModal";
-import DeleteConfirmDialog from "common/modal/DeleteConfirmDialog";
+import { useEffect, useState } from 'react';
+import { Box, Typography, Grid, CircularProgress, Alert, TextField, Button } from '@mui/material';
+import api from '@/config/axiosConfig';
+import { IdeasPageData } from 'store/slices/ideas/ideasSlice';
+import IdeasPageCard from './IdeasPageCard';
+import IdeasPageDetailsModal from './IdeasPageDetailsModal';
+import DeleteConfirmDialog from 'common/modal/DeleteConfirmDialog';
 
 export default function IdeasPageListPage() {
   const [ideasPages, setIdeasPages] = useState<IdeasPageData[]>([]);
   const [filteredPages, setFilteredPages] = useState<IdeasPageData[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [isFiltering, setIsFiltering] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -32,14 +24,14 @@ export default function IdeasPageListPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await api.get<IdeasPageData[]>("/ideas-pages");
+      const res = await api.get<IdeasPageData[]>('/ideas-pages');
       setIdeasPages(res.data);
       setFilteredPages(res.data);
     } catch (err) {
       setError(
         err instanceof Error
           ? `Erro ao buscar páginas: ${err.message}. Tente novamente mais tarde.`
-          : "Erro desconhecido ao buscar páginas."
+          : 'Erro desconhecido ao buscar páginas.'
       );
     } finally {
       setLoading(false);
@@ -50,9 +42,7 @@ export default function IdeasPageListPage() {
     setIsFiltering(true);
     const timer = setTimeout(() => {
       const term = searchTerm.toLowerCase();
-      setFilteredPages(
-        ideasPages.filter((p) => p.title.toLowerCase().includes(term))
-      );
+      setFilteredPages(ideasPages.filter((p) => p.title.toLowerCase().includes(term)));
       setIsFiltering(false);
     }, 300);
     return () => clearTimeout(timer);
@@ -65,14 +55,14 @@ export default function IdeasPageListPage() {
       await fetchIdeasPages();
       setError(null);
     } catch {
-      setError("Erro ao excluir a página. Tente novamente.");
+      setError('Erro ao excluir a página. Tente novamente.');
     } finally {
       setPageToDelete(null);
     }
   };
 
   return (
-    <Box sx={{ px: { xs: 1, md: 3 }, py: 2, bgcolor: "#f5f7fa", minHeight: "100vh" }}>
+    <Box sx={{ px: { xs: 1, md: 3 }, py: 2, bgcolor: '#f5f7fa', minHeight: '100vh' }}>
       <Typography
         variant="h4"
         textAlign="center"
@@ -90,12 +80,12 @@ export default function IdeasPageListPage() {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           aria-label="Campo de busca por título"
-          inputProps={{ "aria-label": "Buscar por título" }}
+          inputProps={{ 'aria-label': 'Buscar por título' }}
         />
         {isFiltering && (
           <CircularProgress
             size={24}
-            sx={{ position: "absolute", right: 10, top: 10 }}
+            sx={{ position: 'absolute', right: 10, top: 10 }}
             aria-label="Filtrando páginas"
           />
         )}

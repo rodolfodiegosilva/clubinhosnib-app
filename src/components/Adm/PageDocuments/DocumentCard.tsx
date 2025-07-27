@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  Paper,
-  Box,
-  Typography,
-  IconButton,
-  Stack,
-  Tooltip,
-} from '@mui/material';
+import { Paper, Box, Typography, IconButton, Stack, Tooltip } from '@mui/material';
 import { Eye, Pencil, Trash2, Info } from 'lucide-react';
 
 export interface DocumentCardProps {

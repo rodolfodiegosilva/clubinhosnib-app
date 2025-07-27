@@ -1,15 +1,16 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import apiAxios from "../../../config/axiosConfig";
+import apiAxios from '@/config/axiosConfig';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 export enum Type {
-  Page = "page",
-  Doc = "doc",
+  Page = 'page',
+  Doc = 'doc',
 }
 
 export interface RouteData {
   id: string;
   title: string;
-  public: boolean;
+  public: boolean;  
+  current: boolean;
   subtitle: string;
   path: string;
   idToFetch: string;
@@ -34,16 +35,13 @@ const initialState: RouteState = {
   error: null,
 };
 
-export const fetchRoutes = createAsyncThunk<RouteData[]>(
-  "routes/fetchRoutes",
-  async () => {
-    const response = await apiAxios.get<RouteData[]>("/routes");
-    return response.data;
-  }
-);
+export const fetchRoutes = createAsyncThunk<RouteData[]>('routes/fetchRoutes', async () => {
+  const response = await apiAxios.get<RouteData[]>('/routes');
+  return response.data;
+});
 
 const routeSlice = createSlice({
-  name: "routes",
+  name: 'routes',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -58,7 +56,7 @@ const routeSlice = createSlice({
       })
       .addCase(fetchRoutes.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Erro ao buscar rotas.";
+        state.error = action.error.message || 'Erro ao buscar rotas.';
       });
   },
 });

@@ -1,10 +1,10 @@
 import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Stack } from '@mui/material';
-import { RootState } from '../../store/slices';
-import { logout } from '../../store/slices/auth/authSlice';
-import api from '../../config/axiosConfig';
+import { RootState } from '@/store/slices';
+import { logout } from '@/store/slices/auth/authSlice';
+import api from '@/config/axiosConfig';
 
 interface Props {
   closeMenu?: () => void;
@@ -12,7 +12,6 @@ interface Props {
 }
 
 const NavLinks: React.FC<Props> = ({ closeMenu, isMobile }) => {
-  const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 

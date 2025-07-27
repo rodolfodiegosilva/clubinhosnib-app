@@ -1,6 +1,6 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RouteData } from "../route/routeSlice";
-import { MediaItem } from "../types";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RouteData } from '@/store/slices/route/routeSlice';
+import { MediaItem } from '@/store/slices/types';
 
 export interface IdeasSection {
   id?: string;
@@ -16,7 +16,7 @@ export interface IdeasPageData {
   id?: string;
   public?: boolean;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   description: string;
   createdAt?: string;
   updatedAt?: string;
@@ -33,7 +33,7 @@ const initialState: IdeasState = {
 };
 
 const ideasSlice = createSlice({
-  name: "ideas",
+  name: 'ideas',
   initialState,
   reducers: {
     setIdeasData: (state, action: PayloadAction<IdeasPageData>) => {

@@ -1,4 +1,4 @@
-import { MediaPlatform, MediaUploadType, MediaItem, MediaType } from "store/slices/types";
+import { MediaPlatform, MediaUploadType, MediaItem, MediaType } from 'store/slices/types';
 
 export const getGoogleDriveThumbnailUrl = (url: string): string | null => {
   const match = url.match(/\/d\/(.*?)\//);
@@ -26,10 +26,10 @@ export const getMediaPreviewUrl = (media: MediaItem): string => {
         return previewUrl || media.url;
 
       case MediaPlatform.DROPBOX:
-        return media.url.replace("www.dropbox.com", "dl.dropboxusercontent.com");
+        return media.url.replace('www.dropbox.com', 'dl.dropboxusercontent.com');
 
       case MediaPlatform.ONEDRIVE:
-        return media.url.replace("redir?", "embed?");
+        return media.url.replace('redir?', 'embed?');
 
       case MediaPlatform.ANY:
       default:

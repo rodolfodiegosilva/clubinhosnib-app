@@ -1,5 +1,4 @@
-// components/IdeasMaterialDocuments.tsx
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Box,
   TextField,
@@ -17,10 +16,10 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-} from "@mui/material";
-import { Delete, Edit, Visibility } from "@mui/icons-material";
-import { validateMediaURL } from "utils/validateMediaURL";
-import { MediaItem, MediaPlatform, MediaType, MediaUploadType } from "store/slices/types";
+} from '@mui/material';
+import { Delete, Edit, Visibility } from '@mui/icons-material';
+import { validateMediaURL } from 'utils/validateMediaURL';
+import { MediaItem, MediaPlatform, MediaType, MediaUploadType } from 'store/slices/types';
 
 interface DocumentsProps {
   documents: MediaItem[];
@@ -29,14 +28,14 @@ interface DocumentsProps {
 
 export function IdeasMaterialDocuments({ documents, setDocuments }: DocumentsProps) {
   const [tempDoc, setTempDoc] = useState<MediaItem>({
-    title: "",
-    description: "",
+    title: '',
+    description: '',
     mediaType: MediaType.DOCUMENT,
     uploadType: MediaUploadType.LINK,
-    url: "",
+    url: '',
     platformType: MediaPlatform.GOOGLE_DRIVE,
   });
-  const [fileName, setFileName] = useState("");
+  const [fileName, setFileName] = useState('');
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [errors, setErrors] = useState({ title: false, description: false, url: false });
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -52,35 +51,40 @@ export function IdeasMaterialDocuments({ documents, setDocuments }: DocumentsPro
 
   const resetForm = () => {
     setTempDoc({
-      title: "",
-      description: "",
+      title: '',
+      description: '',
       mediaType: MediaType.DOCUMENT,
       uploadType: MediaUploadType.LINK,
-      url: "",
+      url: '',
       platformType: MediaPlatform.GOOGLE_DRIVE,
     });
-    setFileName("");
+    setFileName('');
     setEditingIndex(null);
     setErrors({ title: false, description: false, url: false });
   };
 
   const handleAddOrUpdate = () => {
     const isValid =
-      tempDoc.uploadType === "upload" || validateMediaURL(tempDoc.url, tempDoc.platformType);
+      tempDoc.uploadType === MediaUploadType.UPLOAD ||
+      validateMediaURL(tempDoc.url, tempDoc.platformType);
     const hasError =
-      !tempDoc.title || !tempDoc.description || !tempDoc.url || (tempDoc.uploadType === "link" && !isValid);
+      !tempDoc.title ||
+      !tempDoc.description ||
+      !tempDoc.url ||
+      (tempDoc.uploadType === MediaUploadType.LINK && !isValid);
 
     setErrors({
       title: !tempDoc.title,
       description: !tempDoc.description,
-      url: !tempDoc.url || (tempDoc.uploadType === "link" && !isValid),
+      url: !tempDoc.url || (tempDoc.uploadType === MediaUploadType.LINK && !isValid),
     });
 
     if (hasError) return;
 
-    const updated = editingIndex !== null
-      ? documents.map((doc, i) => (i === editingIndex ? tempDoc : doc))
-      : [...documents, tempDoc];
+    const updated =
+      editingIndex !== null
+        ? documents.map((doc, i) => (i === editingIndex ? tempDoc : doc))
+        : [...documents, tempDoc];
 
     setDocuments(updated);
     resetForm();
@@ -88,7 +92,7 @@ export function IdeasMaterialDocuments({ documents, setDocuments }: DocumentsPro
 
   const handleEdit = (index: number) => {
     setTempDoc(documents[index]);
-    setFileName(documents[index].file?.name || "");
+    setFileName(documents[index].file?.name || '');
     setEditingIndex(index);
   };
 
@@ -115,7 +119,7 @@ export function IdeasMaterialDocuments({ documents, setDocuments }: DocumentsPro
             value={tempDoc.title}
             onChange={(e) => setTempDoc({ ...tempDoc, title: e.target.value })}
             error={errors.title}
-            helperText={errors.title ? "Campo obrigatório" : ""}
+            helperText={errors.title ? 'Campo obrigatório' : ''}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -125,7 +129,7 @@ export function IdeasMaterialDocuments({ documents, setDocuments }: DocumentsPro
             value={tempDoc.description}
             onChange={(e) => setTempDoc({ ...tempDoc, description: e.target.value })}
             error={errors.description}
-            helperText={errors.description ? "Campo obrigatório" : ""}
+            helperText={errors.description ? 'Campo obrigatório' : ''}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -138,8 +142,11 @@ export function IdeasMaterialDocuments({ documents, setDocuments }: DocumentsPro
                 setTempDoc({
                   ...tempDoc,
                   uploadType: e.target.value as MediaUploadType.LINK | MediaUploadType.UPLOAD,
-                  platformType: e.target.value === MediaUploadType.LINK ? MediaPlatform.GOOGLE_DRIVE : undefined,
-                  url: "",
+                  platformType:
+                    e.target.value === MediaUploadType.LINK
+                      ? MediaPlatform.GOOGLE_DRIVE
+                      : undefined,
+                  url: '',
                   file: undefined,
                 })
               }
@@ -149,16 +156,19 @@ export function IdeasMaterialDocuments({ documents, setDocuments }: DocumentsPro
             </Select>
           </FormControl>
         </Grid>
-        {tempDoc.uploadType === "link" && (
+        {tempDoc.uploadType === MediaUploadType.LINK && (
           <>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <InputLabel>Plataforma</InputLabel>
                 <Select
-                  value={tempDoc.platformType || ""}
+                  value={tempDoc.platformType || ''}
                   label="Plataforma"
                   onChange={(e) =>
-                    setTempDoc({ ...tempDoc, platformType: e.target.value as MediaItem["platformType"] })
+                    setTempDoc({
+                      ...tempDoc,
+                      platformType: e.target.value as MediaItem['platformType'],
+                    })
                   }
                 >
                   <MenuItem value="googledrive">Google Drive</MenuItem>
@@ -174,12 +184,12 @@ export function IdeasMaterialDocuments({ documents, setDocuments }: DocumentsPro
                 value={tempDoc.url}
                 onChange={(e) => setTempDoc({ ...tempDoc, url: e.target.value })}
                 error={errors.url}
-                helperText={errors.url ? "URL inválida ou obrigatória" : ""}
+                helperText={errors.url ? 'URL inválida ou obrigatória' : ''}
               />
             </Grid>
           </>
         )}
-        {tempDoc.uploadType === "upload" && (
+        {tempDoc.uploadType === MediaUploadType.UPLOAD && (
           <Grid item xs={12}>
             <Button variant="outlined" component="label">
               Upload de Documento
@@ -193,13 +203,8 @@ export function IdeasMaterialDocuments({ documents, setDocuments }: DocumentsPro
           </Grid>
         )}
         <Grid item xs={12}>
-          <Button
-            variant="contained"
-            fullWidth
-            onClick={handleAddOrUpdate}
-            sx={{ mt: 2 }}
-          >
-            {editingIndex !== null ? "Salvar Alterações" : "Adicionar Documento"}
+          <Button variant="contained" fullWidth onClick={handleAddOrUpdate} sx={{ mt: 2 }}>
+            {editingIndex !== null ? 'Salvar Alterações' : 'Adicionar Documento'}
           </Button>
         </Grid>
       </Grid>
@@ -207,13 +212,13 @@ export function IdeasMaterialDocuments({ documents, setDocuments }: DocumentsPro
       <Grid container spacing={2} sx={{ mt: 3 }}>
         {documents.map((doc, index) => (
           <Grid item xs={12} sm={6} key={index}>
-            <Box sx={{ p: 2, border: "1px solid #ddd", borderRadius: 2 }}>
+            <Box sx={{ p: 2, border: '1px solid #ddd', borderRadius: 2 }}>
               <Typography fontWeight="bold">{doc.title}</Typography>
               <Typography variant="body2">{doc.description}</Typography>
-              <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
-                {doc.uploadType === "upload" && (
+              <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
+                {doc.uploadType === MediaUploadType.UPLOAD && (
                   <Tooltip title="Visualizar">
-                    <IconButton onClick={() => window.open(doc.url, "_blank")}>
+                    <IconButton onClick={() => window.open(doc.url, '_blank')}>
                       <Visibility />
                     </IconButton>
                   </Tooltip>

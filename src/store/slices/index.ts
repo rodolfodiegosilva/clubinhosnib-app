@@ -3,6 +3,7 @@ import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 import imageReducer from './image/imageSlice';
+import imageSectionReducer from './image-section/imageSectionSlice';
 import authReducer from './auth/authSlice';
 import routesReducer from './route/routeSlice';
 import videoReducer from './video/videoSlice';
@@ -12,6 +13,9 @@ import eventsReducer from './events/eventsSlice';
 import commentsReducer from './comment/commentsSlice';
 import documentReducer from './documents/documentSlice';
 import ideasReducer from './ideas/ideasSlice';
+import informativeBannerReducer from './informative/informativeBannerSlice';
+import imageSectionPaginationReducer from './image-section-pagination/imageSectionPaginationSlice';
+import feedbackReducer from './feedback/feedbackSlice';
 
 const authPersistConfig = {
   key: 'auth',
@@ -22,6 +26,7 @@ const authPersistConfig = {
 const rootReducer = combineReducers({
   auth: persistReducer(authPersistConfig, authReducer),
   image: imageReducer,
+  imageSection: imageSectionReducer,
   routes: routesReducer,
   video: videoReducer,
   meditation: meditationReducer,
@@ -30,12 +35,14 @@ const rootReducer = combineReducers({
   comments: commentsReducer,
   document: documentReducer,
   ideas: ideasReducer,
+  informativeBanner: informativeBannerReducer,
+  imageSectionPagination: imageSectionPaginationReducer,
+  feedback: feedbackReducer,
 });
 
 export const store = configureStore({
   reducer: rootReducer,
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({ serializableCheck: false }),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }),
 });
 
 export const persistor = persistStore(store);

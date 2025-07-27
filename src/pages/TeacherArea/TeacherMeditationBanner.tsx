@@ -1,92 +1,97 @@
-import React, { useState } from "react";
+import { useState } from 'react';
 import {
   Box,
   Typography,
   Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   useMediaQuery,
   useTheme,
-} from "@mui/material";
+  CircularProgress,
+} from '@mui/material';
+import MediaDocumentPreviewModal from 'utils/MediaDocumentPreviewModal';
+import { AppDispatch, RootState } from 'store/slices';
+import { useDispatch, useSelector } from 'react-redux';
 import {
+  setMeditationData,
   MeditationData,
   WeekDayLabel,
-} from "../../store/slices/meditation/meditationSlice";
-import { sharedBannerStyles } from "./SharedBannerStyles";
-import { MediaItem, MediaUploadType, MediaPlatform } from "store/slices/types";
+} from '@/store/slices/meditation/meditationSlice';
+import api from '@/config/axiosConfig';
 
-interface TeacherMeditationBannerProps {
-  meditation: MeditationData;
-}
+export default function TeacherMeditationBanner() {
+  const dispatch = useDispatch<AppDispatch>();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-export default function TeacherMeditationBanner({ meditation }: TeacherMeditationBannerProps) {
-  const today = new Date();
-  const weekdayName = today.toLocaleDateString("en-US", { weekday: "long" });
-  const todayData = meditation.days.find((d) => d.day === weekdayName);
-
+  const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
 
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const currentMeditation = useSelector(
+    (state: RootState) => state.meditation.meditationData
+  );
 
-  const getPreviewUrl = (media: MediaItem): string => {
-    const originalUrl = media.url || "";
+  const routes = useSelector((state: RootState) => state.routes.routes);
 
-    if (media.uploadType === MediaUploadType.UPLOAD) {
-      return originalUrl;
-    }
+  const today = new Date();
+  const weekdayName = today.toLocaleDateString('en-US', { weekday: 'long' });
 
-    switch (media.platformType) {
-      case MediaPlatform.GOOGLE_DRIVE: {
-        const match = originalUrl.match(/\/d\/([^/]+)\//);
-        if (match?.[1]) {
-          return `https://drive.google.com/file/d/${match[1]}/preview`;
-        }
-        return originalUrl;
+  const meditationDay = routes.find(
+    (route) =>
+      route.entityType === 'MeditationDay' &&
+      route.path.toLowerCase().includes(weekdayName.toLowerCase())
+  );
+
+  if (!meditationDay) return null;
+
+  const handleOpenPreview = async () => {
+    if (!meditationDay) return;
+
+    try {
+      setLoading(true);
+      const response = await api.get(`/meditations/${meditationDay?.idToFetch}`);
+      if (response.data?.meditation) {
+        dispatch(setMeditationData(response.data.meditation as MeditationData));
+        setOpenModal(true);
       }
-
-      case MediaPlatform.ONEDRIVE: {
-        if (originalUrl.includes("onedrive.live.com/embed")) {
-          return originalUrl;
-        }
-        return originalUrl;
-      }
-
-      case MediaPlatform.DROPBOX: {
-        return originalUrl.includes("dropbox.com")
-          ? originalUrl.replace("?dl=0", "?raw=1")
-          : originalUrl;
-      }
-
-      case MediaPlatform.ANY:
-      default:
-        return originalUrl;
+    } catch (error) {
+      console.error('Erro ao buscar meditação da semana:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleOpenPreview = () => {
-    if (!meditation.media?.url) return;
-    setOpenModal(true);
-  };
+  if (loading) {
+    return (
+      <Box sx={{ mt: 20, display: 'flex', justifyContent: 'center' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <>
       <Box
         sx={{
-          ...sharedBannerStyles,
-          background: "linear-gradient(to bottom right, #E60026 0%, #dceeff 100%)",
-          color: "#3e2723",
+          width: '100%',
+          minHeight: { xs: '50vh', sm: '55vh', md: '30vh' },
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          textAlign: 'center',
+          px: 0,
+          py: { xs: 0, md: 0 },
+          boxShadow: 'inset 0 0 80px rgba(0,0,0,0.1)',
+          borderRadius: 2,
+          background: 'linear-gradient(to bottom right, #00796b 0%, #004d40 100%)',
+          color: '#e0f2f1',
         }}
       >
         <Typography
           variant="h4"
           fontWeight="bold"
           sx={{
-            color: "#fff",
-            textShadow: "2px 2px 6px rgba(0,0,0,0.85)",
             mb: 2,
+            textShadow: '2px 2px 6px rgba(0,0,0,0.85)',
           }}
         >
           Já meditou hoje?
@@ -96,95 +101,74 @@ export default function TeacherMeditationBanner({ meditation }: TeacherMeditatio
           variant="h6"
           fontWeight="medium"
           gutterBottom
-          sx={{
-            color: "#fff",
-            textShadow: "2px 2px 6px rgba(0,0,0,0.85)",
-          }}
+          sx={{ textShadow: '2px 2px 6px rgba(0,0,0,0.85)' }}
         >
-          Hoje é{" "}
-          {todayData
-            ? `${WeekDayLabel[todayData.day as keyof typeof WeekDayLabel] || todayData.day}.`
-            : "..."}
+          Hoje é{' '}
+          {meditationDay
+            ? `${WeekDayLabel[meditationDay?.path as keyof typeof WeekDayLabel] || meditationDay?.path}.`
+            : '...'}
         </Typography>
 
-        {todayData ? (
+        {meditationDay ? (
           <>
             <Typography
               variant="subtitle1"
               sx={{
-                color: "#fff",
-                textShadow: "2px 2px 6px rgba(0,0,0,0.85)",
                 mt: 1,
                 fontWeight: 500,
+                textShadow: '2px 2px 6px rgba(0,0,0,0.85)',
               }}
             >
-              O tema de hoje é:{" "}
-              <span style={{ fontWeight: "bold" }}>{todayData.topic}</span>
+              O tema de hoje é:{' '}
+              <span style={{ fontWeight: 'bold' }}>{meditationDay?.title}</span>
             </Typography>
 
             <Typography
               variant="subtitle1"
               fontStyle="italic"
-              sx={{
-                color: "#fff",
-                textShadow: "2px 2px 6px rgba(0,0,0,0.85)",
-                mt: 1,
-              }}
+              sx={{ mt: 1, textShadow: '2px 2px 6px rgba(0,0,0,0.85)' }}
             >
-              Versículo de hoje: “{todayData.verse}”
+              Versículo de hoje: “{meditationDay?.description}”
             </Typography>
           </>
         ) : (
           <Typography
             variant="body1"
-            sx={{
-              color: "#fff",
-              textShadow: "2px 2px 6px rgba(0,0,0,0.85)",
-            }}
+            sx={{ textShadow: '2px 2px 6px rgba(0,0,0,0.85)' }}
           >
             Ainda não há meditação disponível para hoje.
           </Typography>
         )}
 
-        {meditation.media?.url && (
+        {meditationDay?.idToFetch && (
           <Button
             variant="outlined"
-            sx={{ mt: 3, alignSelf: "center" }}
             onClick={handleOpenPreview}
+            sx={{
+              mt: 3,
+              alignSelf: 'center',
+              padding: '10px 20px',
+              textTransform: 'none',
+              borderColor: '#e0f2f1',
+              color: '#e0f2f1',
+              '&:hover': {
+                backgroundColor: '#004d40',
+                borderColor: '#004d40',
+                color: '#ffffff',
+              },
+            }}
           >
             Visualizar Meditação
           </Button>
         )}
       </Box>
 
-      <Dialog
+      <MediaDocumentPreviewModal
         open={openModal}
         onClose={() => setOpenModal(false)}
-        maxWidth="xl"
-        fullWidth
-        PaperProps={{
-          sx: {
-            m: 0,
-            borderRadius: 2,
-            width: isMobile ? "100%" : "90%",
-            height: isMobile ? "100%" : "75%",
-          },
-        }}
-      >
-        <DialogTitle>Visualização da Meditação</DialogTitle>
-        <DialogContent dividers sx={{ p: 0 }}>
-          <Box sx={{ width: "100%", height: "100%" }}>
-            <iframe
-              src={getPreviewUrl(meditation.media)}
-              style={{ width: "100%", height: "100%", border: "none" }}
-              title="Documento"
-            />
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenModal(false)}>Fechar</Button>
-        </DialogActions>
-      </Dialog>
+        media={currentMeditation?.media || null}
+        title={currentMeditation?.topic || ''}
+      />
     </>
   );
 }

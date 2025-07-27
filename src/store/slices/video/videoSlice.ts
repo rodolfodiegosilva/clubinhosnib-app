@@ -1,6 +1,6 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RouteData } from "../route/routeSlice";
-import { MediaItem } from "../types";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RouteData } from '@/store/slices/route/routeSlice';
+import { MediaItem } from '@/store/slices/types';
 
 export interface VideoPageData {
   id?: string;
@@ -22,7 +22,7 @@ const initialState: VideoState = {
 };
 
 const videoSlice = createSlice({
-  name: "video",
+  name: 'video',
   initialState,
   reducers: {
     setVideoData: (state, action: PayloadAction<VideoPageData>) => {

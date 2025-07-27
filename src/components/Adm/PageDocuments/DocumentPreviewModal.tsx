@@ -14,11 +14,7 @@ interface DocumentPreviewModalProps {
   document: any | null;
 }
 
-const DocumentPreviewModal: React.FC<DocumentPreviewModalProps> = ({
-  open,
-  onClose,
-  document,
-}) => {
+const DocumentPreviewModal: React.FC<DocumentPreviewModalProps> = ({ open, onClose, document }) => {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>{document?.name}</DialogTitle>

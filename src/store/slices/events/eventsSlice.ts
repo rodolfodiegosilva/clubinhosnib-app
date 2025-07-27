@@ -1,4 +1,5 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { MediaItem } from '@/store/slices/types';
 
 export interface EventData {
   id: string;
@@ -8,6 +9,7 @@ export interface EventData {
   date: string;
   location: string;
   description: string;
+  media: MediaItem;
 }
 
 interface EventsState {
@@ -19,7 +21,7 @@ const initialState: EventsState = {
 };
 
 const eventsSlice = createSlice({
-  name: "events",
+  name: 'events',
   initialState,
   reducers: {
     setEvents: (state, action: PayloadAction<EventData[]>) => {

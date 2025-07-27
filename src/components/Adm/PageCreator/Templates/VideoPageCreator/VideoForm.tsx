@@ -8,13 +8,9 @@ import {
   Button,
   Typography,
   CircularProgress,
-} from "@mui/material";
-import { Dispatch, SetStateAction } from "react";
-import {
-  MediaItem,
-  MediaPlatform,
-  MediaUploadType,
-} from "store/slices/types";
+} from '@mui/material';
+import { Dispatch, SetStateAction } from 'react';
+import { MediaItem, MediaPlatform, MediaUploadType } from 'store/slices/types';
 
 interface VideoFormProps {
   newVideo: MediaItem;
@@ -45,7 +41,7 @@ export default function VideoForm({
   return (
     <>
       <Typography variant="h6" mb={2} fontWeight="medium">
-        {isEditing ? "Editar Vídeo" : "Adicionar Novo Vídeo"}
+        {isEditing ? 'Editar Vídeo' : 'Adicionar Novo Vídeo'}
       </Typography>
       <Grid container spacing={2} sx={{ mb: 4 }}>
         <Grid item xs={12} sm={6}>
@@ -55,7 +51,7 @@ export default function VideoForm({
             value={newVideo.title}
             onChange={(e) => setNewVideo((prev) => ({ ...prev, title: e.target.value }))}
             error={errors.newVideoTitle}
-            helperText={errors.newVideoTitle ? "Campo obrigatório" : ""}
+            helperText={errors.newVideoTitle ? 'Campo obrigatório' : ''}
           />
         </Grid>
 
@@ -66,7 +62,7 @@ export default function VideoForm({
             value={newVideo.description}
             onChange={(e) => setNewVideo((prev) => ({ ...prev, description: e.target.value }))}
             error={errors.newVideoDescription}
-            helperText={errors.newVideoDescription ? "Campo obrigatório" : ""}
+            helperText={errors.newVideoDescription ? 'Campo obrigatório' : ''}
           />
         </Grid>
 
@@ -80,8 +76,9 @@ export default function VideoForm({
                 setNewVideo((prev) => ({
                   ...prev,
                   uploadType: e.target.value as MediaUploadType,
-                  platformType: e.target.value === MediaUploadType.LINK ? MediaPlatform.YOUTUBE : undefined,
-                  url: "",
+                  platformType:
+                    e.target.value === MediaUploadType.LINK ? MediaPlatform.YOUTUBE : undefined,
+                  url: '',
                   file: undefined,
                   isLocalFile: e.target.value === MediaUploadType.UPLOAD,
                 }))
@@ -98,7 +95,7 @@ export default function VideoForm({
             <FormControl fullWidth>
               <InputLabel>Plataforma</InputLabel>
               <Select
-                value={newVideo.platformType || ""}
+                value={newVideo.platformType || ''}
                 label="Plataforma"
                 onChange={(e) =>
                   setNewVideo((prev) => ({
@@ -122,15 +119,15 @@ export default function VideoForm({
             <TextField
               label="URL do Vídeo (embed)"
               fullWidth
-              value={newVideo.url || ""}
+              value={newVideo.url || ''}
               onChange={(e) => setNewVideo((prev) => ({ ...prev, url: e.target.value }))}
               error={errors.newVideoSrc || errors.newVideoURL}
               helperText={
                 errors.newVideoSrc
-                  ? "Campo obrigatório"
+                  ? 'Campo obrigatório'
                   : errors.newVideoURL
-                  ? "URL inválida para a plataforma selecionada"
-                  : ""
+                    ? 'URL inválida para a plataforma selecionada'
+                    : ''
               }
             />
           </Grid>
@@ -144,11 +141,11 @@ export default function VideoForm({
             </Button>
             {newVideo.file && (
               <Typography variant="body2" display="inline">
-                {newVideo.file.name}{" "}
+                {newVideo.file.name}{' '}
                 {uploadProgress[newVideo.file.name] === false ? (
                   <CircularProgress size={16} sx={{ ml: 1 }} />
                 ) : (
-                  "✔"
+                  '✔'
                 )}
               </Typography>
             )}
@@ -166,7 +163,7 @@ export default function VideoForm({
               uploadProgress[newVideo.file.name] === false
             }
           >
-            {isEditing ? "Atualizar Vídeo" : "Adicionar Vídeo"}
+            {isEditing ? 'Atualizar Vídeo' : 'Adicionar Vídeo'}
           </Button>
         </Grid>
       </Grid>

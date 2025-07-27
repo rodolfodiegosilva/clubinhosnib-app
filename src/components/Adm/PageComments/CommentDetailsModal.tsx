@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -20,8 +19,6 @@ interface CommentDetailsModalProps {
 }
 
 export default function CommentDetailsModal({ comment, open, onClose }: CommentDetailsModalProps) {
-  const navigate = useNavigate();
-
   const formatDate = (date?: string | Date) => {
     if (!date) return 'Não disponível';
     return new Date(date).toLocaleString('pt-BR');
@@ -54,13 +51,7 @@ export default function CommentDetailsModal({ comment, open, onClose }: CommentD
         {comment && (
           <Stack spacing={3} sx={{ mt: 2, mx: 'auto', maxWidth: '100%' }}>
             <Paper elevation={1} sx={{ p: '5px', borderRadius: 2, bgcolor: '#fff' }}>
-              <Typography
-                variant="h6"
-                fontWeight="bold"
-                color="primary"
-                textAlign="center"
-                mb={2}
-              >
+              <Typography variant="h6" fontWeight="bold" color="primary" textAlign="center" mb={2}>
                 Informações do Comentário
               </Typography>
               <Box
